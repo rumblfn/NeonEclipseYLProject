@@ -1,2 +1,2 @@
 # NeonEclipseYLProject
-neon eclipse yonder lyceum project
+neon eclipse yandex lyceum project
