@@ -1,0 +1,26 @@
+All heroes
+Rect
+x1: 545 y1: 87
+x2: 961 y2: 289
+Width: 416
+Height: 202
+miniRects in Allheroes
+Width: 72
+Height: 72
+
+Elector
+X1: 66
+Y1: 86
+X2: 498
+Y2: 289
+buttonLeftRightArrowWidth: 92
+buttonLeftRightArrowHeight: 140
+HeroSizes: (140, 140)
+imageSizes: (136, 136)
+Border 4px-8px
+
+HeroDescription
+X1: 66
+Y1: 339
+X2: 366
+Y2: 703
