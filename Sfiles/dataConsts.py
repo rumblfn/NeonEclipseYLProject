@@ -16,10 +16,12 @@ pygame.mouse.set_visible(False)
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 clock = pygame.time.Clock()
 
-imageButtonStartHost = pygame.image.load('static/startHost.png')
-imageButtonJoinHost = pygame.image.load('static/JoinHostt.png')
-buttonHostSizeWidth = imageButtonStartHost.get_width()
-buttonHostSizeHeight = imageButtonStartHost.get_height()
+# imageButtonStartHost = pygame.image.load('static/startHost.png')
+# imageButtonJoinHost = pygame.image.load('static/JoinHostt.png')
+imageButtonStartGame = pygame.image.load('static/StartGame.png')
+buttonStartGameWidth = imageButtonStartGame.get_width()
+buttonStartGameHeight = imageButtonStartGame.get_height()
+
 
 imageCursorNormal = pygame.image.load('static/Cursor_normal.png')
 imageCursorClicked = pygame.image.load('static/Cursor_Clicked.png')
@@ -76,7 +78,7 @@ objAllHeroesWidget = {'x1': round(0.545 * WIDTH), 'y1': round((87 / 750) * HEIGH
                           'titleText': 'All heroes', 'heroes': HEROES,
                           'blockWidth': 72, 'blockHeight': 72}
 objAboutGame = {
-        'x1': WIDTH / 2 - buttonHostSizeWidth / 2, 'y1': round((470 / 750) * HEIGHT),
+        'x1': WIDTH / 2 - buttonStartGameWidth / 2, 'y1': round((470 / 750) * HEIGHT),
         'x2': round(0.961 * WIDTH), 'y2': round((700 / 750) * HEIGHT),
         'titleText': 'About game'
     }

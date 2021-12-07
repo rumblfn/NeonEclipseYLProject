@@ -12,11 +12,11 @@ def draw_cursor(sc):
 
 
 def draw_button(sc, image, pos_y_diff):
-    surf = pygame.Surface((buttonHostSizeWidth, buttonHostSizeHeight))
+    surf = pygame.Surface((buttonStartGameWidth, buttonStartGameHeight))
     surf.blit(image, (0, 0))
-    x_lef_top = WIDTH / 2 - buttonHostSizeWidth / 2
-    y_left_top = HEIGHT / 2 - buttonHostSizeHeight / 2 - pos_y_diff
-    button = pygame.Rect(x_lef_top, y_left_top, buttonHostSizeWidth, buttonHostSizeHeight)
+    x_lef_top = WIDTH / 2 - buttonStartGameWidth / 2
+    y_left_top = HEIGHT / 2 - buttonStartGameHeight / 2 - pos_y_diff
+    button = pygame.Rect(x_lef_top, y_left_top, buttonStartGameWidth, buttonStartGameHeight)
     mx, my = pygame.mouse.get_pos()
     if button.collidepoint((mx, my)):
         if pygame.mouse.get_pressed()[0]:
@@ -31,8 +31,7 @@ def main_menu():
 
     while run:
         screen.fill((0, 0, 0))
-        draw_button(screen, imageButtonStartHost, 30)
-        draw_button(screen, imageButtonJoinHost, -30)
+        draw_button(screen, imageButtonStartGame, 0)
         screen.blit(surfTitle, (50, 35))
         menuWidgetAllHeroes.draw_widget()
         menuWidgetAboutGame.draw_widget()
