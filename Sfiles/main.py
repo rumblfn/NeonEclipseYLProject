@@ -89,7 +89,6 @@ def waitingForConnection(character, player, network):
 
     while run:
         player2 = network.send(player)
-        player.move()
         screen.fill((0, 0, 0))
         screen.blit(waitingText, (top_menu_text_pos_x, top_menu_text_pos_x))
         pygame.display.flip()
