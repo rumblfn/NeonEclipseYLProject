@@ -1,5 +1,6 @@
 import socket
 from _thread import start_new_thread
+from player import Player
 import pythonFB
 import pickle
 import sys
@@ -18,52 +19,51 @@ count_of_players = 0
 pythonFB.setNetworkIpv4(server)
 pythonFB.setNetworkPort(port)
 
-socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-socketServer.bind((server, port))
-socketServer.listen(2)
-print('Waiting for a connection')
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+try:
+    s.bind((server, port))
+except socket.error as e:
+    str(e)
 
-players = [{'gameStatus': False, 'count': 0}, {'gameStatus': False, 'count': 0}]
+s.listen(2)
+print("Waiting for a connection, Server Started")
+
+players = [Player(0, 0, 50, 50, (255, 0, 0)), Player(100, 100, 50, 50, (0, 0, 255))]
 
 
 def threaded_client(conn, player):
-    global count_of_players
     conn.send(pickle.dumps(players[player]))
-    reply = ''
-    replyStartGame = ''
+    reply = ""
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
             players[player] = data
-            # if count_of_players == 2:
-            #     replyStartGame = data.decode("utf-8")
+
             if not data:
-                print('disconnected')
+                print("Disconnected")
                 break
             else:
                 if player == 1:
                     reply = players[0]
-                    reply['count'] = count_of_players
                 else:
                     reply = players[1]
-                    reply['count'] = count_of_players
 
                 print("Received: ", data)
                 print("Sending : ", reply)
+
             conn.sendall(pickle.dumps(reply))
-            # con.sendall(str.encode(replyStartGame))
         except:
             break
-    print('lost connection')
-    count_of_players -= 1
+
+    print("Lost connection")
     conn.close()
 
 
-current_player = 0
+currentPlayer = 0
 while True:
-    conn, addr = socketServer.accept()
-    print('Connected to:', addr)
-    count_of_players += 1
-    start_new_thread(threaded_client, (conn, current_player))
-    current_player += 1
+    conn, addr = s.accept()
+    print("Connected to:", addr)
+
+    start_new_thread(threaded_client, (conn, currentPlayer))
+    currentPlayer += 1

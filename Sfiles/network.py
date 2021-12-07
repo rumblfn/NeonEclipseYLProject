@@ -28,11 +28,3 @@ class Network:
             return pickle.loads(self.client.recv(2048))
         except socket.error as e:
             print(e)
-
-    def ch(self):
-        self.p[0]['gameStatus'] = not self.p[0]['gameStatus']
-
-
-while True:
-    n = Network()
-    print(n.p)
