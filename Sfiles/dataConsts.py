@@ -34,6 +34,9 @@ player3Sniper = pygame.image.load('static/sniper37x75.png')
 player3SniperBig = pygame.image.load('static/sniper136Big.png')
 
 
+sleeper_status = False
+
+
 HEROES = [
     {'name': 'Hero1',
      'attack power': 10,

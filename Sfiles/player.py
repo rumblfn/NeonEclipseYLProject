@@ -8,9 +8,16 @@ class Player:
         self.width = width
         self.height = height
         self.color = color
-        self.rect = (x,y,width,height)
+        self.rect = (x, y, width, height)
         self.vel = 3
-        self.ready = False
+        self.ready = None
+        self.name = None
+        self.attack_power = None
+        self.maxHp = None
+        self.image = None
+        self.attackE = None
+        self.attackQ = None
+        self.simpleAttack = None
 
     def draw(self, win):
         pygame.draw.rect(win, self.color, self.rect)

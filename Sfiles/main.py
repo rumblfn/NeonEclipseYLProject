@@ -2,6 +2,8 @@ import sys
 from pygame.locals import *
 from dataConsts import *
 from network import Network
+from time import sleep
+from _thread import start_new_thread
 
 
 def draw_cursor(sc):
@@ -10,6 +12,13 @@ def draw_cursor(sc):
         sc.blit(imageCursorClicked, (mx - 2, my - 2))
     else:
         sc.blit(imageCursorNormal, (mx, my))
+
+
+def sleeper():
+    global sleeper_status
+    sleeper_status = False
+    sleep(3)
+    sleeper_status = True
 
 
 def draw_button(sc, image, pos_y_diff, player, network):
@@ -23,21 +32,52 @@ def draw_button(sc, image, pos_y_diff, player, network):
         if pygame.mouse.get_pressed()[0]:
             for hero in menuWidgetAllHeroes.heroes:
                 if hero['selected']:
+                    print(hero)
+                    player.name = hero['name']
+                    player.attack_power = hero['attack power']
+                    player.maxHp = hero['maxHp']
+                    # player.image = hero['imagePreview']
+                    player.width = hero['width']
+                    player.height = hero['height']
                     player.ready = True
                     waitingForConnection(hero, player, network)
     sc.blit(surf, (x_lef_top, y_left_top))
 
 
-def map_preparation():
+def main_game(player, network):
     run = True
     while run:
-        screen.fill((255, 255, 255))
+        player.move()
+        player2 = network.send(player)
+        redrawWindow(screen, player, player2)
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                player.ready = False
+                network.send(player)
                 pygame.quit()
                 sys.exit()
+        clock.tick(60)
+
+
+def map_preparation(player, network):
+    run = True
+    start_new_thread(sleeper, ())
+    while run:
+        screen.fill((10, 17, 25))
+        player.move()
+        player.draw(screen)
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                player.ready = False
+                network.send(player)
+                pygame.quit()
+                sys.exit()
+        if sleeper_status:
+            main_game(player, network)
         clock.tick(60)
 
 
@@ -45,6 +85,7 @@ def main_menu():
     run = True
     network = Network()
     player = network.getP()
+    player.ready = False
     while run:
         screen.fill((0, 0, 0))
         draw_button(screen, imageButtonStartGame, 0, player, network)
@@ -55,8 +96,6 @@ def main_menu():
         menuWidgetAboutHero.draw_widget()
         draw_cursor(screen)
         pygame.display.flip()
-
-        player2 = network.send(player)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -82,7 +121,6 @@ def redrawWindow(win, player, player2):
 
 
 def waitingForConnection(character, player, network):
-    global font
     run = True
     waitingText = font.render('Waiting for a connection', False, (0, 255, 0))
     top_menu_text_pos_x = 10
@@ -96,13 +134,17 @@ def waitingForConnection(character, player, network):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                player.ready = False
+                network.send(player)
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
+                    player.ready = False
+                    network.send(player)
                     run = False
         if player2.ready:
-            map_preparation()
+            map_preparation(player, network)
         clock.tick(60)
 
 
