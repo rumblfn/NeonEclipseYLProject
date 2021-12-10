@@ -9,6 +9,8 @@ class AboutHeroWindow:
         self.Y_RIGHT_BOT = round((703 / 750) * h)
         self.WIDGET_HEIGHT = round((364 / 750) * h)
         self.WIDGET_WIDTH = round(0.300 * w)
+        self.width = w
+        self.height = h
 
         self.BORDER_WIDTH = 4
 

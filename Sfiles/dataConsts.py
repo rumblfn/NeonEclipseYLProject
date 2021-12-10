@@ -3,10 +3,11 @@ from menuWidgetAllHeroes import AllHeroesWindow
 from menuWidgetAboutGame import AboutGameWindow
 from menuWidgetElector import ElectorWindow
 from menuWidgetAboutHero import AboutHeroWindow
-
+from menuWidgetSetScreen import ScreenSizeWindow
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Neon eclipse")
 pygame.font.init()
@@ -14,6 +15,7 @@ font = pygame.font.SysFont('Avenir Next', 26)
 fontTitle = pygame.font.SysFont('SFCompactItalic', 36)
 pygame.mouse.set_visible(False)
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+WI, HE = WIDTH, HEIGHT
 clock = pygame.time.Clock()
 
 # imageButtonStartHost = pygame.image.load('static/startHost.png')
@@ -32,9 +34,6 @@ player2Paladin = pygame.image.load('static/paladin27x78.png')
 player2PaladinBig = pygame.image.load('static/paladin27x78Big1.png')
 player3Sniper = pygame.image.load('static/sniper37x75.png')
 player3SniperBig = pygame.image.load('static/sniper136Big.png')
-
-
-sleeper_status = False
 
 
 HEROES = [
@@ -89,3 +88,4 @@ menuWidgetAllHeroes = AllHeroesWindow(screen, font, objAllHeroesWidget)
 menuWidgetAboutGame = AboutGameWindow(screen, font, objAboutGame)
 menuWidgetElector = ElectorWindow(screen, font, menuWidgetAllHeroes, WIDTH, HEIGHT)
 menuWidgetAboutHero = AboutHeroWindow(screen, font, menuWidgetElector, WIDTH, HEIGHT)
+menuWidgetScreenSize = ScreenSizeWindow(screen, font, WIDTH, HEIGHT)
