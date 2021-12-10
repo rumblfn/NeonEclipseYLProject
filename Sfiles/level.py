@@ -1,6 +1,6 @@
 import pygame
 from tiles import Tile
-from map_preparation_settings import tile_size
+from map_preparation_settings import tile_size, level1_map
 from player import Player_map_preparation
 
 
@@ -17,6 +17,8 @@ class Level:
     def setup_level(self, layout):
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
+        HEIGHT = pygame.display.Info().current_h
+        tile_size = HEIGHT // len(level1_map)
 
         for row_index, row in enumerate(layout):
             for col_index, cell in enumerate(row):
@@ -48,13 +50,19 @@ class Level:
         player = self.player.sprite
         player_y = player.rect.centery
         direction_y = player.direction.y
+        # if direction_y > 0:
+        #     self.world_shift_y = 8
+        # elif direction_y < 0:
+        #     self.world_shift_y = -8
+        # else:
+        #     self.world_shift_y = 0
 
-        if player_y > self.height * (2/3) and direction_y > 0:
-            self.world_shift_y = -8
-        elif player_y < self.height * (1/3) and direction_y < 0:
-            self.world_shift_y = 8
-        else:
-            self.world_shift_y = 0
+        # if player_y > self.height * (2/3) and direction_y > 0:
+        #     self.world_shift_y = -8
+        # elif player_y < self.height * (1/3) and direction_y < 0:
+        #     self.world_shift_y = 8
+        # else:
+        #     self.world_shift_y = 0
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -86,7 +94,7 @@ class Level:
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
         self.scroll_x()
-        self.scroll_y()
+        # self.scroll_y()
 
         self.player.update()
         self.horizontal_movement_collisions()

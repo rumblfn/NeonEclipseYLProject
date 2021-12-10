@@ -19,7 +19,7 @@ level1_map = [
     'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
 ]
 
-tile_size = 64
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+tile_size = HEIGHT // len(level1_map)
 screen_width = len(level1_map[0]) * tile_size
 screen_height = len(level1_map) * tile_size

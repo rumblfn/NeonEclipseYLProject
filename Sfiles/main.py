@@ -7,6 +7,7 @@ from _thread import start_new_thread
 from map_preparation_settings import *
 from tiles import Tile
 from level import Level
+from map_preparation_settings import *
 
 
 def draw_cursor(sc):
@@ -69,6 +70,7 @@ def map_preparation(player, network):
     player.x = WIDTH // 4
     player.y = round(HEIGHT * (2 / 3))
     player.vel = 8
+
     level = Level(level1_map, screen)
     start_new_thread(sleeper, ())
     while run:

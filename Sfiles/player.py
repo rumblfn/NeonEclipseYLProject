@@ -1,4 +1,6 @@
 import pygame
+from map_preparation_settings import tile_size
+from map_preparation_settings import level1_map
 
 player1Preview = pygame.image.load('static/charackter64x64Preview.png')
 player2Paladin = pygame.image.load('static/paladin27x78.png')
@@ -13,8 +15,10 @@ playerImages = {
 class Player_map_preparation(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
-        self.image = pygame.Surface((64, 64))
-        self.image.fill('red')
+        HEIGHT = pygame.display.Info().current_h
+        tile_size = HEIGHT // len(level1_map)
+        self.image = pygame.Surface((tile_size, tile_size))
+        self.image.blit(pygame.transform.scale(playerImages['Hero1'], (tile_size, tile_size)), (0, 0))
         self.rect = self.image.get_rect(topleft=pos)
 
         self.direction = pygame.math.Vector2(0, 0)
