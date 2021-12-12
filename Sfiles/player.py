@@ -1,24 +1,5 @@
 import pygame
 
-level1_map = [
-    '                            ',
-    '                            ',
-    '                            ',
-    ' XX    XXX            XX    ',
-    ' XX P                       ',
-    ' XXXX         XX         XX ',
-    ' XXXX       XXX             ',
-    ' XX       XXXX    XX  XX    ',
-    '       X  XXXX    X   XXX   ',
-    '    XXXX  XXXXXX        XXXX',
-    'XXXXXXXX  XXXXXX   X       X',
-    'XXXX                       X',
-    '                      XXXXXX',
-    '          XXXXXX  XX  XXXXXX',
-    'XX        XXXXXX  XX  XXXXXX',
-    'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-]
-
 player1Preview = pygame.image.load('static/charackter64x64Preview.png')
 player2Paladin = pygame.image.load('static/paladin27x78.png')
 player3Sniper = pygame.image.load('static/sniper37x75.png')
@@ -37,9 +18,12 @@ class Player_map_preparation(pygame.sprite.Sprite):
         self.name = player_settings['name']
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
+
+        from map_preparation_settings import level1_map
+
         re_size = (HEIGHT / len(level1_map)) / 64
-        self.width = round(player_settings['width'] * re_size)
-        self.height = round(player_settings['height'] * re_size)
+        self.width = round(player_settings['width'] * re_size) - 1
+        self.height = round(player_settings['height'] * re_size) - 1
         self.image = pygame.Surface((self.width, self.height))
         self.image.blit(player_settings['imagePreview'], (0, 0))
         self.rect = self.image.get_rect(topleft=pos)
@@ -83,4 +67,4 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = None  # True
+        self.ready = True  # None

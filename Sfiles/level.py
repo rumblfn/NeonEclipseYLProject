@@ -25,12 +25,12 @@ class Level:
             for col_index, cell in enumerate(row):
                 x = col_index * tile_size
                 y = row_index * tile_size
-                if cell == 'X':
-                    tile = Tile((x, y), tile_size)
-                    self.tiles.add(tile)
                 if cell == 'P':
                     self.player_sprite = Player_map_preparation((x, y), self.player_settings)
                     self.player.add(self.player_sprite)
+                elif cell != ' ':
+                    tile = Tile((x, y), tile_size, cell)
+                    self.tiles.add(tile)
 
     def scroll_x(self):
         player = self.player.sprite

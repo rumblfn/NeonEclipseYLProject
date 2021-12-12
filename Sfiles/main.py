@@ -78,7 +78,7 @@ def map_preparation(player, network, player_settings):
             pygame.mixer.music.load('music/preparation_map.mp3')
             pygame.mixer.music.play(loops=2)
         # screen.fill((245, 238, 230))
-        screen.fill((10, 17, 25))
+        # screen.fill((10, 17, 25))
         bgMapPreparation.draw((0, 0))
         # player.move()
         level.run()
@@ -180,9 +180,12 @@ def waitingForConnection(character, player, network, player_settings):
     waitingText = font.render('Waiting for a connection', False, (0, 255, 0))
     top_menu_text_pos_x = 10
 
+    # nez_image = pygame.image.load('static/nezuko-pixel-art.jpeg')
+
     while run:
         player2 = network.send(player)
         screen.fill((0, 0, 0))
+        # screen.blit(nez_image, (0, 0))
         screen.blit(waitingText, (top_menu_text_pos_x, top_menu_text_pos_x))
         pygame.display.flip()
 
