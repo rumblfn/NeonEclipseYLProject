@@ -26,8 +26,11 @@ class AboutHeroWindow:
     def draw_widget(self):
         mx, my = pygame.mouse.get_pos()
         rectHoverRect = pygame.Rect(self.X_LEFT_TOP + 2, self.Y_LEFT_TOP + 2, self.WIDGET_WIDTH - 4, self.WIDGET_HEIGHT - 4)
-        if rectHoverRect.collidepoint((mx, my)):
-            pygame.draw.rect(self.screen, self.borderColor2, rectHoverRect)
+
+        # if rectHoverRect.collidepoint((mx, my)):
+        #     pygame.draw.rect(self.screen, self.borderColor2, rectHoverRect)
+        pygame.draw.rect(self.screen, self.borderColor2, rectHoverRect)
+
         pygame.draw.rect(self.screen, self.borderColor,
                          (self.X_LEFT_TOP, self.Y_LEFT_TOP, self.WIDGET_WIDTH, self.WIDGET_HEIGHT), self.BORDER_WIDTH, 10)
         self.choose_hero()

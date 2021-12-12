@@ -22,8 +22,11 @@ class AboutGameWindow:
         mx, my = pygame.mouse.get_pos()
         rectHoverRect = pygame.Rect(self.x_left_top + 2, self.y_left_top + 2, self.widgetWidth - 4,
                                     self.widgetHeight - 4)
-        if rectHoverRect.collidepoint((mx, my)):
-            pygame.draw.rect(self.screen, self.borderColor2, rectHoverRect)
+
+        pygame.draw.rect(self.screen, self.borderColor2, rectHoverRect)
+        # if rectHoverRect.collidepoint((mx, my)):
+        #     pygame.draw.rect(self.screen, self.borderColor2, rectHoverRect)
+
         pygame.draw.rect(self.screen, self.borderColor,
                          (self.x_left_top, self.y_left_top, self.widgetWidth, self.widgetHeight), 4, 10)
         self.screen.blit(self.titleSurface, (self.x_left_top + 15, self.y_left_top + 10))

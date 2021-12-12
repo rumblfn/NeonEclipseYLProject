@@ -15,8 +15,12 @@ class ScreenSizeWindow:
         self.titleSurface = font.render('Set window size', True, self.textAndBlockColor)
         self.borderColor = (64, 128, 255)
         self.BORDER_WIDTH = 4
+        self.borderColor2 = (8, 16, 32)
 
     def draw_widget(self):
+        rectHoverRect = pygame.Rect(self.X_LEFT_TOP + 2, self.Y_LEFT_TOP + 2, self.WIDGET_WIDTH - 4,
+                                    self.WIDGET_HEIGHT - 4)
+        pygame.draw.rect(self.screen, self.borderColor2, rectHoverRect)
         pygame.draw.rect(self.screen, self.borderColor,
                          (self.X_LEFT_TOP, self.Y_LEFT_TOP, self.WIDGET_WIDTH, self.WIDGET_HEIGHT), self.BORDER_WIDTH,
                          10)
