@@ -4,6 +4,7 @@ from menuWidgetAboutGame import AboutGameWindow
 from menuWidgetElector import ElectorWindow
 from menuWidgetAboutHero import AboutHeroWindow
 from menuWidgetSetScreen import ScreenSizeWindow
+from backgtoundClasses import *
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -24,7 +25,8 @@ imageButtonStartGame = pygame.image.load('static/StartGame.png')
 buttonStartGameWidth = imageButtonStartGame.get_width()
 buttonStartGameHeight = imageButtonStartGame.get_height()
 
-background_map_preparation = pygame.image.load('static/Bg-straight-echo.png')
+background_menu = pygame.image.load('static/Bg-straight-echo.png')
+background_map_preparation_with_opacity = pygame.image.load('static/Bg-straight-echo2.png')
 
 imageCursorNormal = pygame.image.load('static/Cursor_normal.png')
 imageCursorClicked = pygame.image.load('static/Cursor_Clicked.png')
@@ -90,3 +92,5 @@ menuWidgetAboutGame = AboutGameWindow(screen, font, objAboutGame)
 menuWidgetElector = ElectorWindow(screen, font, menuWidgetAllHeroes, WIDTH, HEIGHT)
 menuWidgetAboutHero = AboutHeroWindow(screen, font, menuWidgetElector, WIDTH, HEIGHT)
 menuWidgetScreenSize = ScreenSizeWindow(screen, font, WIDTH, HEIGHT)
+bgMenu = BackgroundMapPreparation(screen, background_menu)
+bgMapPreparation = Background(screen, background_map_preparation_with_opacity)

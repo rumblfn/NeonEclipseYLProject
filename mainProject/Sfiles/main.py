@@ -70,14 +70,13 @@ def map_preparation(player, network):
     player.x = WIDTH // 4
     player.y = round(HEIGHT * (2 / 3))
     player.vel = 8
-    background_map_preparation2 = pygame.image.load('static/Bg-straight-echo2.png')
 
     level = Level(level1_map, screen)
     start_new_thread(sleeper, ())
     while run:
         # screen.fill((245, 238, 230))
         screen.fill((10, 17, 25))
-        screen.blit(background_map_preparation2, (0, 0))
+        bgMapPreparation.draw((0, 0))
         # player.move()
         level.run()
         # player.draw(screen)
@@ -130,10 +129,7 @@ def main_menu():
     WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
     while run:
         screen.fill((0, 0, 0))
-        mx, my = pygame.mouse.get_pos()
-        lx = (WIDTH // 2 - mx) / 7
-        ly = (HEIGHT // 2 - my) / 7
-        screen.blit(background_map_preparation, (lx - 100, ly - 100))
+        bgMenu.draw_with_mouse_pos(WIDTH, HEIGHT)
         draw_button(screen, imageButtonStartGame, 0, player, network)
         screen.blit(surfTitle, (50, 35))
         menuWidgetAllHeroes.draw_widget()
