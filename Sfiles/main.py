@@ -22,7 +22,7 @@ def draw_cursor(sc):
 def sleeper():
     global sleeper_status
     sleeper_status = False
-    sleep(120)
+    sleep(10)
     sleeper_status = True
 
 
@@ -73,13 +73,30 @@ def map_preparation(player, network, player_settings):
     player.vel = 8
     level = Level(level1_map, screen, player_settings)
     start_new_thread(sleeper, ())
+
+    def portalParkourMap(sc, player_parkour):
+        runParkourMap = True
+        while runParkourMap:
+            sc.fill((244, 1, 32))
+            pygame.display.update()
+            for e in pygame.event.get():
+                if e.type == KEYDOWN:
+                    if e.key == K_ESCAPE:
+                        runParkourMap = False
+                        level.portalParkour = False
+            if sleeper_status:
+                runParkourMap = False
+            clock.tick(60)
+
     while run:
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/preparation_map.mp3')
             pygame.mixer.music.play(loops=2)
-        # screen.fill((245, 238, 230))
-        # screen.fill((10, 17, 25))
-        bgMapPreparation.draw((0, 0))
+        if sleeper_status:
+            pygame.mixer.music.stop()
+            main_game(player, network, level.player_sprite)
+        screen.fill((244, 1, 32))  # '#fefec2'
+        bgMapPreparation.draw()
         # player.move()
         level.run()
         # player.draw(screen)
@@ -91,9 +108,9 @@ def map_preparation(player, network, player_settings):
                 network.send(player)
                 pygame.quit()
                 sys.exit()
-        if sleeper_status:
+        if level.portalParkour:
             pygame.mixer.music.stop()
-            main_game(player, network, level.player_sprite)
+            portalParkourMap(screen, level.player)
         clock.tick(60)
 
 
@@ -166,7 +183,6 @@ def main_menu():
                 menuWidgetScreenSize.change_size()
 
         w, h = pygame.display.Info().current_w, pygame.display.Info().current_h
-        print(w, h, '\n',  WIDTH, HEIGHT)
         if w != WIDTH or h != HEIGHT:
             if w == h == 1000:
                 w, h = WI, HE

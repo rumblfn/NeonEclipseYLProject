@@ -96,5 +96,5 @@ menuWidgetElector = ElectorWindow(screen, font, menuWidgetAllHeroes, WIDTH, HEIG
 menuWidgetAboutHero = AboutHeroWindow(screen, font, menuWidgetAllHeroes, WIDTH, HEIGHT)
 menuWidgetScreenSize = ScreenSizeWindow(screen, font, WIDTH, HEIGHT)
 menuWidgetSlider = SliderWindow(screen, WIDTH, HEIGHT)
-bgMenu = BackgroundMapPreparation(screen, background_menu)
+bgMenu = BackgroundMenu(screen, background_menu)
 bgMapPreparation = Background(screen, background_map_preparation_with_opacity)

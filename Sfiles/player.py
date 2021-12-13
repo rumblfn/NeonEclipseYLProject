@@ -1,8 +1,8 @@
 import pygame
 
-player1Preview = pygame.image.load('static/charackter64x64Preview.png')
-player2Paladin = pygame.image.load('static/paladin27x78.png')
-player3Sniper = pygame.image.load('static/sniper37x75.png')
+player1Preview = pygame.image.load('static/charackter64x64Preview.png').convert_alpha()
+player2Paladin = pygame.image.load('static/paladin27x78.png').convert_alpha()
+player3Sniper = pygame.image.load('static/sniper37x75.png').convert_alpha()
 playerImages = {
     'Hero1': player1Preview,
     'Hero2': player3Sniper,
@@ -19,13 +19,16 @@ class Player_map_preparation(pygame.sprite.Sprite):
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
 
+        self.K_x = False
+
         from map_preparation_settings import level1_map
 
         re_size = (HEIGHT / len(level1_map)) / 64
         self.width = round(player_settings['width'] * re_size) - 1
         self.height = round(player_settings['height'] * re_size) - 1
-        self.image = pygame.Surface((self.width, self.height))
-        self.image.blit(player_settings['imagePreview'], (0, 0))
+        self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        # self.image.fill((255, 255, 255, 0))
+        self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
         self.rect = self.image.get_rect(topleft=pos)
 
         self.direction = pygame.math.Vector2(0, 0)
@@ -37,6 +40,11 @@ class Player_map_preparation(pygame.sprite.Sprite):
 
     def get_input(self):
         keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_x]:
+            self.K_x = True
+        else:
+            self.K_x = False
 
         if keys[pygame.K_d]:
             self.direction.x = 1

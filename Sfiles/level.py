@@ -1,5 +1,5 @@
 import pygame
-from tiles import Tile
+from tiles import Tile, Portal
 from map_preparation_settings import tile_size, level1_map
 from player import Player_map_preparation
 
@@ -12,12 +12,14 @@ class Level:
         self.setup_level(level_data)
         self.world_shift_x = 0
         self.world_shift_y = 0
+        self.portalParkour = False
         self.width = pygame.display.Info().current_w
         self.height = pygame.display.Info().current_h
 
     def setup_level(self, layout):
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
+        self.portals = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level1_map)
 
@@ -28,9 +30,20 @@ class Level:
                 if cell == 'P':
                     self.player_sprite = Player_map_preparation((x, y), self.player_settings)
                     self.player.add(self.player_sprite)
+                elif cell == 'u':
+                    portal = Portal((x, y))
+                    self.portals.add(portal)
                 elif cell != ' ':
                     tile = Tile((x, y), tile_size, cell)
                     self.tiles.add(tile)
+
+    def check_portals(self):
+        player = self.player.sprite
+        if player.K_x:
+            for portal in self.portals:
+                if portal.rect.colliderect(player.rect):
+                    self.portalParkour = True
+                    return True
 
     def scroll_x(self):
         player = self.player.sprite
@@ -46,18 +59,6 @@ class Level:
         else:
             self.world_shift_x = 0
             player.speed = player.control_speed
-
-    def scroll_y(self):
-        player = self.player.sprite
-        player_y = player.rect.centery
-        direction_y = player.direction.y
-
-        if player_y > self.height / 2 and direction_y > 0:
-            self.world_shift_y = -direction_y
-        elif player_y < self.height / 2 and direction_y < 0:
-            self.world_shift_y = direction_y
-        else:
-            self.world_shift_y = 0
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -89,10 +90,12 @@ class Level:
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
+        self.portals.update((self.world_shift_x, self.world_shift_y))
+        self.portals.draw(self.display_surface)
         self.scroll_x()
-        # self.scroll_y()
 
         self.player.update()
+        self.check_portals()
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
         self.player.draw(self.display_surface)

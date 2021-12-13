@@ -6,11 +6,11 @@ class Background:
         self.image = image
         self.screen = screen
 
-    def draw(self, pos):
-        self.screen.blit(self.image, pos)
+    def draw(self):
+        self.screen.blit(self.image, (0, 0))
 
 
-class BackgroundMapPreparation(Background):
+class BackgroundMenu(Background):
     def draw_with_mouse_pos(self, w, h):
         mx, my = pygame.mouse.get_pos()
         lx = (w // 2 - mx) / 30 - 100
