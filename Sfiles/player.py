@@ -1,13 +1,16 @@
 import pygame
 
-player1Preview = pygame.image.load('static/charackter64x64Preview.png').convert_alpha()
-player2Paladin = pygame.image.load('static/paladin27x78.png').convert_alpha()
-player3Sniper = pygame.image.load('static/sniper37x75.png').convert_alpha()
-playerImages = {
-    'Hero1': player1Preview,
-    'Hero2': player3Sniper,
-    'Hero3': player2Paladin,
-}
+try:
+    player1Preview = pygame.image.load('static/charackter64x64Preview.png').convert_alpha()
+    player2Paladin = pygame.image.load('static/paladin27x78.png').convert_alpha()
+    player3Sniper = pygame.image.load('static/sniper37x75.png').convert_alpha()
+    playerImages = {
+        'Hero1': player1Preview,
+        'Hero2': player3Sniper,
+        'Hero3': player2Paladin,
+    }
+except:
+    print('game not started')
 
 
 class Player_map_preparation(pygame.sprite.Sprite):
