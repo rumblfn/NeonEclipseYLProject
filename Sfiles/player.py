@@ -1,4 +1,5 @@
 import pygame
+from CBullet import Bullet
 
 try:
     player1Preview = pygame.image.load('static/charackter64x64Preview.png').convert_alpha()
@@ -41,6 +42,8 @@ class Player_map_preparation(pygame.sprite.Sprite):
         self.jump_speed = -18 * HEIGHT / 900
         self.jump_bool = True
 
+        self.shoot_bool = 1
+
     def get_input(self):
         keys = pygame.key.get_pressed()
 
@@ -62,6 +65,10 @@ class Player_map_preparation(pygame.sprite.Sprite):
         if not self.direction.y:
             self.jump_bool = True
 
+    def create_bullet(self):
+        self.shoot_bool = 0
+        return Bullet((self.rect.centerx + 10, self.rect.centery - self.height / 4))
+
     def apply_gravity(self):
         self.direction.y += self.gravity
         self.rect.y += self.direction.y
@@ -71,6 +78,7 @@ class Player_map_preparation(pygame.sprite.Sprite):
         self.direction.y = self.jump_speed
 
     def update(self):
+        self.shoot_bool += 0.1
         self.get_input()
 
 

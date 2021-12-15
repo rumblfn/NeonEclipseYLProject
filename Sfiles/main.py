@@ -22,7 +22,7 @@ def draw_cursor(sc):
 def sleeper():
     global sleeper_status
     sleeper_status = False
-    sleep(10)
+    sleep(120)
     sleeper_status = True
 
 
@@ -95,11 +95,16 @@ def map_preparation(player, network, player_settings):
         if sleeper_status:
             pygame.mixer.music.stop()
             main_game(player, network, level.player_sprite)
-        screen.fill((244, 1, 32))  # '#fefec2'
+        screen.fill('#fefec2')  # '#fefec2'
         bgMapPreparation.draw()
         # player.move()
         level.run()
         # player.draw(screen)
+        draw_cursor(screen)
+        if pygame.mouse.get_pressed()[0]:
+            if level.player.sprite.shoot_bool >= 1:
+                level.bullets.add(level.player.sprite.create_bullet())
+
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

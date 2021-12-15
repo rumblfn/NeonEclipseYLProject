@@ -2,6 +2,7 @@ import pygame
 from tiles import Tile, Portal
 from map_preparation_settings import tile_size, level1_map
 from player import Player_map_preparation
+from NPC import Class_npc
 
 
 class Level:
@@ -20,6 +21,8 @@ class Level:
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         self.portals = pygame.sprite.Group()
+        self.npces = pygame.sprite.Group()
+        self.bullets = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level1_map)
 
@@ -33,6 +36,9 @@ class Level:
                 elif cell == 'u':
                     portal = Portal((x, y))
                     self.portals.add(portal)
+                elif cell == 'N':
+                    npc = Class_npc((x, y), len(self.npces.sprites()), self.display_surface)
+                    self.npces.add(npc)
                 elif cell != ' ':
                     tile = Tile((x, y), tile_size, cell)
                     self.tiles.add(tile)
@@ -59,6 +65,20 @@ class Level:
         else:
             self.world_shift_x = 0
             player.speed = player.control_speed
+
+    def npc_collisions(self):
+        player = self.player.sprite
+
+        for sprite in self.npces.sprites():
+            if sprite.rect.colliderect(player.rect):
+                sprite.show_msg()
+
+    def bullets_settings(self):
+        for sprite in self.bullets.sprites():
+            for tile in self.tiles.sprites():
+                if tile.rect.collidepoint(sprite.rect.center):
+                    sprite.kill()
+            sprite.move()
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -90,12 +110,22 @@ class Level:
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
+
         self.portals.update((self.world_shift_x, self.world_shift_y))
         self.portals.draw(self.display_surface)
+
+        self.npces.update((self.world_shift_x, self.world_shift_y))
+        self.npces.draw(self.display_surface)
+
         self.scroll_x()
 
         self.player.update()
         self.check_portals()
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
+        self.npc_collisions()
         self.player.draw(self.display_surface)
+
+        self.bullets.update((self.world_shift_x, self.world_shift_y))
+        self.bullets.draw(self.display_surface)
+        self.bullets_settings()
