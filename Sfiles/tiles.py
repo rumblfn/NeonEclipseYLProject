@@ -7,7 +7,10 @@ from map_preparation_settings import level1_map
 # block3 = pygame.image.load('static/Bg1-1.png')
 h = pygame.display.Info().current_h
 res = h // len(level1_map)
-portal_res = round((109 / 900) * h)
+portal_res = round((82 / 900) * h)
+portal_res_x = round((32 / 900) * h)
+pipe_vertical = pygame.transform.scale(pygame.image.load('static/vertical_pipe.png'), (res, res))
+pipe_horizontal = pygame.transform.scale(pygame.image.load('static/pipe.png'), (res, res))
 blockLeft = pygame.transform.scale(pygame.image.load('static/blockLeft.png'), (res, res))
 blockTop = pygame.transform.scale(pygame.image.load('static/blockTop.png'), (res, res))
 blockRight = pygame.transform.scale(pygame.image.load('static/blockRight.png'), (res, res))
@@ -23,26 +26,27 @@ windowBlock3 = pygame.transform.scale(pygame.image.load('static/WindowBlock3.png
 windowBlock4 = pygame.transform.scale(pygame.image.load('static/WindowBlock4.png'), (res, res))
 windowBlock5 = pygame.transform.scale(pygame.image.load('static/WindowBlock5.png'), (res, res))
 windowBlock6 = pygame.transform.scale(pygame.image.load('static/WindowBlock6.png'), (res, res))
+windowBlock7 = pygame.transform.scale(pygame.image.load('static/window_transparent.png').convert_alpha(), (res, res))
 blockTopBottom = pygame.transform.scale(pygame.image.load('static/blockBottomTop.png'), (res, res))
 blockTopLeftBottom = pygame.transform.scale(pygame.image.load('static/blockBottomLeftTop.png'), (res, res))
 blockTopRightBottom = pygame.transform.scale(pygame.image.load('static/blockBottomRightTop.png'), (res, res))
 blockBorders = pygame.transform.scale(pygame.image.load('static/blockBorders.png'), (res, res))
 blockLeftTopRight = pygame.transform.scale(pygame.image.load('static/blockLeftTopRight.png'), (res, res))
-portalImage = pygame.transform.scale(pygame.image.load('static/portal.png').convert_alpha(), (portal_res, portal_res))
-lst_of_windows = [windowBlock1, windowBlock2, windowBlock3, windowBlock4, windowBlock5, windowBlock6]
+portalImage = pygame.transform.scale(pygame.image.load('static/portal_door_blue.png').convert_alpha(), (portal_res_x, portal_res))
+lst_of_windows = [windowBlock1, windowBlock2, windowBlock3, windowBlock4, windowBlock5, windowBlock6, windowBlock7]
 
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, size, cell):
         super().__init__()
-        self.image = pygame.Surface((size, size))
+        self.image = pygame.Surface((size, size), pygame.SRCALPHA)
         self.set_image(cell, size)
         # self.image.fill((10, 17, 25))
         self.rect = self.image.get_rect(topleft=pos)
 
     def set_image(self, cell, s):
         if cell == '0':
-            self.image.blit(lst_of_windows[random.randint(0, 5)], (0, 0))
+            self.image.blit(lst_of_windows[random.randint(0, len(lst_of_windows)) - 1], (0, 0))
         elif cell == '1':
             self.image.blit(blockLeft, (0, 0))
         elif cell == '2':
@@ -71,6 +75,10 @@ class Tile(pygame.sprite.Sprite):
             self.image.blit(blockLeftTopRight, (0, 0))
         elif cell == 'X':
             self.image.blit(block, (0, 0))
+        elif cell == 'п':  # vertical
+            self.image.blit(pipe_vertical, (0, 0))
+        elif cell == 'П':  # horizontal
+            self.image.blit(pipe_horizontal, (0, 0))
 
     def update(self, shift):
         self.rect.x += shift[0]

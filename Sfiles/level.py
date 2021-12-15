@@ -19,6 +19,7 @@ class Level:
 
     def setup_level(self, layout):
         self.tiles = pygame.sprite.Group()
+        self.decoration = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         self.portals = pygame.sprite.Group()
         self.npces = pygame.sprite.Group()
@@ -39,6 +40,9 @@ class Level:
                 elif cell == 'N':
                     npc = Class_npc((x, y), len(self.npces.sprites()), self.display_surface)
                     self.npces.add(npc)
+                elif cell == 'п' or cell == 'П':
+                    tile = Tile((x, y), tile_size, cell)
+                    self.decoration.add(tile)
                 elif cell != ' ':
                     tile = Tile((x, y), tile_size, cell)
                     self.tiles.add(tile)
@@ -59,7 +63,7 @@ class Level:
         if player_x < self.width / 2 and direction_x < 0:
             self.world_shift_x = player.control_speed
             player.speed = 0
-        elif player_x > self.width / 2 and direction_x > 0:
+        elif player_x >= self.width / 2 and direction_x > 0:
             self.world_shift_x = -player.control_speed
             player.speed = 0
         else:
@@ -129,3 +133,6 @@ class Level:
         self.bullets.update((self.world_shift_x, self.world_shift_y))
         self.bullets.draw(self.display_surface)
         self.bullets_settings()
+
+        self.decoration.update((self.world_shift_x, self.world_shift_y))
+        self.decoration.draw(self.display_surface)
