@@ -31,6 +31,8 @@ class Level:
             for col_index, cell in enumerate(row):
                 x = col_index * tile_size
                 y = row_index * tile_size
+                # tile = Tile((col_index, row_index), tile_size, 'bg', level1_map)
+                # self.decoration.add(tile)
                 if cell == 'P':
                     self.player_sprite = Player_map_preparation((x, y), self.player_settings)
                     self.player.add(self.player_sprite)
@@ -41,10 +43,10 @@ class Level:
                     npc = Class_npc((x, y), len(self.npces.sprites()), self.display_surface)
                     self.npces.add(npc)
                 elif cell == 'п' or cell == 'П':
-                    tile = Tile((x, y), tile_size, cell)
+                    tile = Tile((col_index, row_index), tile_size, cell, level1_map)
                     self.decoration.add(tile)
                 elif cell != ' ':
-                    tile = Tile((x, y), tile_size, cell)
+                    tile = Tile((col_index, row_index), tile_size, cell, level1_map)
                     self.tiles.add(tile)
 
     def check_portals(self):
@@ -112,6 +114,9 @@ class Level:
                     # player.direction.y = 0  # feature
 
     def run(self):
+        self.decoration.update((self.world_shift_x, self.world_shift_y))
+        self.decoration.draw(self.display_surface)
+
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
 
@@ -133,6 +138,3 @@ class Level:
         self.bullets.update((self.world_shift_x, self.world_shift_y))
         self.bullets.draw(self.display_surface)
         self.bullets_settings()
-
-        self.decoration.update((self.world_shift_x, self.world_shift_y))
-        self.decoration.draw(self.display_surface)

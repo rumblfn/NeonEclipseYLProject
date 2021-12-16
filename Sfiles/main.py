@@ -95,14 +95,14 @@ def map_preparation(player, network, player_settings):
         if sleeper_status:
             pygame.mixer.music.stop()
             main_game(player, network, level.player_sprite)
-        screen.fill('#fefec2')  # '#fefec2'
+        # screen.fill('#fefec2')  # '#fefec2'
         bgMapPreparation.draw()
         # player.move()
         level.run()
         # player.draw(screen)
         draw_cursor(screen)
         if pygame.mouse.get_pressed()[0]:
-            if level.player.sprite.shoot_bool >= 1:
+            if level.player.sprite.shoot_bool >= 1 and level.player.sprite.name == 'Hero1':
                 level.bullets.add(level.player.sprite.create_bullet())
 
         pygame.display.update()

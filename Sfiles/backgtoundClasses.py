@@ -5,9 +5,14 @@ class Background:
     def __init__(self, screen, image):
         self.image = image
         self.screen = screen
+        self.pos_x = 0
+        self.pos_y = 0
 
     def draw(self):
-        self.screen.blit(self.image, (0, 0))
+        self.pos_y -= 0.5
+        if self.pos_y <= -1080:
+            self.pos_y = 0
+        self.screen.blit(self.image, (self.pos_x, self.pos_y))
 
 
 class BackgroundMenu(Background):
