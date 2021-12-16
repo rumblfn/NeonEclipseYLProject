@@ -8,6 +8,12 @@ class Background:
         self.pos_x = 0
         self.pos_y = 0
 
+    def update(self, shift):
+        self.pos_x += shift[0]
+        self.pos_y += shift[1]
+        if self.pos_x > 0:
+            self.pos_x -= 960
+
     def draw(self):
         self.pos_y -= 0.5
         if self.pos_y <= -1080:

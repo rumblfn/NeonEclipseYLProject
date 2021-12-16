@@ -3,6 +3,7 @@ from tiles import Tile, Portal
 from map_preparation_settings import tile_size, level1_map
 from player import Player_map_preparation
 from NPC import Class_npc
+from dataConsts import bgMapPreparation
 
 
 class Level:
@@ -114,6 +115,7 @@ class Level:
                     # player.direction.y = 0  # feature
 
     def run(self):
+        bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
         self.decoration.draw(self.display_surface)
 
