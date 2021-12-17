@@ -39,29 +39,29 @@ bgTile = pygame.transform.scale(pygame.image.load('static/bgTiles.png'), (res, r
 
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, size, cell, map):
+    def __init__(self, pos, size, cell, map, player_col):
         super().__init__()
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-        self.set_image(pos, cell, size, map)
+        self.set_image(pos, cell, size, map, player_col)
         # self.image.fill((10, 17, 25))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
-    def set_image(self, pos, cell, s, lvl_map):
+    def set_image(self, pos, cell, s, lvl_map, player_col):
         el_top, el_right, el_bottom, el_left = False, False, False, False
         try:
-            el_top = True if lvl_map[pos[1] - 1][pos[0]] == 'X' else False
+            el_top = True if lvl_map[pos[1] - 1][pos[0] + player_col] == 'X' else False
         except:
             pass
         try:
-            el_right = True if lvl_map[pos[1]][pos[0] + 1] == 'X' else False
+            el_right = True if lvl_map[pos[1]][pos[0] + player_col + 1] == 'X' else False
         except:
             pass
         try:
-            el_left = True if lvl_map[pos[1]][pos[0] - 1] == 'X' else False
+            el_left = True if lvl_map[pos[1]][pos[0] + player_col - 1] == 'X' else False
         except:
             pass
         try:
-            el_bottom = True if lvl_map[pos[1] + 1][pos[0]] == 'X' else False
+            el_bottom = True if lvl_map[pos[1] + 1][pos[0] + player_col] == 'X' else False
         except:
             pass
         if cell == '0':
@@ -117,7 +117,6 @@ class Portal(pygame.sprite.Sprite):
         self.image = pygame.Surface((portal_res_x, portal_res), pygame.SRCALPHA)
         self.image.blit(portalImage, (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0] - res // 2, pos[1]))
-        print(self.rect)
 
     def update(self, shift):
         self.rect.x += shift[0]

@@ -13,12 +13,15 @@ class Level:
         self.player_settings = player_settings
         self.width = pygame.display.Info().current_w
         self.height = pygame.display.Info().current_h
+        self.player_col = 0
+        self.pos_x = 0
         self.setup_level(level_data)
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
 
     def setup_level(self, layout):
+        self.all_sprites = pygame.sprite.Group()
         self.tiles = pygame.sprite.Group()
         self.decoration = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
@@ -30,6 +33,15 @@ class Level:
 
         for row_index, row in enumerate(layout):
             for col_index, cell in enumerate(row):
+                if cell == 'P':
+                    self.player_col = col_index // 2
+                    break
+            if self.player_col != 0:
+                break
+
+        for row_index, row in enumerate(layout):
+            for col_index, cell in enumerate(row):
+                col_index -= self.player_col
                 x = col_index * tile_size
                 y = row_index * tile_size
                 # tile = Tile((col_index, row_index), tile_size, 'bg', level1_map)
@@ -37,18 +49,23 @@ class Level:
                 if cell == 'P':
                     self.player_sprite = Player_map_preparation((x, y), self.player_settings)
                     self.player.add(self.player_sprite)
+                    self.all_sprites.add(self.player_sprite)
                 elif cell == 'u':
                     portal = Portal((x, y))
                     self.portals.add(portal)
+                    self.all_sprites.add(portal)
                 elif cell == 'N':
                     npc = Class_npc((x, y), len(self.npces.sprites()), self.display_surface)
                     self.npces.add(npc)
+                    self.all_sprites.add(npc)
                 elif cell == 'п' or cell == 'П':
-                    tile = Tile((col_index, row_index), tile_size, cell, level1_map)
+                    tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.decoration.add(tile)
+                    self.all_sprites.add(tile)
                 elif cell != ' ':
-                    tile = Tile((col_index, row_index), tile_size, cell, level1_map)
+                    tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.tiles.add(tile)
+                    self.all_sprites.add(tile)
 
     def check_portals(self):
         player = self.player.sprite
@@ -72,6 +89,11 @@ class Level:
         else:
             self.world_shift_x = 0
             player.speed = player.control_speed
+
+    def player_pos_checker(self):
+        player = self.player_sprite
+        if player.rect.y > self.height + 300 or player.rect.y < - 300:
+            self.setup_level(self.level_data)
 
     def npc_collisions(self):
         player = self.player.sprite
@@ -131,6 +153,7 @@ class Level:
         self.scroll_x()
 
         self.player.update()
+        self.player_pos_checker()
         self.check_portals()
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
