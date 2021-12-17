@@ -1,4 +1,5 @@
 import sys
+import datetime
 
 import pygame.mixer_music
 from pygame.locals import *
@@ -74,21 +75,39 @@ def map_preparation(player, network, player_settings):
     level = Level(level1_map, screen, player_settings)
     start_new_thread(sleeper, ())
 
-    def portalParkourMap(sc, player_parkour):
+    def portalParkourMap(sc, player_parkour, to_print):
+
+        def info_text_parkour():
+            text = 'Press Esc to return to the spawn point'
+            newFont = pygame.font.SysFont('SFCompact', 75)
+            txt_surf = newFont.render(text, False, (255, 183, 0))
+            cur = datetime.datetime.now().time().second
+            sc.blit(txt_surf, (WIDTH // 5, HEIGHT // 2 - 35))
+
         runParkourMap = True
+        level_p = LevelParkour(level_parkour_map, screen, player_settings)
+        count = 0
         while runParkourMap:
             sc.fill((255, 255, 255))
             bgMapPreparation.draw()
-            level_p = LevelParkour(level_parkour_map, screen, player_settings)
             level_p.run()
+            count += 1
+            if to_print:
+                info_text_parkour()
+                if count == 150:
+                    to_print = False
             pygame.display.update()
             for e in pygame.event.get():
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
-                        runParkourMap = False
-                        level.portalParkour = False
+                        portalParkourMap(sc, player_parkour, False)
+                    level_p.check_fall = False
+                if level_p.portalParkour:
+                    map_preparation(player, network, player_settings)
             if sleeper_status:
                 runParkourMap = False
+            if level_p.check_fall:
+                portalParkourMap(sc, player_parkour, False)
             clock.tick(60)
 
     while run:
@@ -118,7 +137,7 @@ def map_preparation(player, network, player_settings):
                 sys.exit()
         if level.portalParkour:
             pygame.mixer.music.stop()
-            portalParkourMap(screen, level.player)
+            portalParkourMap(screen, level.player, True)
         clock.tick(60)
 
 

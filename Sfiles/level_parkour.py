@@ -1,5 +1,5 @@
 import pygame
-from tiles import Tile, Portal
+from tiles_parkour import Tile, Portal, MovingTile
 from map_parkour_settings import level_parkour_map
 from player import Player_map_parkour
 
@@ -15,10 +15,13 @@ class LevelParkour:
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
+        self.check_fall = False
+        self.moving_t_direct = 'up'
+        self.height = pygame.display.Info().current_h
 
     def setup_level(self, layout):
         self.tiles = pygame.sprite.Group()
-        self.decoration = pygame.sprite.Group()
+        self.moving_tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         self.portals = pygame.sprite.Group()
         self.npces = pygame.sprite.Group()
@@ -37,6 +40,9 @@ class LevelParkour:
                 elif cell == 'u':
                     portal = Portal((x, y))
                     self.portals.add(portal)
+                elif cell == 'L':
+                    tile = MovingTile((col_index, row_index), tile_size)
+                    self.moving_tiles.add(tile)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map)
                     self.tiles.add(tile)
@@ -77,6 +83,15 @@ class LevelParkour:
                     player.rect.right = sprite.rect.left
                     player.direction.x = 0
 
+        for sprite in self.moving_tiles.sprites():
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.x < 0:
+                    player.rect.left = sprite.rect.right
+                    player.direction.x = 0
+                elif player.direction.x > 0:
+                    player.rect.right = sprite.rect.left
+                    player.direction.x = 0
+
     def vertical_movement_collisions(self):
         player = self.player.sprite
         player.apply_gravity()
@@ -89,20 +104,38 @@ class LevelParkour:
                 elif player.direction.y < 0:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = -0.01
-                    # player.direction.y = 0  # feature
+
+        for sprite in self.moving_tiles.sprites():
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.y > 0:
+                    player.rect.bottom = sprite.rect.top
+                    player.direction.y = 0
+                elif player.direction.y < 0:
+                    player.rect.top = sprite.rect.bottom
+                    player.direction.y = -0.01
+
+    def move_tiles(self):
+        last_y = 0
+        if self.moving_t_direct == 'up':
+            for tile in self.moving_tiles:
+                tile.rect.y -= 1
+                last_y = tile.rect.y
+            if last_y <= self.height // 5:
+                self.moving_t_direct = 'down'
+
+        if self.moving_t_direct == 'down':
+            for tile in self.moving_tiles:
+                tile.rect.y += 1
+                last_y = tile.rect.y
+            if last_y >= self.height // 5 * 3:
+                self.moving_t_direct = 'up'
 
     def run(self):
-        self.decoration.update((self.world_shift_x, self.world_shift_y))
-        self.decoration.draw(self.display_surface)
-
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
 
         self.portals.update((self.world_shift_x, self.world_shift_y))
         self.portals.draw(self.display_surface)
-
-        self.npces.update((self.world_shift_x, self.world_shift_y))
-        self.npces.draw(self.display_surface)
 
         self.scroll_x()
 
@@ -111,5 +144,12 @@ class LevelParkour:
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
         self.player.draw(self.display_surface)
+
+        self.move_tiles()
+        self.moving_tiles.update((self.world_shift_x, self.world_shift_y))
+        self.moving_tiles.draw(self.display_surface)
+
+        if self.player.sprite.rect.y > self.height:
+            self.check_fall = True
 
 

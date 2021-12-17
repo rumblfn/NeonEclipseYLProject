@@ -103,8 +103,8 @@ class Player_map_parkour(pygame.sprite.Sprite):
         from map_parkour_settings import level_parkour_map
 
         re_size = (HEIGHT / len(level_parkour_map)) / 64
-        self.width = round(player_settings['width'] * re_size) - 1
-        self.height = round(player_settings['height'] * re_size) - 1
+        self.width = round(player_settings['width'] * re_size) - 10
+        self.height = round(player_settings['height'] * re_size) - 10
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         # self.image.fill((255, 255, 255, 0))
         self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
@@ -129,10 +129,8 @@ class Player_map_parkour(pygame.sprite.Sprite):
 
         if keys[pygame.K_d]:
             self.direction.x = 1
-            print(self.direction.x)
         elif keys[pygame.K_a]:
             self.direction.x = -1
-            print(self.direction.x)
         else:
             self.direction.x = 0
 

@@ -20,6 +20,7 @@ blockTopRight = pygame.transform.scale(pygame.image.load('static/blockTopRight.p
 blockRightBottom = pygame.transform.scale(pygame.image.load('static/blockRightBottom.png'), (res, res))
 blockBottomLeft = pygame.transform.scale(pygame.image.load('static/blockLeftBottom.png'), (res, res))
 block = pygame.transform.scale(pygame.image.load('static/block.png'), (res, res))
+block2 = pygame.transform.scale(pygame.image.load('static/block2.png'), (res, res))
 windowBlock1 = pygame.transform.scale(pygame.image.load('static/WindowBlock.png'), (res, res))
 windowBlock2 = pygame.transform.scale(pygame.image.load('static/WindowBlock2.png'), (res, res))
 windowBlock3 = pygame.transform.scale(pygame.image.load('static/WindowBlock3.png'), (res, res))
@@ -45,6 +46,8 @@ class Tile(pygame.sprite.Sprite):
         self.set_image(pos, cell, size, map)
         # self.image.fill((10, 17, 25))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        self.cell = cell
+        self.size = size
 
     def set_image(self, pos, cell, s, lvl_map):
         el_top, el_right, el_bottom, el_left = False, False, False, False
@@ -110,8 +113,19 @@ class Portal(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((portal_res_x, portal_res), pygame.SRCALPHA)
         self.image.blit(portalImage, (0, 0))
-        self.rect = self.image.get_rect(topleft=(pos[0] - res // 2, pos[1]))
-        print(self.rect)
+        self.rect = self.image.get_rect(topleft=(pos[0] + 5, pos[1] - 38))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+
+class MovingTile(pygame.sprite.Sprite):
+    def __init__(self, pos, size):
+        super().__init__()
+        self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+        self.image.blit(block2, (0, 0))
+        self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
     def update(self, shift):
         self.rect.x += shift[0]
