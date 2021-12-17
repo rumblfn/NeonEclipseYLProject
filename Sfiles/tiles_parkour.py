@@ -1,12 +1,12 @@
 import pygame
 import random
-from map_preparation_settings import level1_map
+from map_parkour_settings import level_parkour_map
 
 # block1 = pygame.image.load('static/Bg.png')
 # block2 = pygame.image.load('static/Bg1.png')
 # block3 = pygame.image.load('static/Bg1-1.png')
 h = pygame.display.Info().current_h
-res = h // len(level1_map)
+res = h // len(level_parkour_map)
 portal_res = round((82 / 900) * h)
 portal_res_x = round((32 / 900) * h)
 pipe_vertical = pygame.transform.scale(pygame.image.load('static/vertical_pipe.png'), (res, round(res * 1.5)))
@@ -99,12 +99,6 @@ class Tile(pygame.sprite.Sprite):
                 self.image.blit(blockLeftTopRight, (0, 0))
             elif el_top and el_left and el_bottom and el_right:
                 self.image.blit(block, (0, 0))
-        elif cell == 'п':  # vertical
-            self.image = pygame.Surface((res, round(res * 1.5)), pygame.SRCALPHA)
-            self.image.blit(pipe_vertical, (0, 0))
-        elif cell == 'П':  # horizontal
-            self.image = pygame.Surface((round(res * 1.5), res), pygame.SRCALPHA)
-            self.image.blit(pipe_horizontal, (0, 0))
 
     def update(self, shift):
         self.rect.x += shift[0]
@@ -117,6 +111,7 @@ class Portal(pygame.sprite.Sprite):
         self.image = pygame.Surface((portal_res_x, portal_res), pygame.SRCALPHA)
         self.image.blit(portalImage, (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0] - res // 2, pos[1]))
+        print(self.rect)
 
     def update(self, shift):
         self.rect.x += shift[0]

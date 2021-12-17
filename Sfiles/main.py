@@ -6,11 +6,10 @@ from dataConsts import *
 from network import Network
 from time import sleep
 from _thread import start_new_thread
-from map_preparation_settings import *
-from player import Player_map_preparation
-from tiles import Tile
 from level import Level
+from level_parkour import LevelParkour
 from map_preparation_settings import *
+from map_parkour_settings import *
 
 
 def draw_cursor(sc):
@@ -24,7 +23,7 @@ def draw_cursor(sc):
 def sleeper():
     global sleeper_status
     sleeper_status = False
-    sleep(120)
+    sleep(420)
     sleeper_status = True
 
 
@@ -53,7 +52,6 @@ def redrawWindow(win, player, player2):
 
 def main_game(server_player, network, player_main):
     run = True
-    print(player_main)
     while run:
         player2 = network.send(server_player)
         redrawWindow(screen, server_player, player2)
@@ -79,7 +77,10 @@ def map_preparation(player, network, player_settings):
     def portalParkourMap(sc, player_parkour):
         runParkourMap = True
         while runParkourMap:
-            sc.fill((244, 1, 32))
+            sc.fill((255, 255, 255))
+            bgMapPreparation.draw()
+            level_p = LevelParkour(level_parkour_map, screen, player_settings)
+            level_p.run()
             pygame.display.update()
             for e in pygame.event.get():
                 if e.type == KEYDOWN:
@@ -93,7 +94,7 @@ def map_preparation(player, network, player_settings):
     while run:
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/preparation_map.mp3')
-            pygame.mixer.music.play(loops=2)
+            pygame.mixer.music.play()
         if sleeper_status:
             pygame.mixer.music.stop()
             main_game(player, network, level.player_sprite)
