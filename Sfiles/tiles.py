@@ -116,7 +116,7 @@ class Portal(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((portal_res_x, portal_res), pygame.SRCALPHA)
         self.image.blit(portalImage, (0, 0))
-        self.rect = self.image.get_rect(topleft=(pos[0] + (res - portal_res_x) // 2, pos[1]))
+        self.rect = self.image.get_rect(topleft=(pos[0] - res // 2, pos[1]))
         print(self.rect)
 
     def update(self, shift):

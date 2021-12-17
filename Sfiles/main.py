@@ -1,4 +1,6 @@
 import sys
+
+import pygame.mixer_music
 from pygame.locals import *
 from dataConsts import *
 from network import Network
@@ -159,6 +161,7 @@ def main_menu():
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/menu.mp3')
             pygame.mixer.music.play()
+            pygame.mixer_music.set_volume(0)
         screen.fill((0, 0, 0))
         bgMenu.draw_with_mouse_pos(WIDTH, HEIGHT)
         draw_button(screen, imageButtonStartGame, 0, player, network)

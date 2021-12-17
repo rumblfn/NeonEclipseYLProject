@@ -1,24 +1,24 @@
 import pygame
 
-level1_map = [
-    '                           ',
-    '                  u        ',
-    '                           ',
-    '                  X        ',
-    '          P 0          XX  ',
-    '   XX    XXX          0XXXX',
-    '  0XXN    0              XX',
-    '   X0XX                    ',
-    '  0XXXXXXXXXXXXX       N 0 ',
-    '   XXпП П  0XXXX     XXXX  ',
-    '   П  XXXX  X0XX0     XX   ',
-    '  XXXXXXXX  XX0XXX         ',
-    '  XXXX0      XXXXX      0  ',
-    '   0                       ',
-    '                           ',
-    '            XXXXXXXXXX     ',
-    '  X  N    XXXXXXXXXXXXXX   ',
-    '  XXXXXXXXXXXXXXXXXXXXXXXXX',
+level1_map = [  # 18
+    'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXX             XXXXXXXXXXXXXXXXXXX                                      XXXX         XXXXXXXX     XXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXX             XXXX                                                     XXXX          XXXXX       XXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX               XXXX                   XXXXX              XX             XXXXXXXXX     XXXXX    XXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX         XXX     XX                   XXXXX          XXXXXX             XXXXXXXXXXX          XXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX  XXX    XXX     XX   XXXXXXXXXXXXXXXXXXX            XX        XXXXXX    XXXXXXXXXX          XXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX  XXXN                XXXXX         XXXXX     XX               XXXXXX    XXXXXXXX     XXXXX  XXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX  XXXXX                                       XXXXX            XXXXXX      XXXXXX     XXXXX    XXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX  XXXXX     XXXX       N                      XXXXX          XXXXXXXXXX    XXXXXX   XXXXXXX    XXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXX     XXXX u  XXXX      XXXX          XXXXX       XXX          XXXXXXXXXX             XXXXXXXXX    XXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXP    XXXX    XXXXXX    XX     XXXX   XXXXX       XXX             XXXXXXXX            XXX  XXXX    XXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX   XXXXXXX   XXXXX           XXXX     XXX       XXXXXXXX           XXXXX  XXXXXXX              XXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX   XXXXXXX   XXXX                     XXX     XXXXXXXXXX                  XXXXXXX              XXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX     XXX                                      XXXXXXXX         XX         XXXXXXXXXXX    XXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXX                                              XXXXXX           XX            XXXXXXXX    XXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXX          XXXXXXXXXX         XXXXX        XXXXXXXX           XXXX            XXXXXX  XXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXX N      XXXXXXXXXXXXXX     XXXXXXX        XXXXXXXXXX         XXXX            XXXXXX  XXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXXXXXXX   XXXXXXXXXXXXXX     XXXXXXXXX      XXXXXXXXXXXXXXXX   XXX      XXXXXXXXXXXXX  XXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
 ]
 
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h

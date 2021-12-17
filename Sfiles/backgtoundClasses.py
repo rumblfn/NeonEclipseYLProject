@@ -13,6 +13,8 @@ class Background:
         self.pos_y += shift[1]
         if self.pos_x > 0:
             self.pos_x -= 960
+        elif self.pos_x < -1920:
+            self.pos_x += 960
 
     def draw(self):
         self.pos_y -= 0.5

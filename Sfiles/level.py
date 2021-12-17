@@ -11,12 +11,12 @@ class Level:
         self.display_surface = surface
         self.level_data = level_data
         self.player_settings = player_settings
+        self.width = pygame.display.Info().current_w
+        self.height = pygame.display.Info().current_h
         self.setup_level(level_data)
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
-        self.width = pygame.display.Info().current_w
-        self.height = pygame.display.Info().current_h
 
     def setup_level(self, layout):
         self.tiles = pygame.sprite.Group()
