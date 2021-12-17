@@ -37,6 +37,7 @@ portalImage = pygame.transform.scale(pygame.image.load('static/portal_door_blue.
 lst_of_windows = [windowBlock1, windowBlock2, windowBlock3, windowBlock4, windowBlock5, windowBlock6, windowBlock7]
 blockRightLeft = pygame.transform.scale(pygame.image.load('static/BlockRightLeft.png'), (res, res))
 bgTile = pygame.transform.scale(pygame.image.load('static/bgTiles.png'), (res, res))
+gold = pygame.transform.scale(pygame.image.load('static/gold.png'), (res, res))
 
 
 class Tile(pygame.sprite.Sprite):
@@ -125,6 +126,18 @@ class MovingTile(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
         self.image.blit(block2, (0, 0))
+        self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+
+class Gold(pygame.sprite.Sprite):
+    def __init__(self, pos, size):
+        super().__init__()
+        self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+        self.image.blit(gold, (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
     def update(self, shift):

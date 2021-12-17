@@ -1,5 +1,4 @@
 import sys
-import datetime
 
 import pygame.mixer_music
 from pygame.locals import *
@@ -81,7 +80,6 @@ def map_preparation(player, network, player_settings):
             text = 'Press Esc to return to the spawn point'
             newFont = pygame.font.SysFont('SFCompact', 75)
             txt_surf = newFont.render(text, False, (255, 183, 0))
-            cur = datetime.datetime.now().time().second
             sc.blit(txt_surf, (WIDTH // 5, HEIGHT // 2 - 35))
 
         runParkourMap = True
@@ -108,6 +106,9 @@ def map_preparation(player, network, player_settings):
                 runParkourMap = False
             if level_p.check_fall:
                 portalParkourMap(sc, player_parkour, False)
+            if level_p.gold_taken:
+                level_p.take_gold()
+                level_p.gold_taken = False
             clock.tick(60)
 
     while run:

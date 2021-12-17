@@ -1,6 +1,6 @@
 import pygame
-from tiles_parkour import Tile, Portal, MovingTile
-from map_parkour_settings import level_parkour_map
+from tiles_parkour import Tile, Portal, MovingTile, Gold
+from map_parkour_settings import level_parkour_map, gold_max
 from player import Player_map_parkour
 
 
@@ -16,16 +16,21 @@ class LevelParkour:
         self.world_shift_y = 0
         self.portalParkour = False
         self.check_fall = False
+        self.gold_taken = False
+        self.cur_gold = ''
         self.moving_t_direct = 'up'
         self.height = pygame.display.Info().current_h
+        text = f'GOLD COLLECTED: {gold_max - len(list(self.golds))}'
+        newFont = pygame.font.SysFont('SFCompact', 40)
+        txt_surf = newFont.render(text, False, (255, 183, 0))
+        self.txt_surf = txt_surf
 
     def setup_level(self, layout):
         self.tiles = pygame.sprite.Group()
         self.moving_tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         self.portals = pygame.sprite.Group()
-        self.npces = pygame.sprite.Group()
-        self.bullets = pygame.sprite.Group()
+        self.golds = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level_parkour_map)
 
@@ -36,13 +41,15 @@ class LevelParkour:
                 if cell == 'P':
                     self.player_sprite = Player_map_parkour((x, y), self.player_settings)
                     self.player.add(self.player_sprite)
-                    print(self.player_sprite)
                 elif cell == 'u':
                     portal = Portal((x, y))
                     self.portals.add(portal)
                 elif cell == 'L':
                     tile = MovingTile((col_index, row_index), tile_size)
                     self.moving_tiles.add(tile)
+                elif cell == 'G':
+                    tile = Gold((col_index, row_index), tile_size)
+                    self.golds.add(tile)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map)
                     self.tiles.add(tile)
@@ -129,6 +136,27 @@ class LevelParkour:
                 last_y = tile.rect.y
             if last_y >= self.height // 5 * 3:
                 self.moving_t_direct = 'up'
+        self.scroll_x()
+        self.player.update()
+        self.player.draw(self.display_surface)
+
+    def check_gold(self):
+        player = self.player.sprite
+        for gold in self.golds:
+            if gold.rect.colliderect(player.rect):
+                self.gold_taken = True
+                self.cur_gold = gold
+
+    def take_gold(self):
+        self.golds.remove(self.cur_gold)
+        text = f'GOLD COLLECTED: {gold_max - len(list(self.golds))}'
+        newFont = pygame.font.SysFont('SFCompact', 40)
+        txt_surf = newFont.render(text, False, (255, 183, 0))
+        self.txt_surf = txt_surf
+        self.print_current_gold()
+
+    def print_current_gold(self):
+        self.display_surface.blit(self.txt_surf, (20, 20))
 
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))
@@ -137,10 +165,14 @@ class LevelParkour:
         self.portals.update((self.world_shift_x, self.world_shift_y))
         self.portals.draw(self.display_surface)
 
+        self.golds.update((self.world_shift_x, self.world_shift_y))
+        self.golds.draw(self.display_surface)
+
         self.scroll_x()
 
         self.player.update()
         self.check_portals()
+        self.check_gold()
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
         self.player.draw(self.display_surface)
@@ -148,6 +180,7 @@ class LevelParkour:
         self.move_tiles()
         self.moving_tiles.update((self.world_shift_x, self.world_shift_y))
         self.moving_tiles.draw(self.display_surface)
+        self.print_current_gold()
 
         if self.player.sprite.rect.y > self.height:
             self.check_fall = True
