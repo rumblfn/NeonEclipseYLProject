@@ -20,7 +20,7 @@ class Level:
         self.world_shift_y = 0
         self.portalParkour = False
 
-    def setup_level(self, layout):
+    def setup_level(self, layout, default_player=False):
         self.all_sprites = pygame.sprite.Group()
         self.tiles = pygame.sprite.Group()
         self.decoration = pygame.sprite.Group()
@@ -47,9 +47,16 @@ class Level:
                 # tile = Tile((col_index, row_index), tile_size, 'bg', level1_map)
                 # self.decoration.add(tile)
                 if cell == 'P':
-                    self.player_sprite = Player_map_preparation((x, y), self.player_settings)
-                    self.player.add(self.player_sprite)
-                    self.all_sprites.add(self.player_sprite)
+                    if not default_player:
+                        self.player_sprite = Player_map_preparation((x, y), self.player_settings)
+                        self.player.add(self.player_sprite)
+                        self.all_sprites.add(self.player_sprite)
+                    else:
+                        pos = default_player.started_pos
+                        default_player.rect = default_player.image.get_rect(topleft=(pos[0], pos[1] - 300))
+                        self.player_sprite = default_player
+                        self.player.add(self.player_sprite)
+                        self.all_sprites.add(self.player_sprite)
                 elif cell == 'u':
                     portal = Portal((x, y))
                     self.portals.add(portal)
@@ -93,7 +100,7 @@ class Level:
     def player_pos_checker(self):
         player = self.player_sprite
         if player.rect.y > self.height + 300 or player.rect.y < - 300:
-            self.setup_level(self.level_data)
+            self.setup_level(self.level_data, self.player_sprite)
 
     def npc_collisions(self):
         player = self.player.sprite

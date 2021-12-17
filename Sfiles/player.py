@@ -22,6 +22,7 @@ class Player_map_preparation(pygame.sprite.Sprite):
         self.name = player_settings['name']
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
+        self.started_pos = pos
 
         self.K_x = False
 
