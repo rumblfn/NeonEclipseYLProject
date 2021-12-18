@@ -202,3 +202,11 @@ class Player_map_parkour(pygame.sprite.Sprite):
 
     def levitate(self):
         self.jump()
+
+    def web(self, arg):
+        if arg:
+            self.control_speed = round(pygame.display.Info().current_w / 1440)
+            self.speed = round(pygame.display.Info().current_w / 1440)
+        else:
+            self.control_speed = round(7 * pygame.display.Info().current_w / 1440)
+            self.speed = round(7 * pygame.display.Info().current_w / 1440)

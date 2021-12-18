@@ -39,6 +39,7 @@ blockRightLeft = pygame.transform.scale(pygame.image.load('static/BlockRightLeft
 bgTile = pygame.transform.scale(pygame.image.load('static/bgTiles.png'), (res, res))
 gold = pygame.transform.scale(pygame.image.load('static/gold.png'), (res, res))
 up_arrow = pygame.transform.scale(pygame.image.load('static/up_arrow.png'), (res, res))
+web = pygame.transform.scale(pygame.image.load('static/web.png'), (res, res))
 
 
 class Tile(pygame.sprite.Sprite):
@@ -157,6 +158,18 @@ class UpArrow(pygame.sprite.Sprite):
         else:
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(up_arrow, (0, 0))
+        self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+
+class Web(pygame.sprite.Sprite):
+    def __init__(self, pos, size):
+        super().__init__()
+        self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+        self.image.blit(web, (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
     def update(self, shift):

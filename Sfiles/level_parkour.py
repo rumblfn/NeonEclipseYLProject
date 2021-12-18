@@ -1,5 +1,5 @@
 import pygame
-from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow
+from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web
 from map_parkour_settings import level_parkour_map, gold_max
 from player import Player_map_parkour
 
@@ -18,6 +18,7 @@ class LevelParkour:
         self.check_fall = False
         self.gold_taken = False
         self.arrow_works = False
+        self.in_web = False
         self.cur_gold = ''
         self.moving_t_direct = 'up'
         self.height = pygame.display.Info().current_h
@@ -33,6 +34,7 @@ class LevelParkour:
         self.portals = pygame.sprite.Group()
         self.golds = pygame.sprite.Group()
         self.up_arrows = pygame.sprite.Group()
+        self.webs = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level_parkour_map)
 
@@ -58,6 +60,9 @@ class LevelParkour:
                 elif cell == 'a':
                     tile = UpArrow((col_index, row_index), tile_size, cell)
                     self.up_arrows.add(tile)
+                elif cell == 'W':
+                    tile = Web((col_index, row_index), tile_size)
+                    self.webs.add(tile)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map)
                     self.tiles.add(tile)
@@ -182,6 +187,20 @@ class LevelParkour:
     def raise_player(self):
         self.player_sprite.levitate()
 
+    def check_web(self):
+        player = self.player.sprite
+        for web in self.webs:
+            if web.rect.colliderect(player.rect):
+                self.in_web = True
+                return
+            self.in_web = False
+
+    def web_work(self, arg):
+        if arg:
+            self.player_sprite.web(True)
+        else:
+            self.player_sprite.web(False)
+
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
@@ -195,12 +214,17 @@ class LevelParkour:
         self.up_arrows.update((self.world_shift_x, self.world_shift_y))
         self.up_arrows.draw(self.display_surface)
 
-        self.scroll_x()
+        self.webs.update((self.world_shift_x, self.world_shift_y))
+        self.webs.draw(self.display_surface)
 
+        self.scroll_x()
         self.player.update()
+
         self.check_portals()
         self.check_gold()
         self.arrow_work()
+        self.check_web()
+
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
         self.player.draw(self.display_surface)

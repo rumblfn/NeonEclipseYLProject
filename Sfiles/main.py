@@ -112,6 +112,10 @@ def map_preparation(player, network, player_settings):
             if level_p.arrow_works:
                 level_p.raise_player()
                 level_p.arrow_works = False
+            if level_p.in_web:
+                level_p.web_work(True)
+            if not level_p.in_web:
+                level_p.web_work(False)
             clock.tick(60)
 
     while run:
