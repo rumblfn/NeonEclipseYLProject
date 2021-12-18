@@ -38,6 +38,7 @@ lst_of_windows = [windowBlock1, windowBlock2, windowBlock3, windowBlock4, window
 blockRightLeft = pygame.transform.scale(pygame.image.load('static/BlockRightLeft.png'), (res, res))
 bgTile = pygame.transform.scale(pygame.image.load('static/bgTiles.png'), (res, res))
 gold = pygame.transform.scale(pygame.image.load('static/gold.png'), (res, res))
+up_arrow = pygame.transform.scale(pygame.image.load('static/up_arrow.png'), (res, res))
 
 
 class Tile(pygame.sprite.Sprite):
@@ -138,6 +139,24 @@ class Gold(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
         self.image.blit(gold, (0, 0))
+        self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+
+class UpArrow(pygame.sprite.Sprite):
+    def __init__(self, pos, size, cell):
+        super().__init__()
+        self.cell = cell
+        if cell == 'a':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((255, 255, 255, 0))
+            self.able = False
+        else:
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(up_arrow, (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
     def update(self, shift):

@@ -109,6 +109,9 @@ def map_preparation(player, network, player_settings):
             if level_p.gold_taken:
                 level_p.take_gold()
                 level_p.gold_taken = False
+            if level_p.arrow_works:
+                level_p.raise_player()
+                level_p.arrow_works = False
             clock.tick(60)
 
     while run:

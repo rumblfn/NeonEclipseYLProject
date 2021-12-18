@@ -1,5 +1,5 @@
 import pygame
-from tiles_parkour import Tile, Portal, MovingTile, Gold
+from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow
 from map_parkour_settings import level_parkour_map, gold_max
 from player import Player_map_parkour
 
@@ -17,6 +17,7 @@ class LevelParkour:
         self.portalParkour = False
         self.check_fall = False
         self.gold_taken = False
+        self.arrow_works = False
         self.cur_gold = ''
         self.moving_t_direct = 'up'
         self.height = pygame.display.Info().current_h
@@ -31,6 +32,7 @@ class LevelParkour:
         self.player = pygame.sprite.GroupSingle()
         self.portals = pygame.sprite.Group()
         self.golds = pygame.sprite.Group()
+        self.up_arrows = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level_parkour_map)
 
@@ -50,17 +52,15 @@ class LevelParkour:
                 elif cell == 'G':
                     tile = Gold((col_index, row_index), tile_size)
                     self.golds.add(tile)
+                elif cell == 'A':
+                    tile = UpArrow((col_index, row_index), tile_size, cell)
+                    self.up_arrows.add(tile)
+                elif cell == 'a':
+                    tile = UpArrow((col_index, row_index), tile_size, cell)
+                    self.up_arrows.add(tile)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map)
                     self.tiles.add(tile)
-
-    def check_portals(self):
-        player = self.player.sprite
-        if player.K_x:
-            for portal in self.portals:
-                if portal.rect.colliderect(player.rect):
-                    self.portalParkour = True
-                    return True
 
     def scroll_x(self):
         player = self.player.sprite
@@ -121,6 +121,14 @@ class LevelParkour:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = -0.01
 
+    def check_portals(self):
+        player = self.player.sprite
+        if player.K_x:
+            for portal in self.portals:
+                if portal.rect.colliderect(player.rect):
+                    self.portalParkour = True
+                    return True
+
     def move_tiles(self):
         last_y = 0
         if self.moving_t_direct == 'up':
@@ -158,6 +166,22 @@ class LevelParkour:
     def print_current_gold(self):
         self.display_surface.blit(self.txt_surf, (20, 20))
 
+    def arrow_work(self):
+        player = self.player.sprite
+        for arrow in self.up_arrows:
+            if arrow.rect.colliderect(player.rect):
+                if arrow.cell == 'a':
+                    if arrow.able:
+                        self.arrow_works = True
+                    arrow.able = False
+                if arrow.cell == 'A':
+                    for el in list(self.up_arrows)[1:]:
+                        el.able = True
+                    self.arrow_works = True
+
+    def raise_player(self):
+        self.player_sprite.levitate()
+
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
@@ -168,11 +192,15 @@ class LevelParkour:
         self.golds.update((self.world_shift_x, self.world_shift_y))
         self.golds.draw(self.display_surface)
 
+        self.up_arrows.update((self.world_shift_x, self.world_shift_y))
+        self.up_arrows.draw(self.display_surface)
+
         self.scroll_x()
 
         self.player.update()
         self.check_portals()
         self.check_gold()
+        self.arrow_work()
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
         self.player.draw(self.display_surface)
