@@ -186,3 +186,27 @@ class Web(pygame.sprite.Sprite):
     def update(self, shift):
         self.rect.x += shift[0]
         self.rect.y += shift[1]
+
+
+class Bridge(pygame.sprite.Sprite):
+    def __init__(self, pos, size, cell):
+        super().__init__()
+        self.cell = cell
+        if cell == 'B':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(gold, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        else:
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((255, 255, 255, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+    def update_vision(self, arg):
+        if arg:
+            self.image.blit(block2, (0, 0))
+        else:
+            self.image.fill((255, 255, 255, 0))

@@ -1,4 +1,5 @@
 import sys
+import datetime
 
 import pygame.mixer_music
 from pygame.locals import *
@@ -116,6 +117,10 @@ def map_preparation(player, network, player_settings):
                 level_p.web_work(True)
             if not level_p.in_web:
                 level_p.web_work(False)
+            if level_p.ready_bridge:
+                cur = datetime.datetime.now().time().second
+                finish_time = cur + 10
+                level_p.build_bridge(finish_time, cur)
             clock.tick(60)
 
     while run:
