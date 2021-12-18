@@ -23,7 +23,7 @@ class LevelParkour:
         self.cur_gold = ''
         self.moving_t_direct = 'up'
         self.height = pygame.display.Info().current_h
-        text = f'GOLD COLLECTED: {gold_max - len(list(self.golds))}'
+        text = f'GEMS COLLECTED: {gold_max - len(list(self.golds))}'
         newFont = pygame.font.SysFont('SFCompact', 40)
         txt_surf = newFont.render(text, False, (255, 183, 0))
         self.txt_surf = txt_surf
@@ -74,7 +74,7 @@ class LevelParkour:
                     tile = Web((col_index, row_index), tile_size)
                     self.webs.add(tile)
                 elif cell != ' ':
-                    tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map)
+                    tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map, self.player_col)
                     self.tiles.add(tile)
 
     def scroll_x(self):
@@ -190,7 +190,7 @@ class LevelParkour:
                         self.arrow_works = True
                     arrow.able = False
                 if arrow.cell == 'A':
-                    for el in list(self.up_arrows)[1:]:
+                    for el in list(filter(lambda x: x.cell == 'a', list(self.up_arrows))):
                         el.able = True
                     self.arrow_works = True
 

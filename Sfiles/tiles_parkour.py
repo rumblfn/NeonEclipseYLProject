@@ -34,40 +34,45 @@ blockTopRightBottom = pygame.transform.scale(pygame.image.load('static/blockBott
 blockBorders = pygame.transform.scale(pygame.image.load('static/blockBorders.png'), (res, res))
 blockLeftTopRight = pygame.transform.scale(pygame.image.load('static/blockLeftTopRight.png'), (res, res))
 portalImage = pygame.transform.scale(pygame.image.load('static/portal_door_blue.png').convert_alpha(), (portal_res_x, portal_res))
-lst_of_windows = [windowBlock1, windowBlock2, windowBlock3, windowBlock4, windowBlock5, windowBlock6, windowBlock7]
+platform = pygame.transform.scale(pygame.image.load('static/platform.png'), (res, res))
+lst_of_windows = [windowBlock1, windowBlock2, windowBlock3, windowBlock4, windowBlock5, windowBlock6, windowBlock7, platform]
 blockRightLeft = pygame.transform.scale(pygame.image.load('static/BlockRightLeft.png'), (res, res))
 bgTile = pygame.transform.scale(pygame.image.load('static/bgTiles.png'), (res, res))
 gold = pygame.transform.scale(pygame.image.load('static/gold.png'), (res, res))
 up_arrow = pygame.transform.scale(pygame.image.load('static/up_arrow.png'), (res, res))
 web = pygame.transform.scale(pygame.image.load('static/web.png'), (res, res))
+red_gem = pygame.transform.scale(pygame.image.load('static/red_gem.png'), (res, res))
+blue_gem = pygame.transform.scale(pygame.image.load('static/blue_gem.png'), (res, res))
+green_gem = pygame.transform.scale(pygame.image.load('static/green_gem.png'), (res, res))
+yellow_gem = pygame.transform.scale(pygame.image.load('static/yellow_gem.png'), (res, res))
 
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, size, cell, map):
+    def __init__(self, pos, size, cell, map, player_col):
         super().__init__()
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-        self.set_image(pos, cell, size, map)
+        self.set_image(pos, cell, size, map, player_col)
         # self.image.fill((10, 17, 25))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
         self.cell = cell
         self.size = size
 
-    def set_image(self, pos, cell, s, lvl_map):
+    def set_image(self, pos, cell, s, lvl_map, player_col):
         el_top, el_right, el_bottom, el_left = False, False, False, False
         try:
-            el_top = True if lvl_map[pos[1] - 1][pos[0]] == 'X' else False
+            el_top = True if lvl_map[pos[1] - 1][pos[0] + player_col] == 'X' else False
         except:
             pass
         try:
-            el_right = True if lvl_map[pos[1]][pos[0] + 1] == 'X' else False
+            el_right = True if lvl_map[pos[1]][pos[0] + player_col + 1] == 'X' else False
         except:
             pass
         try:
-            el_left = True if lvl_map[pos[1]][pos[0] - 1] == 'X' else False
+            el_left = True if lvl_map[pos[1]][pos[0] + player_col - 1] == 'X' else False
         except:
             pass
         try:
-            el_bottom = True if lvl_map[pos[1] + 1][pos[0]] == 'X' else False
+            el_bottom = True if lvl_map[pos[1] + 1][pos[0] + player_col] == 'X' else False
         except:
             pass
         if cell == '0':
@@ -105,6 +110,12 @@ class Tile(pygame.sprite.Sprite):
                 self.image.blit(blockLeftTopRight, (0, 0))
             elif el_top and el_left and el_bottom and el_right:
                 self.image.blit(block, (0, 0))
+        elif cell == 'п':  # vertical
+            self.image = pygame.Surface((res, round(res * 1.5)), pygame.SRCALPHA)
+            self.image.blit(pipe_vertical, (0, 0))
+        elif cell == 'П':  # horizontal
+            self.image = pygame.Surface((round(res * 1.5), res), pygame.SRCALPHA)
+            self.image.blit(pipe_horizontal, (0, 0))
 
     def update(self, shift):
         self.rect.x += shift[0]
@@ -139,7 +150,7 @@ class Gold(pygame.sprite.Sprite):
     def __init__(self, pos, size):
         super().__init__()
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-        self.image.blit(gold, (0, 0))
+        self.image.blit(random.choice([red_gem, blue_gem, green_gem, yellow_gem]), (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
     def update(self, shift):

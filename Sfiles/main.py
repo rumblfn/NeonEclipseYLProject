@@ -77,7 +77,7 @@ def map_preparation(player, network, player_settings):
     def portalParkourMap(sc, player_parkour, to_print):
 
         def info_text_parkour():
-            text = 'ф Press Esc to return to the spawn point'
+            text = 'Press Esc to return to the spawn point'
             newFont = pygame.font.SysFont('SFCompact', 75)
             txt_surf = newFont.render(text, False, (255, 183, 0))
             sc.blit(txt_surf, (WIDTH // 5, HEIGHT // 2 - 35))

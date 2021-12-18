@@ -201,7 +201,7 @@ class Player_map_parkour(pygame.sprite.Sprite):
         self.get_input()
 
     def levitate(self):
-        self.jump()
+        self.direction.y = -9 * pygame.display.Info().current_h / 900
 
     def web(self, arg):
         if arg:

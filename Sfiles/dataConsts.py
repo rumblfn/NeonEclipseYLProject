@@ -30,6 +30,7 @@ background_menu = pygame.image.load('static/Bg-straight-echo.png')
 background_map_preparation_with_opacity = pygame.transform.scale(pygame.image.load('static/bg21920x2176.png'),
                                                                  (3840, 4352))
 
+
 imageCursorNormal = pygame.image.load('static/Cursor_normal.png')
 imageCursorClicked = pygame.image.load('static/Cursor_Clicked.png')
 
