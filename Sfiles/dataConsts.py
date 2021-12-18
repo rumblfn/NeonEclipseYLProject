@@ -27,7 +27,8 @@ buttonStartGameWidth = imageButtonStartGame.get_width()
 buttonStartGameHeight = imageButtonStartGame.get_height()
 
 background_menu = pygame.image.load('static/Bg-straight-echo.png')
-background_map_preparation_with_opacity = pygame.transform.scale(pygame.image.load('static/bg21920x2176.png'), (3840, 4352))
+background_map_preparation_with_opacity = pygame.transform.scale(pygame.image.load('static/bg21920x2176.png'),
+                                                                 (3840, 4352))
 
 imageCursorNormal = pygame.image.load('static/Cursor_normal.png')
 imageCursorClicked = pygame.image.load('static/Cursor_Clicked.png')
@@ -39,57 +40,69 @@ player2PaladinBig = pygame.image.load('static/paladin27x78Big1.png')
 player3Sniper = pygame.image.load('static/sniper37x75.png')
 player3SniperBig = pygame.image.load('static/sniper136Big.png')
 
-
 HEROES = [
-    {'name': 'Hero1',
-     'attack power': 10,
-     'maxHp': 100,
-     'imagePreview': player1Preview,
-     'imagePreviewBig': player1BigGif,
-     'selected': True,
-     'attackE': 'attackE - 1',
-     'attackQ': 'attackQ - 1',
-     'width':  64,
-     'height': 64,
-     'simpleAttack': 'attackLBM - 1'},
-    {'name': 'Hero2',
-     'attack power': 20,
-     'maxHp': 70,
-     'imagePreview': player3Sniper,
-     'imagePreviewBig': player3SniperBig,
-     'selected': False,
-     'attackE': 'attackE - 2',
-     'attackQ': 'attackQ - 2',
-     'simpleAttack': 'attackLBM - 2',
-     'width': 37,
-     'height': 75},
-    {'name': 'Hero3',
-     'attack power': 5,
-     'maxHp': 200,
-     'imagePreview': player2Paladin,
-     'imagePreviewBig': player2PaladinBig,
-     'selected': False,
-     'attackE': 'attackE - 3',
-     'attackQ': 'attackQ - 3',
-     'width': 27,
-     'height': 78,
-     'simpleAttack': 'attackLBM - 3'}
+    {
+        'name': 'Hero1',
+        'attack power': 10,
+        'maxHp': 100,
+        'imagePreview': player1Preview,
+        'imagePreviewBig': player1BigGif,
+        'selected': True,
+        'attackE': 'attackE - 1',
+        'attackQ': 'attackQ - 1',
+        'width': 64,
+        'height': 64,
+        'simpleAttack': 'attackLBM - 1',
+        'animations': {  # paths
+            'right_walk': 'static/hero1animations/rightWalkImages/rightwalk',  # + 14 + $ 1...2...14 + .png
+            'left_walk': 'static/hero1animations/leftWalkImages/leftwalk',
+            'right_jump': 'static/hero1animations/rightjump/rightjump',
+            'left_jump': 'static/hero1animations/leftjump/leftjump'
+        }
+    },
+    {
+        'name': 'Hero2',
+        'attack power': 20,
+        'maxHp': 70,
+        'imagePreview': player3Sniper,
+        'imagePreviewBig': player3SniperBig,
+        'selected': False,
+        'attackE': 'attackE - 2',
+        'attackQ': 'attackQ - 2',
+        'simpleAttack': 'attackLBM - 2',
+        'width': 37,
+        'height': 75,
+        'animations': None
+    },
+    {
+        'name': 'Hero3',
+        'attack power': 5,
+        'maxHp': 200,
+        'imagePreview': player2Paladin,
+        'imagePreviewBig': player2PaladinBig,
+        'selected': False,
+        'attackE': 'attackE - 3',
+        'attackQ': 'attackQ - 3',
+        'width': 27,
+        'height': 78,
+        'simpleAttack': 'attackLBM - 3',
+        'animations': None
+    }
 ]
 
 START_HEROES = HEROES
 
-
 surfTitle = fontTitle.render('Neon Eclipse', False, (255, 183, 0))
 objAllHeroesWidget = {'x1': round(0.545 * WIDTH), 'y1': round((87 / 750) * HEIGHT),
-                          'x2': round(0.872 * WIDTH), 'y2': round((289 / 750) * HEIGHT),
-                          'width': round(0.327 * WIDTH), 'height': round((202 / 750) * HEIGHT),
-                          'titleText': 'All heroes', 'heroes': HEROES,
-                          'blockWidth': 72, 'blockHeight': 72}
+                      'x2': round(0.872 * WIDTH), 'y2': round((289 / 750) * HEIGHT),
+                      'width': round(0.327 * WIDTH), 'height': round((202 / 750) * HEIGHT),
+                      'titleText': 'All heroes', 'heroes': HEROES,
+                      'blockWidth': 72, 'blockHeight': 72}
 objAboutGame = {
-        'x1': WIDTH / 2 - buttonStartGameWidth / 2, 'y1': round((470 / 750) * HEIGHT),
-        'x2': round(0.961 * WIDTH), 'y2': round((700 / 750) * HEIGHT),
-        'titleText': 'About game'
-    }
+    'x1': WIDTH / 2 - buttonStartGameWidth / 2, 'y1': round((470 / 750) * HEIGHT),
+    'x2': round(0.961 * WIDTH), 'y2': round((700 / 750) * HEIGHT),
+    'titleText': 'About game'
+}
 menuWidgetAllHeroes = AllHeroesWindow(screen, font, objAllHeroesWidget)
 menuWidgetAboutGame = AboutGameWindow(screen, font, objAboutGame)
 menuWidgetElector = ElectorWindow(screen, font, menuWidgetAllHeroes, WIDTH, HEIGHT)
