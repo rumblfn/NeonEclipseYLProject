@@ -9,15 +9,15 @@ level_parkour_map = [  # 18
     'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXaXXXXX                                                                                                            XXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXG a  XXXXXaXXXXX                                                                                                            XXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaX  XXXXAXXXXX                                                                                                              XXXXXXXXXXXXXXXXXXXXX',
-    'XXXXXXXXXXXXXXXXXXXXXXXXXaXX      XXXXX                               P                                                                              XXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXXXXXXXaXX      XXXXX                                                                                                              XXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXX                                 00000 0000 00         L                                                          XXXXXXXXXXXXXXXXXXX',
-    'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXu    0                          0     0    0  00                                                                  XXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXuP   0                          0     0    0  00                                                                  XXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXX                                    0  0      00                                                               XXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXG           0                    0        0  0        G                                                        XXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXX                   0                0        0000   000                                                 XXXXXXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXX                                                0    0                                                  XXXXXXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXAXXXX                                    0                0 0G0    G     00 00                                       XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-    'XXXXXXXXXXXXXXXXXXXXXXXXX      XXXXXXXXXX                                             0     0      G                                                               XXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXXXXXXX      XXXXXXXXXX                                             0     0      G                                                            GGGXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                                                  0     0000Bbb bbb    bbb   b   b  b bb b  b  b   XXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
 ]
 
