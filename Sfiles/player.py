@@ -25,6 +25,7 @@ class Player_map_preparation(pygame.sprite.Sprite):
         self.started_pos = pos
 
         self.K_x = False
+        self.current_sprite = 0
 
         from map_preparation_settings import level1_map
 
@@ -33,7 +34,18 @@ class Player_map_preparation(pygame.sprite.Sprite):
         self.height = round(player_settings['height'] * re_size) - 1
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         # self.image.fill((255, 255, 255, 0))
-        self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
+        self.images = False
+        if player_settings['animations'] is None:
+            self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
+        else:
+            self.images = {}
+            for el in player_settings['animations'].keys():
+                self.images[el] = []
+                for i in range(1, 15):
+                    image = pygame.transform.scale(pygame.image.load(f'{player_settings["animations"][el]}{i}.png').convert_alpha(), (self.width, self.height))
+                    self.images[el].append(image)
+            self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
+        print(self.images)
         self.rect = self.image.get_rect(topleft=pos)
 
         self.direction = pygame.math.Vector2(0, 0)
@@ -46,6 +58,7 @@ class Player_map_preparation(pygame.sprite.Sprite):
         self.shoot_bool = 1
 
     def get_input(self):
+        self.current_sprite += 0.25
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_x]:
@@ -55,8 +68,14 @@ class Player_map_preparation(pygame.sprite.Sprite):
 
         if keys[pygame.K_d]:
             self.direction.x = 1
+            if self.images:
+                self.image.fill((0, 0, 0, 0))
+                self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
         elif keys[pygame.K_a]:
             self.direction.x = -1
+            if self.images:
+                self.image.fill((0, 0, 0, 0))
+                self.image.blit(self.images['left_walk'][int(self.current_sprite)], (0, 0))
         else:
             self.direction.x = 0
 
@@ -65,6 +84,9 @@ class Player_map_preparation(pygame.sprite.Sprite):
                 self.jump()
         if not self.direction.y:
             self.jump_bool = True
+
+        if self.current_sprite >= 13:
+            self.current_sprite = 0
 
     def create_bullet(self):
         self.shoot_bool = 0

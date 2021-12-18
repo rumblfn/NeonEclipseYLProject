@@ -24,7 +24,7 @@ def draw_cursor(sc):
 def sleeper():
     global sleeper_status
     sleeper_status = False
-    sleep(120)
+    sleep(300)
     sleeper_status = True
 
 
@@ -42,7 +42,7 @@ def draw_button(sc, image, pos_y_diff, player, network):
                 if hero['selected']:
                     player.ready = True
                     pygame.mixer.music.stop()
-                    waitingForConnection(hero, player, network, hero)
+                    waitingForConnection(player, network, hero)
     sc.blit(surf, (x_lef_top, y_left_top))
 
 
@@ -199,7 +199,7 @@ def main_menu():
         clock.tick(60)
 
 
-def waitingForConnection(character, player, network, player_settings):
+def waitingForConnection(player, network, player_settings):
     run = True
     waitingText = font.render('Waiting for a connection', False, (0, 255, 0))
     top_menu_text_pos_x = 10
