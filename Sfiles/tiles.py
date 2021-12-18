@@ -41,6 +41,7 @@ bgTile = pygame.transform.scale(pygame.image.load('static/bgTiles.png'), (res, r
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, size, cell, map, player_col):
         super().__init__()
+        self.new_tile_size = size
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
         self.set_image(pos, cell, size, map, player_col)
         # self.image.fill((10, 17, 25))
@@ -70,41 +71,44 @@ class Tile(pygame.sprite.Sprite):
             self.image.blit(bgTile, (0, 0))
         elif cell == 'X':
             if not el_left and all([el_top, el_right, el_bottom]):
-                self.image.blit(blockLeft, (0, 0))
+                self.draw_block(blockLeft)
             elif not el_left and not el_right and all([el_top, el_bottom]):
-                self.image.blit(blockRightLeft, (0, 0))
+                self.draw_block(blockRightLeft)
             elif not el_top and all([el_left, el_bottom, el_right]):
-                self.image.blit(blockTop, (0, 0))
+                self.draw_block(blockTop)
             elif not el_right and all([el_top, el_bottom, el_left]):
-                self.image.blit(blockRight, (0, 0))
+                self.draw_block(blockRight)
             elif not el_bottom and all([el_left, el_top, el_right]):
-                self.image.blit(blockBottom, (0, 0))
+                self.draw_block(blockBottom)
             elif el_right and el_bottom and not any([el_left, el_top]):
-                self.image.blit(blockLeftTop, (0, 0))
+                self.draw_block(blockLeftTop)
             elif el_left and el_bottom and not any([el_top, el_right]):
-                self.image.blit(blockTopRight, (0, 0))
+                self.draw_block(blockTopRight)
             elif el_left and el_top and not any([el_right, el_bottom]):
-                self.image.blit(blockRightBottom, (0, 0))
+                self.draw_block(blockRightBottom)
             elif el_top and el_right and not any([el_left, el_bottom]):
-                self.image.blit(blockBottomLeft, (0, 0))
+                self.draw_block(blockBottomLeft)
             elif el_left and el_right and not any([el_top, el_bottom]):
-                self.image.blit(blockTopBottom, (0, 0))
+                self.draw_block(blockTopBottom)
             elif el_right and not any([el_bottom, el_left, el_top]):
-                self.image.blit(blockTopLeftBottom, (0, 0))
+                self.draw_block(blockTopLeftBottom)
             elif el_left and not any([el_top, el_right, el_bottom]):
-                self.image.blit(blockTopRightBottom, (0, 0))
+                self.draw_block(blockTopRightBottom)
             elif not any([el_left, el_top, el_right, el_bottom]):
-                self.image.blit(blockBorders, (0, 0))
+                self.draw_block(blockBorders)
             elif el_bottom and not any([el_left, el_top, el_right]):
-                self.image.blit(blockLeftTopRight, (0, 0))
+                self.draw_block(blockLeftTopRight)
             elif el_top and el_left and el_bottom and el_right:
-                self.image.blit(block, (0, 0))
+                self.draw_block(block)
         elif cell == 'п':  # vertical
             self.image = pygame.Surface((res, round(res * 1.5)), pygame.SRCALPHA)
             self.image.blit(pipe_vertical, (0, 0))
         elif cell == 'П':  # horizontal
             self.image = pygame.Surface((round(res * 1.5), res), pygame.SRCALPHA)
             self.image.blit(pipe_horizontal, (0, 0))
+
+    def draw_block(self, block_main):
+        self.image.blit(pygame.transform.scale(block_main, (self.new_tile_size, self.new_tile_size)), (0, 0))
 
     def update(self, shift):
         self.rect.x += shift[0]

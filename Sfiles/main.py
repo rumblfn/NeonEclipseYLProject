@@ -6,11 +6,11 @@ from dataConsts import *
 from network import Network
 from time import sleep
 from _thread import start_new_thread
-from map_preparation_settings import *
 from player import Player_map_preparation
 from tiles import Tile
 from level import Level
 from map_preparation_settings import *
+from main_game_level import *
 
 
 def draw_cursor(sc):
@@ -24,7 +24,7 @@ def draw_cursor(sc):
 def sleeper():
     global sleeper_status
     sleeper_status = False
-    sleep(300)
+    sleep(3)
     sleeper_status = True
 
 
@@ -53,10 +53,23 @@ def redrawWindow(win, player, player2):
 
 def main_game(server_player, network, player_main):
     run = True
-    print(player_main)
+
+    level = LevelG(map, screen, player_main)
+    server_player.x = player_main.rect.x
+    server_player.y = player_main.rect.y
+    player_enemy = network.send(server_player)
+    surf = pygame.Surface((50, 50))
+    surf.fill((255, 0, 0))
+
     while run:
-        player2 = network.send(server_player)
-        redrawWindow(screen, server_player, player2)
+        screen.fill((0, 0, 0))
+        server_player.x = player_main.rect.x
+        server_player.y = player_main.rect.y
+        player_enemy = network.send(server_player)
+        level.run()
+        print(player_main.rect.x)
+        print(player_enemy.x, player_enemy.y)
+        screen.blit(surf, (player_enemy.x, player_enemy.y))
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -72,7 +85,6 @@ def map_preparation(player, network, player_settings):
     run = True
     player.x = WIDTH // 4
     player.y = round(HEIGHT * (2 / 3))
-    player.vel = 8
     level = Level(level1_map, screen, player_settings)
     start_new_thread(sleeper, ())
 

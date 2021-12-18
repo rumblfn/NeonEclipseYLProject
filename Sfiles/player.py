@@ -1,4 +1,5 @@
 import pygame
+from pygame.constants import *
 
 try:
     from CBullet import Bullet
@@ -109,4 +110,4 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = True  # None
+        self.ready = None  # True
