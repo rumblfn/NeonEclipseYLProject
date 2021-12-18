@@ -11,6 +11,7 @@ class LevelParkour:
         self.player_settings = player_settings
         self.width = pygame.display.Info().current_w
         self.height = pygame.display.Info().current_h
+        self.player_col = 0
         self.setup_level(level_data)
         self.world_shift_x = 0
         self.world_shift_y = 0
@@ -40,6 +41,15 @@ class LevelParkour:
 
         for row_index, row in enumerate(layout):
             for col_index, cell in enumerate(row):
+                if cell == 'P':
+                    self.player_col = col_index // 2
+                    break
+            if self.player_col != 0:
+                break
+
+        for row_index, row in enumerate(layout):
+            for col_index, cell in enumerate(row):
+                col_index -= self.player_col
                 x = col_index * tile_size
                 y = row_index * tile_size
                 if cell == 'P':
