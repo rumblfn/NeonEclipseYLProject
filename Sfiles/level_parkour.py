@@ -308,13 +308,13 @@ class LevelParkour:
             if bird.cell == 'R':
                 if bird.rect.colliderect(player.rect):
                     self.build_bird = True
+                    for gold in self.golds:
+                        if gold.cell == 'g':
+                            gold.update_bird_gems(True)
 
     def make_bird(self):
         player = self.player.sprite
         player.bird_mode = True
-        for gold in self.golds:
-            if gold.cell == 'g':
-                gold.update_bird_gems(True)
         for bird in self.bird:
             if bird.cell == 'd':
                 bird.image.fill((102, 255, 0, 90))
