@@ -148,15 +148,26 @@ class MovingTile(pygame.sprite.Sprite):
 
 
 class Gold(pygame.sprite.Sprite):
-    def __init__(self, pos, size):
+    def __init__(self, pos, size, cell):
         super().__init__()
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-        self.image.blit(random.choice([red_gem, blue_gem, green_gem, yellow_gem]), (0, 0))
+        self.cell = cell
+        if cell == 'g':
+            self.image.fill((255, 255, 255, 0))
+        else:
+            self.image.blit(random.choice([red_gem, blue_gem, green_gem, yellow_gem]), (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
     def update(self, shift):
         self.rect.x += shift[0]
         self.rect.y += shift[1]
+
+    def update_bird_gems(self, arg):
+        if arg:
+            self.image.blit(random.choice([red_gem, blue_gem, green_gem, yellow_gem]), (0, 0))
+        else:
+            self.image.fill((255, 255, 255, 0))
+
 
 
 class UpArrow(pygame.sprite.Sprite):

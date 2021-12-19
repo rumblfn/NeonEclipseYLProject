@@ -119,10 +119,12 @@ def map_preparation(player, network, player_settings):
                 level_p.web_work(False)
             if level_p.ready_bridge:
                 cur = datetime.datetime.now().time().second
-                finish_time = cur + 10
+                finish_time = cur + 8
                 level_p.build_bridge(finish_time, cur)
             if level_p.build_bird:
                 level_p.make_bird()
+            if not level_p.build_bird:
+                level_p.crush_bird()
             clock.tick(60)
 
     while run:

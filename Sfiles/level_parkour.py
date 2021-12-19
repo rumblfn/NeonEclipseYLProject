@@ -25,6 +25,7 @@ class LevelParkour:
         self.bridge_work = False
         self.build_bird = False
         self.cur_gold = ''
+        self.last_bird_block = ''
         self.finsh_bridge = -100
         self.moving_t_direct = 'up'
         self.height = pygame.display.Info().current_h
@@ -70,7 +71,7 @@ class LevelParkour:
                     tile = MovingTile((col_index, row_index), tile_size)
                     self.moving_tiles.add(tile)
                 elif cell == 'G':
-                    tile = Gold((col_index, row_index), tile_size)
+                    tile = Gold((col_index, row_index), tile_size, cell)
                     self.golds.add(tile)
                 elif cell == 'A':
                     tile = UpArrow((col_index, row_index), tile_size, cell)
@@ -99,6 +100,9 @@ class LevelParkour:
                 elif cell == 'd':
                     tile = Bird((col_index, row_index), tile_size, cell)
                     self.bird.add(tile)
+                elif cell == 'g':
+                    tile = Gold((col_index, row_index), tile_size, cell)
+                    self.golds.add(tile)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map, self.player_col)
                     self.tiles.add(tile)
@@ -296,6 +300,7 @@ class LevelParkour:
         else:
             self.bridge_work = False
             self.ready_bridge = False
+            self.finsh_bridge = -100
 
     def check_bird(self):
         player = self.player.sprite
@@ -307,31 +312,37 @@ class LevelParkour:
     def make_bird(self):
         player = self.player.sprite
         player.bird_mode = True
+        for gold in self.golds:
+            if gold.cell == 'g':
+                gold.update_bird_gems(True)
         for bird in self.bird:
             if bird.cell == 'd':
-                bird.image.fill((0, 255, 0, 75))
+                bird.image.fill((102, 255, 0, 90))
                 if bird.rect.colliderect(player.rect):
                     self.build_bird = False
-                    self.finish_bird(True)
                     player.bird_mode = False
+                    self.last_bird_block = 'd'
             elif bird.cell == 'D':
-                bird.image.fill((255, 0, 0, 75))
+                bird.image.fill((255, 0, 0, 90))
                 if bird.rect.colliderect(player.rect):
                     self.build_bird = False
-                    self.finish_bird(False)
                     player.bird_mode = False
+                    self.last_bird_block = 'D'
             elif bird.cell == 'R':
                 bird.image.fill((255, 0, 0, 0))
 
-    def finish_bird(self, arg):
-        if arg:
+    def crush_bird(self):
+        for gold in self.golds:
+            if gold.cell == 'g':
+                gold.update_bird_gems(False)
+        if self.last_bird_block == 'D':
+            self.check_fall = True
+        else:
             for bird in self.bird:
                 if bird.cell == 'd':
                     bird.image.fill((0, 255, 0, 0))
                 elif bird.cell == 'D':
                     bird.image.fill((255, 0, 0, 0))
-        else:
-            self.check_fall = True
 
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))
