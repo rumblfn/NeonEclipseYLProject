@@ -10,8 +10,8 @@ class LevelG:
         self.level_data = level_data
         self.player_sprite = player_main
         self.player_enemy = player_enemy
-        self.width = pygame.display.Info().current_w
         self.height = pygame.display.Info().current_h
+        self.width = pygame.display.Info().current_w
         self.player_col = 0
         self.pos_x = 0
         self.network = network
@@ -26,8 +26,8 @@ class LevelG:
     def setup_level(self, layout, default_player=False):
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
-        HEIGHT = pygame.display.Info().current_h
-        tile_size = HEIGHT // len(map)
+        tile_size = self.height // len(map)
+        self.width = len(map[0]) * tile_size
 
         for row_index, row in enumerate(layout):
             for col_index, cell in enumerate(row):
@@ -44,11 +44,6 @@ class LevelG:
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, map, self.player_col)
                     self.tiles.add(tile)
-
-    def scroll_x(self, player):
-        direction_x = player.direction.x
-
-        player.speed = 8
 
     def horizontal_movement_collisions(self, player):
         player.rect.x += player.direction.x * player.speed
@@ -75,18 +70,18 @@ class LevelG:
                     player.direction.y = -0.01
 
     def update_enemy_pos(self):
-        self.server_player.x = self.player.sprite.rect.x
-        self.server_player.y = self.player.sprite.rect.y
+        self.server_player.x = (self.player.sprite.rect.x / self.width) * 1920
+        self.server_player.y = (self.player.sprite.rect.y / self.height) * 1080
 
         player_enemy = self.network.send(self.server_player)
-        self.enemy.sprite.rect.x = player_enemy.x
-        self.enemy.sprite.rect.y = player_enemy.y
+        self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
+        self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
 
     def run(self):
         self.tiles.draw(self.display_surface)
         self.update_enemy_pos()
 
-        self.scroll_x(self.player.sprite)
+        # self.scroll_x(self.player.sprite)
         self.horizontal_movement_collisions(self.player.sprite)
         self.vertical_movement_collisions(self.player.sprite)
 

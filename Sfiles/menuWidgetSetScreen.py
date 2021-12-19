@@ -47,10 +47,10 @@ class ScreenSizeWindow:
         mx, my = pygame.mouse.get_pos()
         if self.ch1.collidepoint((mx, my)):
             if pygame.mouse.get_pressed():
-                pygame.display.set_mode((800, 600))
+                pygame.display.set_mode((960, 600))
         elif self.ch2.collidepoint((mx, my)):
             if pygame.mouse.get_pressed():
-                pygame.display.set_mode((1024, 768))
+                pygame.display.set_mode((1024, 640))
         elif self.ch3.collidepoint((mx, my)):
             if pygame.mouse.get_pressed():
                 pygame.display.set_mode((1000, 1000))

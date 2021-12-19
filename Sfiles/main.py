@@ -223,12 +223,9 @@ def waitingForConnection(player, network, player_settings):
     waitingText = font.render('Waiting for a connection', False, (0, 255, 0))
     top_menu_text_pos_x = 10
 
-    # nez_image = pygame.image.load('static/nezuko-pixel-art.jpeg')
-
     while run:
         player2 = network.send(player)
         screen.fill((0, 0, 0))
-        # screen.blit(nez_image, (0, 0))
         screen.blit(waitingText, (top_menu_text_pos_x, top_menu_text_pos_x))
         pygame.display.flip()
 
