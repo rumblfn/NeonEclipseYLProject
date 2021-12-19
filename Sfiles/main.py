@@ -198,7 +198,6 @@ def main_menu():
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/menu.mp3')
             pygame.mixer.music.play()
-            pygame.mixer_music.set_volume(0)
         screen.fill((0, 0, 0))
         bgMenu.draw_with_mouse_pos(WIDTH, HEIGHT)
         draw_button(screen, imageButtonStartGame, 0, player, network)
@@ -226,6 +225,7 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 menuWidgetElector.change_image(('mouse', event))
                 menuWidgetScreenSize.change_size()
+                menuWidgetSlider.check_click_onslider()
 
         w, h = pygame.display.Info().current_w, pygame.display.Info().current_h
         if w != WIDTH or h != HEIGHT:
@@ -233,6 +233,10 @@ def main_menu():
                 w, h = WI, HE
                 pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
             change_objects(w, h)
+        if bool(menuWidgetSlider.vol_changed):
+            print(menuWidgetSlider.vol_changed)
+            pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
+            menuWidgetSlider.vol_changed = None
         clock.tick(60)
 
 
