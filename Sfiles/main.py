@@ -11,6 +11,7 @@ from tiles import Tile
 from level import Level
 from map_preparation_settings import *
 from main_game_level import *
+from enemyClass import Enemy
 
 
 def draw_cursor(sc):
@@ -52,25 +53,31 @@ def redrawWindow(win, player, player2):
 
 
 def main_game(server_player, network, player_main):
-    run = True
+    def update_server_player_pos():
+        server_player.x = WIDTH // 2
+        server_player.y = HEIGHT // 2
 
-    level = LevelG(map, screen, player_main)
-    server_player.x = player_main.rect.x
-    server_player.y = player_main.rect.y
+    def server_player_settings():
+        server_player.name = player_main.name
+        server_player.power = player_main.power
+        server_player.maxHp = player_main.maxHp
+        server_player.width = player_main.width
+        server_player.height = player_main.height
+
+    run = True
+    update_server_player_pos()
+    server_player_settings()
     player_enemy = network.send(server_player)
-    surf = pygame.Surface((50, 50))
-    surf.fill((255, 0, 0))
+    sleep(0.5)
+    player_enemy = network.send(server_player)
+    level = LevelG(map, screen, player_main, player_enemy, network, server_player)
 
     while run:
         screen.fill((0, 0, 0))
-        server_player.x = player_main.rect.x
-        server_player.y = player_main.rect.y
-        player_enemy = network.send(server_player)
+
         level.run()
-        print(player_main.rect.x)
-        print(player_enemy.x, player_enemy.y)
-        screen.blit(surf, (player_enemy.x, player_enemy.y))
         pygame.display.update()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False

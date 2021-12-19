@@ -110,4 +110,10 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = None  # True
+        self.ready = None
+
+        self.name = None
+        self.power = None
+        self.maxHp = None
+        self.width = None
+        self.height = None

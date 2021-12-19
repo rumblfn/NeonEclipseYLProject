@@ -1,15 +1,25 @@
 import pygame
 
-map = [  # 18
-    'XXXXXXXXXXXX',
-    'XX        XX',
-    'XX        XX',
-    'XX        XX',
-    'XX        XX',
-    'XX        XX',
-    'XX  P  E  XX',
-    'XX        XX',
-    'XXXXXXXXXXXX',
+map = [
+    '                               ',
+    '           P                   ',
+    '                               ',
+    '                  XXXX         ',
+    '                  XXXXXXXX     ',
+    '                    XXXX       ',
+    '   XXXXX                       ',
+    '   XXXXX                       ',
+    ' XXXXXXXX        XXXX          ',
+    ' XXXXXXXX        XXXX          ',
+    '  XXXXX                        ',
+    '  XXXXX                        ',
+    '   XX                XXX       ',
+    '                     XXX       ',
+    '                               ',
+    '            XXXXXX             ',
+    '             XXXX              ',
+    '                               ',
+    '                               ',
 ]
 
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
