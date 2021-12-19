@@ -1,7 +1,6 @@
 import pygame
-import datetime
 
-from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge
+from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird
 from map_parkour_settings import level_parkour_map, gold_max
 from player import Player_map_parkour
 
@@ -24,6 +23,7 @@ class LevelParkour:
         self.in_web = False
         self.ready_bridge = False
         self.bridge_work = False
+        self.build_bird = False
         self.cur_gold = ''
         self.finsh_bridge = -100
         self.moving_t_direct = 'up'
@@ -42,6 +42,7 @@ class LevelParkour:
         self.up_arrows = pygame.sprite.Group()
         self.webs = pygame.sprite.Group()
         self.bridge = pygame.sprite.Group()
+        self.bird = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level_parkour_map)
         self.tile_size = tile_size
@@ -86,6 +87,18 @@ class LevelParkour:
                 elif cell == 'b':
                     tile = Bridge((col_index, row_index), tile_size, cell)
                     self.bridge.add(tile)
+                elif cell == 'R':
+                    tile = Bird((col_index, row_index), tile_size, cell)
+                    self.bird.add(tile)
+                elif cell == 'x':
+                    tile = Bird((col_index, row_index), tile_size, cell)
+                    self.bird.add(tile)
+                elif cell == 'D':
+                    tile = Bird((col_index, row_index), tile_size, cell)
+                    self.bird.add(tile)
+                elif cell == 'd':
+                    tile = Bird((col_index, row_index), tile_size, cell)
+                    self.bird.add(tile)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map, self.player_col)
                     self.tiles.add(tile)
@@ -284,6 +297,42 @@ class LevelParkour:
             self.bridge_work = False
             self.ready_bridge = False
 
+    def check_bird(self):
+        player = self.player.sprite
+        for bird in self.bird:
+            if bird.cell == 'R':
+                if bird.rect.colliderect(player.rect):
+                    self.build_bird = True
+
+    def make_bird(self):
+        player = self.player.sprite
+        player.bird_mode = True
+        for bird in self.bird:
+            if bird.cell == 'd':
+                bird.image.fill((0, 255, 0, 75))
+                if bird.rect.colliderect(player.rect):
+                    self.build_bird = False
+                    self.finish_bird(True)
+                    player.bird_mode = False
+            elif bird.cell == 'D':
+                bird.image.fill((255, 0, 0, 75))
+                if bird.rect.colliderect(player.rect):
+                    self.build_bird = False
+                    self.finish_bird(False)
+                    player.bird_mode = False
+            elif bird.cell == 'R':
+                bird.image.fill((255, 0, 0, 0))
+
+    def finish_bird(self, arg):
+        if arg:
+            for bird in self.bird:
+                if bird.cell == 'd':
+                    bird.image.fill((0, 255, 0, 0))
+                elif bird.cell == 'D':
+                    bird.image.fill((255, 0, 0, 0))
+        else:
+            self.check_fall = True
+
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
@@ -303,6 +352,9 @@ class LevelParkour:
         self.bridge.update((self.world_shift_x, self.world_shift_y))
         self.bridge.draw(self.display_surface)
 
+        self.bird.update((self.world_shift_x, self.world_shift_y))
+        self.bird.draw(self.display_surface)
+
         self.scroll_x()
         self.player.update()
 
@@ -311,6 +363,7 @@ class LevelParkour:
         self.arrow_work()
         self.check_web()
         self.check_bridge()
+        self.check_bird()
 
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()

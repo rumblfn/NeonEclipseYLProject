@@ -127,8 +127,8 @@ class Player_map_parkour(pygame.sprite.Sprite):
         from map_parkour_settings import level_parkour_map
 
         re_size = (HEIGHT / len(level_parkour_map)) / 64
-        self.width = round(64 * re_size) - 10
-        self.height = round(64 * re_size) - 10
+        self.width = round(64 * re_size) - 14
+        self.height = round(64 * re_size) - 14
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         # self.image.fill((255, 255, 255, 0))
         self.images = False
@@ -150,6 +150,7 @@ class Player_map_parkour(pygame.sprite.Sprite):
         self.gravity = 0.8 * HEIGHT / 900
         self.jump_speed = -18 * HEIGHT / 900
         self.jump_bool = True
+        self.bird_mode = False
 
         self.shoot_bool = 1
 
@@ -163,12 +164,18 @@ class Player_map_parkour(pygame.sprite.Sprite):
             self.K_x = False
 
         if keys[pygame.K_d]:
-            self.direction.x = 1
+            if self.bird_mode:
+                self.direction.x = 0
+            else:
+                self.direction.x = 1
             if self.images:
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
         elif keys[pygame.K_a]:
-            self.direction.x = -1
+            if self.bird_mode:
+                self.direction.x = -0.4
+            else:
+                self.direction.x = -1
             if self.images:
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['left_walk'][int(self.current_sprite)], (0, 0))
@@ -178,6 +185,15 @@ class Player_map_parkour(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE]:
             if self.jump_bool:
                 self.jump()
+            if self.bird_mode:
+                h = pygame.display.Info().current_h
+                w = pygame.display.Info().current_w
+                self.direction.y = -3 * pygame.display.Info().current_h / 900
+                self.control_speed = round(2.3 * w / 1440)
+                self.speed = round(2.3 * w / 1440)
+                self.gravity = 0.25 * h / 900
+                self.jump_speed = -3 * h / 900
+
         if not self.direction.y:
             self.jump_bool = True
 
@@ -208,5 +224,13 @@ class Player_map_parkour(pygame.sprite.Sprite):
             self.control_speed = round(pygame.display.Info().current_w / 1440)
             self.speed = round(pygame.display.Info().current_w / 1440)
         else:
-            self.control_speed = round(7 * pygame.display.Info().current_w / 1440)
-            self.speed = round(7 * pygame.display.Info().current_w / 1440)
+            if self.bird_mode:
+                self.control_speed = round(2.3 * pygame.display.Info().current_w / 1440)
+                self.speed = round(2.3 * pygame.display.Info().current_w / 1440)
+            else:
+                self.control_speed = round(7 * pygame.display.Info().current_w / 1440)
+                self.speed = round(7 * pygame.display.Info().current_w / 1440)
+                self.gravity = 0.8 * pygame.display.Info().current_h / 900
+                self.jump_speed = -18 * pygame.display.Info().current_h / 900
+
+

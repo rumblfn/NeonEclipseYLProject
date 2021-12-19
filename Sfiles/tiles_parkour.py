@@ -45,6 +45,7 @@ red_gem = pygame.transform.scale(pygame.image.load('static/red_gem.png'), (res, 
 blue_gem = pygame.transform.scale(pygame.image.load('static/blue_gem.png'), (res, res))
 green_gem = pygame.transform.scale(pygame.image.load('static/green_gem.png'), (res, res))
 yellow_gem = pygame.transform.scale(pygame.image.load('static/yellow_gem.png'), (res, res))
+bird = pygame.transform.scale(pygame.image.load('static/bird.png'), (res, res))
 
 
 class Tile(pygame.sprite.Sprite):
@@ -199,6 +200,34 @@ class Bridge(pygame.sprite.Sprite):
         else:
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.fill((255, 255, 255, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+    def update_vision(self, arg):
+        if arg:
+            self.image.blit(block2, (0, 0))
+        else:
+            self.image.fill((255, 255, 255, 0))
+
+
+class Bird(pygame.sprite.Sprite):
+    def __init__(self, pos, size, cell):
+        super().__init__()
+        self.cell = cell
+        if cell == 'R':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(bird, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        elif cell == 'D':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((255, 0, 0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        elif cell == 'd':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((0, 255, 0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
     def update(self, shift):
