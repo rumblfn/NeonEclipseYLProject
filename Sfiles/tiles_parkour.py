@@ -169,7 +169,6 @@ class Gold(pygame.sprite.Sprite):
             self.image.fill((255, 255, 255, 0))
 
 
-
 class UpArrow(pygame.sprite.Sprite):
     def __init__(self, pos, size, cell):
         super().__init__()

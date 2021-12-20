@@ -190,6 +190,7 @@ def change_objects(w, h):
 
 def main_menu():
     pygame.init()
+    print(pygame.display.Info())
     run = True
     network = Network()
     player = network.getP()
