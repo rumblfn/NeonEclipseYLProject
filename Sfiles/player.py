@@ -38,15 +38,17 @@ class Player_hero1(pygame.sprite.Sprite):
         self.width = round(player_settings['width'] * re_size) - 1
         self.height = round(player_settings['height'] * re_size) - 1
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.images = False
+
+        self.images = {}
+        for el in player_settings['animations'].keys():
+            self.images[el] = []
+            for i in range(1, 15):
+                image = pygame.transform.scale(
+                    pygame.image.load(f'{player_settings["animations"][el]}{i}.png').convert_alpha(),
+                    (self.width, self.height))
+                self.images[el].append(image)
+
         self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
-        if not player_settings['animations'] is None:
-            self.images = {}
-            for el in player_settings['animations'].keys():
-                self.images[el] = []
-                for i in range(1, 15):
-                    image = pygame.transform.scale(pygame.image.load(f'{player_settings["animations"][el]}{i}.png').convert_alpha(), (self.width, self.height))
-                    self.images[el].append(image)
         self.rect = self.image.get_rect(topleft=pos)
         self.direction = pygame.math.Vector2(0, 0)
         self.control_speed = round(7 * WIDTH / 1440)
@@ -129,7 +131,7 @@ class Player_hero2(pygame.sprite.Sprite):
         self.width = round(player_settings['width'] * re_size) - 1
         self.height = round(player_settings['height'] * re_size) - 1
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.images = False
+        self.images = {}
         self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
         self.rect = self.image.get_rect(topleft=pos)
         self.direction = pygame.math.Vector2(0, 0)
@@ -263,7 +265,6 @@ class Player_map_parkour(pygame.sprite.Sprite):
         self.width = round(64 * re_size) - 14
         self.height = round(64 * re_size) - 14
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        # self.image.fill((255, 255, 255, 0))
         self.images = False
         if player_settings['animations'] is None:
             self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
