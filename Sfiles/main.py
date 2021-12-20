@@ -26,7 +26,7 @@ def draw_cursor(sc):
 def sleeper():
     global sleeper_status
     sleeper_status = False
-    sleep(300)
+    sleep(3)
     sleeper_status = True
 
 
@@ -77,8 +77,9 @@ def main_game(server_player, network, player_main):
         screen.fill((0, 0, 0))
 
         level.run()
-        pygame.display.update()
         draw_cursor(screen)
+
+        pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

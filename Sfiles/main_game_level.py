@@ -84,6 +84,11 @@ class LevelG:
                     sprite.kill()
             sprite.move()
 
+    def ESettings(self):
+        for sprite in self.player_sprite.attacksE:
+            sprite.rect.midbottom = self.player_sprite.rect.midbottom
+            sprite.run_attackE()
+
     def run(self):
         self.tiles.draw(self.display_surface)
         self.update_enemy_pos()
@@ -95,5 +100,9 @@ class LevelG:
         self.player.update()
         self.player.draw(self.display_surface)
         self.enemy.draw(self.display_surface)
-        self.player_sprite.bullets.draw(self.display_surface)
-        self.bullets_settings()
+
+        if self.player_sprite.name == 'Hero1':
+            self.player_sprite.bullets.draw(self.display_surface)
+            self.player_sprite.attacksE.draw(self.display_surface)
+            self.ESettings()
+            self.bullets_settings()
