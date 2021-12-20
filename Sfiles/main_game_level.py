@@ -77,6 +77,13 @@ class LevelG:
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
 
+    def bullets_settings(self):
+        for sprite in self.player_sprite.bullets.sprites():
+            for tile in self.tiles.sprites():
+                if tile.rect.collidepoint(sprite.rect.center):
+                    sprite.kill()
+            sprite.move()
+
     def run(self):
         self.tiles.draw(self.display_surface)
         self.update_enemy_pos()
@@ -88,3 +95,5 @@ class LevelG:
         self.player.update()
         self.player.draw(self.display_surface)
         self.enemy.draw(self.display_surface)
+        self.player_sprite.bullets.draw(self.display_surface)
+        self.bullets_settings()

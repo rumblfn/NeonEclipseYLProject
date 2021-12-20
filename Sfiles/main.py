@@ -1,17 +1,18 @@
+from dataConsts import *
+import pygame.mixer_music
+from main_game_level import *
 import sys
+import datetime
 
 import pygame.mixer_music
 from pygame.locals import *
-from dataConsts import *
 from network import Network
 from time import sleep
 from _thread import start_new_thread
-from player import Player_map_preparation
-from tiles import Tile
 from level import Level
+from level_parkour import LevelParkour
 from map_preparation_settings import *
-from main_game_level import *
-from enemyClass import Enemy
+from map_parkour_settings import *
 
 
 def draw_cursor(sc):
@@ -25,7 +26,7 @@ def draw_cursor(sc):
 def sleeper():
     global sleeper_status
     sleeper_status = False
-    sleep(3)
+    sleep(300)
     sleeper_status = True
 
 
@@ -77,6 +78,7 @@ def main_game(server_player, network, player_main):
 
         level.run()
         pygame.display.update()
+        draw_cursor(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -95,36 +97,68 @@ def map_preparation(player, network, player_settings):
     level = Level(level1_map, screen, player_settings)
     start_new_thread(sleeper, ())
 
-    def portalParkourMap(sc, player_parkour):
+    def portalParkourMap(sc, player_parkour, to_print):
+
+        def info_text_parkour():
+            text = 'Press Esc to return to the spawn point'
+            newFont = pygame.font.SysFont('SFCompact', 75)
+            txt_surf = newFont.render(text, False, (255, 183, 0))
+            sc.blit(txt_surf, (WIDTH // 5, HEIGHT // 2 - 35))
+
         runParkourMap = True
+        level_p = LevelParkour(level_parkour_map, screen, player_settings)
+        count = 0
         while runParkourMap:
-            sc.fill((244, 1, 32))
+            sc.fill((255, 255, 255))
+            bgMapPreparation.draw()
+            level_p.run()
+            count += 1
+            if to_print:
+                info_text_parkour()
+                if count == 150:
+                    to_print = False
             pygame.display.update()
             for e in pygame.event.get():
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
-                        runParkourMap = False
-                        level.portalParkour = False
+                        portalParkourMap(sc, player_parkour, False)
+                    level_p.check_fall = False
+                if level_p.portalParkour:
+                    map_preparation(player, network, player_settings)
             if sleeper_status:
                 runParkourMap = False
+            if level_p.check_fall:
+                portalParkourMap(sc, player_parkour, False)
+            if level_p.gold_taken:
+                level_p.take_gold()
+                level_p.gold_taken = False
+            if level_p.arrow_works:
+                level_p.raise_player()
+                level_p.arrow_works = False
+            if level_p.in_web:
+                level_p.web_work(True)
+            if not level_p.in_web:
+                level_p.web_work(False)
+            if level_p.ready_bridge:
+                cur = datetime.datetime.now().time().second
+                finish_time = cur + 8
+                level_p.build_bridge(finish_time, cur)
+            if level_p.build_bird:
+                level_p.make_bird()
+            if not level_p.build_bird:
+                level_p.crush_bird()
             clock.tick(60)
 
     while run:
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/preparation_map.mp3')
-            pygame.mixer.music.play(loops=2)
+            pygame.mixer.music.play()
         if sleeper_status:
             pygame.mixer.music.stop()
             main_game(player, network, level.player_sprite)
-        # screen.fill('#fefec2')  # '#fefec2'
         bgMapPreparation.draw()
-        # player.move()
         level.run()
-        # player.draw(screen)
         draw_cursor(screen)
-        if pygame.mouse.get_pressed()[0]:
-            if level.player.sprite.shoot_bool >= 1 and level.player.sprite.name == 'Hero1':
-                level.bullets.add(level.player.sprite.create_bullet())
 
         pygame.display.update()
         for event in pygame.event.get():
@@ -136,7 +170,7 @@ def map_preparation(player, network, player_settings):
                 sys.exit()
         if level.portalParkour:
             pygame.mixer.music.stop()
-            portalParkourMap(screen, level.player)
+            portalParkourMap(screen, level.player, True)
         clock.tick(60)
 
 
@@ -180,7 +214,6 @@ def main_menu():
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/menu.mp3')
             pygame.mixer.music.play()
-            pygame.mixer_music.set_volume(0)
         screen.fill((0, 0, 0))
         bgMenu.draw_with_mouse_pos(WIDTH, HEIGHT)
         draw_button(screen, imageButtonStartGame, 0, player, network)
@@ -208,6 +241,7 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 menuWidgetElector.change_image(('mouse', event))
                 menuWidgetScreenSize.change_size()
+                menuWidgetSlider.check_click_onslider()
 
         w, h = pygame.display.Info().current_w, pygame.display.Info().current_h
         if w != WIDTH or h != HEIGHT:
@@ -215,6 +249,10 @@ def main_menu():
                 w, h = WI, HE
                 pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
             change_objects(w, h)
+        if bool(menuWidgetSlider.vol_changed):
+            print(menuWidgetSlider.vol_changed)
+            pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
+            menuWidgetSlider.vol_changed = None
         clock.tick(60)
 
 

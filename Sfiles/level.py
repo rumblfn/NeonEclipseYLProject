@@ -27,7 +27,6 @@ class Level:
         self.player = pygame.sprite.GroupSingle()
         self.portals = pygame.sprite.Group()
         self.npces = pygame.sprite.Group()
-        self.bullets = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level1_map)
 
@@ -109,13 +108,6 @@ class Level:
             if sprite.rect.colliderect(player.rect):
                 sprite.show_msg()
 
-    def bullets_settings(self):
-        for sprite in self.bullets.sprites():
-            for tile in self.tiles.sprites():
-                if tile.rect.collidepoint(sprite.rect.center):
-                    sprite.kill()
-            sprite.move()
-
     def horizontal_movement_collisions(self):
         player = self.player.sprite
         player.rect.x += player.direction.x * player.speed
@@ -143,6 +135,13 @@ class Level:
                     player.direction.y = -0.01
                     # player.direction.y = 0  # feature
 
+    def bullets_settings(self):
+        for sprite in self.player_sprite.bullets.sprites():
+            for tile in self.tiles.sprites():
+                if tile.rect.collidepoint(sprite.rect.center):
+                    sprite.kill()
+            sprite.move()
+
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
@@ -167,6 +166,10 @@ class Level:
         self.npc_collisions()
         self.player.draw(self.display_surface)
 
-        self.bullets.update((self.world_shift_x, self.world_shift_y))
-        self.bullets.draw(self.display_surface)
+        self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))
+        self.player_sprite.bullets.draw(self.display_surface)
+        self.player_sprite.attacksE.update((self.world_shift_x, self.world_shift_y))
+        self.player_sprite.attacksE.draw(self.display_surface)
+        for sprite in self.player_sprite.attacksE:
+            sprite.run_attackE()
         self.bullets_settings()

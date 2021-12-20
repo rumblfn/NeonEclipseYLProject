@@ -2,9 +2,6 @@ import pygame
 import random
 from map_preparation_settings import level1_map
 
-# block1 = pygame.image.load('static/Bg.png')
-# block2 = pygame.image.load('static/Bg1.png')
-# block3 = pygame.image.load('static/Bg1-1.png')
 h = pygame.display.Info().current_h
 res = h // len(level1_map)
 portal_res = round((82 / 900) * h)
@@ -16,17 +13,28 @@ blockLeft = pygame.transform.scale(pygame.image.load('static/map_preparation_blo
 blockTop = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockTop.png'), (res, res))
 blockRight = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockRight.png'), (res, res))
 blockBottom = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockBottom.png'), (res, res))
-blockLeftTop = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockLeftRight.png'), (res, res))
-blockTopRight = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockTopRight.png'), (res, res))
-blockRightBottom = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockRightBottom.png'), (res, res))
-blockBottomLeft = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockLeftBottom.png'), (res, res))
-blockTopBottom = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockBottomTop.png'), (res, res))
-blockTopLeftBottom = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockBottomLeftTop.png'), (res, res))
-blockTopRightBottom = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockBottomRightTop.png'), (res, res))
-blockBorders = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockBorders.png'), (res, res))
-blockLeftTopRight = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockLeftTopRight.png'), (res, res))
-blockRightLeft = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/BlockRightLeft.png'), (res, res))
-blockLeftBottomRight = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockLeftBottomRightt.png'), (res, res))
+blockLeftTop = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockLeftRight.png'),
+                                          (res, res))
+blockTopRight = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockTopRight.png'),
+                                           (res, res))
+blockRightBottom = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockRightBottom.png'),
+                                              (res, res))
+blockBottomLeft = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockLeftBottom.png'),
+                                             (res, res))
+blockTopBottom = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockBottomTop.png'),
+                                            (res, res))
+blockTopLeftBottom = pygame.transform.scale(
+        pygame.image.load('static/map_preparation_blocks/blockBottomLeftTop.png'), (res, res))
+blockTopRightBottom = pygame.transform.scale(
+        pygame.image.load('static/map_preparation_blocks/blockBottomRightTop.png'), (res, res))
+blockBorders = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockBorders.png'),
+                                          (res, res))
+blockLeftTopRight = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockLeftTopRight.png'),
+                                               (res, res))
+blockRightLeft = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/BlockRightLeft.png'),
+                                            (res, res))
+blockLeftBottomRight = pygame.transform.scale(
+        pygame.image.load('static/map_preparation_blocks/blockLeftBottomRightt.png'), (res, res))
 block = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/block.png'), (res, res))
 
 windowBlock1 = pygame.transform.scale(pygame.image.load('static/WindowBlock.png'), (res, res))
@@ -35,9 +43,11 @@ windowBlock3 = pygame.transform.scale(pygame.image.load('static/WindowBlock3.png
 windowBlock4 = pygame.transform.scale(pygame.image.load('static/WindowBlock4.png'), (res, res))
 windowBlock5 = pygame.transform.scale(pygame.image.load('static/WindowBlock5.png'), (res, res))
 windowBlock6 = pygame.transform.scale(pygame.image.load('static/WindowBlock6.png'), (res, res))
-windowBlock7 = pygame.transform.scale(pygame.image.load('static/window_transparent.png').convert_alpha(), (res, res))
+windowBlock7 = pygame.transform.scale(pygame.image.load('static/window_transparent.png').convert_alpha(),
+                                          (res, res))
 
-portalImage = pygame.transform.scale(pygame.image.load('static/portal_door_blue.png').convert_alpha(), (portal_res_x, portal_res))
+portalImage = pygame.transform.scale(pygame.image.load('static/portal_door_blue.png').convert_alpha(),
+                                         (portal_res_x, portal_res))
 lst_of_windows = [windowBlock1, windowBlock2, windowBlock3, windowBlock4, windowBlock5, windowBlock6, windowBlock7]
 bgTile = pygame.transform.scale(pygame.image.load('static/bgTiles.png'), (res, res))
 

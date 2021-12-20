@@ -3,6 +3,8 @@ import pygame
 
 class ElectorWindow:
     def __init__(self, sc, font, obj, w, h):
+        self.w = w
+        self.h = h
         self.X_LEFT_TOP = round(0.066 * w)
         self.Y_LEFT_TOP = round((86 / 750) * h)
         self.X_RIGHT_BOT = round(0.498 * w)
@@ -35,6 +37,8 @@ class ElectorWindow:
         self.titleSurface = font.render('Choose your hero', True, self.textAndBlockColor)
 
     def draw_widget(self):
+        self.w = pygame.display.Info().current_w
+        self.h = pygame.display.Info().current_h
         mx, my = pygame.mouse.get_pos()
         rectHoverRect = pygame.Rect(self.X_LEFT_TOP + 2, self.Y_LEFT_TOP + 2, self.WIDGET_WIDTH - 4,
                                     self.WIDGET_HEIGHT - 4)
@@ -51,12 +55,13 @@ class ElectorWindow:
         self.draw_image_block(self.heroes[-1]['imagePreviewBig'])
 
     def draw_arrows(self):
-        arr_left = pygame.Surface((self.ARROW_WIDTH, self.ARROW_HEIGHT))
+        arr_left = pygame.Surface((self.ARROW_WIDTH * self.w // 1536, self.ARROW_HEIGHT * self.h // 864))
         img_l = pygame.image.load('static/leftArrow.png')
         arr_left.blit(img_l, (0, 0))
         self.btl = pygame.draw.rect(self.screen, self.borderColor,
-                                    (self.ARROW_LEFT_X1, self.ARROW_LEFT_Y1, self.ARROW_WIDTH, self.ARROW_HEIGHT))
-        self.screen.blit(arr_left, (self.ARROW_LEFT_X1, self.ARROW_LEFT_Y1))
+                                    (self.ARROW_LEFT_X1 * self.w // 1536, self.ARROW_LEFT_Y1 * self.h // 864,
+                                     self.ARROW_WIDTH * self.w // 1536, self.ARROW_HEIGHT * self.h // 864))
+        self.screen.blit(arr_left, (self.ARROW_LEFT_X1 * self.w // 1536, self.ARROW_LEFT_Y1 * self.h // 864))
 
         arr_right = pygame.Surface((self.ARROW_WIDTH, self.ARROW_HEIGHT), 1)
         img_r = pygame.image.load('static/rightArrow.png')

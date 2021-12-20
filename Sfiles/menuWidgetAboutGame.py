@@ -14,7 +14,7 @@ class AboutGameWindow:
         self.textColor = (213, 255, 158)
         self.titleSurface = font.render(obj['titleText'], False, self.textColor)
         text = 'Neon Eclipses is an online game that can be played from the same network'
-        newFont = pygame.font.SysFont('SFCompact', 19)
+        newFont = pygame.font.SysFont('SFCompact', round(25 * self.widgetWidth / 808))
         self.mainTextSurface = newFont.render(text, False, (255, 183, 0))
         self.screen = sc
 
