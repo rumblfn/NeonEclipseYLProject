@@ -148,6 +148,14 @@ def map_preparation(player, network, player_settings):
                 level_p.make_bird()
             if not level_p.build_bird:
                 level_p.crush_bird()
+            if level_p.is_invisible:
+                level_p.invisible_on()
+            if not level_p.is_invisible:
+                level_p.invisible_off()
+            if level_p.is_resizable:
+                level_p.resizer_on()
+            if not level_p.is_resizable:
+                level_p.resizer_off()
             clock.tick(60)
 
     while run:

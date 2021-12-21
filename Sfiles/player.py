@@ -1,5 +1,6 @@
 import pygame
 from pygame.constants import *
+import random
 
 try:
     from CBullet import Bullet
@@ -261,11 +262,15 @@ class Player_map_parkour(pygame.sprite.Sprite):
 
         from map_parkour_settings import level_parkour_map
 
-        re_size = (HEIGHT / len(level_parkour_map)) / 64
-        re_size_h = (HEIGHT / len(level_parkour_map)) / player_settings['height']
-        re_size_w = (HEIGHT / len(level_parkour_map)) / player_settings['width']
-        self.width = round(player_settings['width'] * re_size_w) - round(14 * re_size_w)
-        self.height = round(player_settings['height'] * re_size_h) - round(14 * re_size_h)
+        self.lvl = level_parkour_map
+        self.settings = player_settings
+
+        re_size = (HEIGHT / len(self.lvl)) / 64
+        re_size_h = (HEIGHT / len(self.lvl)) / self.settings['height']
+        re_size_w = (HEIGHT / len(self.lvl)) / self.settings['width']
+        self.start_height = HEIGHT
+        self.width = round(self.settings['width'] * re_size_w) - round(14 * re_size_w)
+        self.height = round(self.settings['height'] * re_size_h) - round(14 * re_size_h)
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         self.images = False
         if player_settings['animations'] is None:
@@ -278,6 +283,7 @@ class Player_map_parkour(pygame.sprite.Sprite):
                     image = pygame.transform.scale(pygame.image.load(f'{player_settings["animations"][el]}{i}.png').convert_alpha(), (self.width, self.height))
                     self.images[el].append(image)
             self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
+        self.start_img = self.image
         self.rect = self.image.get_rect(topleft=pos)
 
         self.direction = pygame.math.Vector2(0, 0)
@@ -287,6 +293,8 @@ class Player_map_parkour(pygame.sprite.Sprite):
         self.jump_speed = -18 * HEIGHT / 900
         self.jump_bool = True
         self.bird_mode = False
+        self.invis_mode = False
+        self.resize_helper = 0
 
         self.shoot_bool = 1
 
@@ -306,7 +314,10 @@ class Player_map_parkour(pygame.sprite.Sprite):
                 self.direction.x = 1
             if self.images:
                 self.image.fill((0, 0, 0, 0))
-                self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
+                if self.invis_mode:
+                    self.image.fill((255, 255, 255, 0))
+                else:
+                    self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
         elif keys[pygame.K_a]:
             if self.bird_mode:
                 self.direction.x = -0.4
@@ -314,7 +325,10 @@ class Player_map_parkour(pygame.sprite.Sprite):
                 self.direction.x = -1
             if self.images:
                 self.image.fill((0, 0, 0, 0))
-                self.image.blit(self.images['left_walk'][int(self.current_sprite)], (0, 0))
+                if self.invis_mode:
+                    self.image.fill((255, 255, 255, 0))
+                else:
+                    self.image.blit(self.images['left_walk'][int(self.current_sprite)], (0, 0))
         else:
             self.direction.x = 0
 
@@ -368,4 +382,36 @@ class Player_map_parkour(pygame.sprite.Sprite):
                 self.speed = round(7 * pygame.display.Info().current_w / 1440)
                 self.gravity = 0.8 * pygame.display.Info().current_h / 900
                 self.jump_speed = -18 * pygame.display.Info().current_h / 900
+
+    def resize(self, arg):
+        if arg:
+            self.resize_helper += 1
+            if self.resize_helper % 50 == 0:
+                x, y = self.rect.x, self.rect.y
+                w = random.randint(18, 60)
+                h = random.randint(18, 60)
+                self.width = w
+                self.height = h
+                self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+                self.images = False
+                if self.settings['animations'] is None:
+                    self.image.blit(pygame.transform.scale(self.settings['imagePreview'], (self.width, self.height)),
+                                    (0, 0))
+                else:
+                    self.images = {}
+                    for el in self.settings['animations'].keys():
+                        self.images[el] = []
+                        for i in range(1, 15):
+                            image = pygame.transform.scale(
+                                pygame.image.load(f'{self.settings["animations"][el]}{i}.png').convert_alpha(),
+                                (self.width, self.height))
+                            self.images[el].append(image)
+                    self.image.blit(pygame.transform.scale(self.settings['imagePreview'], (self.width, self.height)),
+                                    (0, 0))
+                self.rect = self.image.get_rect(topleft=(x, y))
+            else:
+                pass
+        else:
+            pass
+            # TODO: при выключении resizer возвращать нормальный вид
 
