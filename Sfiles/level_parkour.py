@@ -1,6 +1,6 @@
 import pygame
 
-from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird
+from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird, KeysAndDoors
 from map_parkour_settings import level_parkour_map, gold_max
 from player import Player_map_parkour
 
@@ -44,6 +44,7 @@ class LevelParkour:
         self.webs = pygame.sprite.Group()
         self.bridge = pygame.sprite.Group()
         self.bird = pygame.sprite.Group()
+        self.items = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level_parkour_map)
         self.tile_size = tile_size
@@ -103,6 +104,9 @@ class LevelParkour:
                 elif cell == 'g':
                     tile = Gold((col_index, row_index), tile_size, cell)
                     self.golds.add(tile)
+                elif cell in 'йцукенгшщолджэячсм':
+                    item = KeysAndDoors((col_index, row_index), tile_size, cell)
+                    self.items.add(item)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map, self.player_col)
                     self.tiles.add(tile)
@@ -365,6 +369,9 @@ class LevelParkour:
 
         self.bird.update((self.world_shift_x, self.world_shift_y))
         self.bird.draw(self.display_surface)
+
+        self.items.update((self.world_shift_x, self.world_shift_y))
+        self.items.draw(self.display_surface)
 
         self.scroll_x()
         self.player.update()
