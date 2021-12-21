@@ -262,8 +262,10 @@ class Player_map_parkour(pygame.sprite.Sprite):
         from map_parkour_settings import level_parkour_map
 
         re_size = (HEIGHT / len(level_parkour_map)) / 64
-        self.width = round(64 * re_size) - 14
-        self.height = round(64 * re_size) - 14
+        re_size_h = (HEIGHT / len(level_parkour_map)) / player_settings['height']
+        re_size_w = (HEIGHT / len(level_parkour_map)) / player_settings['width']
+        self.width = round(player_settings['width'] * re_size_w) - round(14 * re_size_w)
+        self.height = round(player_settings['height'] * re_size_h) - round(14 * re_size_h)
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         self.images = False
         if player_settings['animations'] is None:
