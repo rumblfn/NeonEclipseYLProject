@@ -52,7 +52,9 @@ HEROES = [
             'right_walk': 'static/hero1animations/rightWalkImages/rightwalk',  # + 14 + $ 1...2...14 + .png
             'left_walk': 'static/hero1animations/leftWalkImages/leftwalk',
             'right_jump': 'static/hero1animations/rightjump/rightjump',
-            'left_jump': 'static/hero1animations/leftjump/leftjump'
+            'left_jump': 'static/hero1animations/leftjump/leftjump',
+            'q_right_animation': 'static/hero1animations/atackQ/rightQ/Q',
+            'q_left_animation': 'static/hero1animations/atackQ/leftQ/Q'
         }
     },
     {

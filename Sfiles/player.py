@@ -34,6 +34,11 @@ class Player_hero1(pygame.sprite.Sprite):
         self.attacksEBool = 300
         self.current_sprite = 0
 
+        self.Q_ACTIVE = False
+        self.Q_ACTIVE_TIMER = 600
+        self.q_side = 'q_right_animation'
+        self.Q_SLEEPER = self.Q_ACTIVE_TIMER * 3
+
         re_size = (HEIGHT / len(level1_map)) / 64
         self.width = round(player_settings['width'] * re_size) - 1
         self.height = round(player_settings['height'] * re_size) - 1
@@ -59,6 +64,7 @@ class Player_hero1(pygame.sprite.Sprite):
         self.shoot_bool = 1
 
     def get_input(self):
+        self.Q_SLEEPER += 1
         self.current_sprite += 0.25
         keys = pygame.key.get_pressed()
 
@@ -67,14 +73,25 @@ class Player_hero1(pygame.sprite.Sprite):
         else:
             self.K_x = False
 
+        if self.Q_ACTIVE:
+            self.Q_ACTIVE_TIMER += 1
+            self.image.fill((0, 0, 0, 0))
+            self.image.blit(self.images[self.q_side][int(self.current_sprite)], (0, 0))
+            if self.Q_ACTIVE_TIMER >= 600:
+                self.Q_ACTIVE = False
+                self.image.fill((0, 0, 0, 0))
+                self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
+
         if keys[pygame.K_d]:
             self.direction.x = 1
-            if self.images:
+            self.q_side = 'q_right_animation'
+            if not self.Q_ACTIVE:
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
         elif keys[pygame.K_a]:
             self.direction.x = -1
-            if self.images:
+            self.q_side = 'q_left_animation'
+            if not self.Q_ACTIVE:
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['left_walk'][int(self.current_sprite)], (0, 0))
         else:
@@ -93,6 +110,12 @@ class Player_hero1(pygame.sprite.Sprite):
             if self.attacksEBool >= 300:
                 self.attacksE.add(Hero1AtackE(self.rect.midbottom))
                 self.attacksEBool = 0
+        if keys[pygame.K_q]:
+            if self.Q_SLEEPER >= 1800:
+                self.Q_ACTIVE = True
+                self.Q_ACTIVE_TIMER = 0
+                self.current_sprite = 0
+                self.Q_SLEEPER = 0
 
         if self.current_sprite >= 13:
             self.current_sprite = 0
@@ -262,8 +285,10 @@ class Player_map_parkour(pygame.sprite.Sprite):
         from map_parkour_settings import level_parkour_map
 
         re_size = (HEIGHT / len(level_parkour_map)) / 64
-        self.width = round(64 * re_size) - 14
-        self.height = round(64 * re_size) - 14
+        re_size_h = (HEIGHT / len(level_parkour_map)) / player_settings['height']
+        re_size_w = (HEIGHT / len(level_parkour_map)) / player_settings['width']
+        self.width = round(player_settings['width'] * re_size_w) - round(14 * re_size_w)
+        self.height = round(player_settings['height'] * re_size_h) - round(14 * re_size_h)
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         self.images = False
         if player_settings['animations'] is None:

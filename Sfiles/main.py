@@ -203,6 +203,12 @@ def change_objects(w, h):
     menuWidgetScreenSize = ScreenSizeWindow(screen, font, w, h)
     menuWidgetSlider = SliderWindow(screen, w, h)
     WIDTH, HEIGHT = w, h
+    if bool(menuWidgetSlider.vol_changed):
+        if menuWidgetSlider.vol_changed == 1:
+            pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed - 1)
+        else:
+            pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
+        menuWidgetSlider.vol_changed = None
 
 
 def main_menu():
@@ -243,6 +249,7 @@ def main_menu():
                 menuWidgetElector.change_image(('mouse', event))
                 menuWidgetScreenSize.change_size()
                 menuWidgetSlider.check_click_onslider()
+                menuWidgetSlider.check_sound_off()
 
         w, h = pygame.display.Info().current_w, pygame.display.Info().current_h
         if w != WIDTH or h != HEIGHT:
@@ -251,8 +258,10 @@ def main_menu():
                 pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
             change_objects(w, h)
         if bool(menuWidgetSlider.vol_changed):
-            print(menuWidgetSlider.vol_changed)
-            pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
+            if menuWidgetSlider.vol_changed == 1:
+                pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed - 1)
+            else:
+                pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
             menuWidgetSlider.vol_changed = None
         clock.tick(60)
 
