@@ -1,9 +1,11 @@
+from dataConsts import *
+import pygame.mixer_music
+from main_game_level import *
 import sys
 import datetime
 
 import pygame.mixer_music
 from pygame.locals import *
-from dataConsts import *
 from network import Network
 from time import sleep
 from _thread import start_new_thread
@@ -24,7 +26,7 @@ def draw_cursor(sc):
 def sleeper():
     global sleeper_status
     sleeper_status = False
-    sleep(420)
+    sleep(300)
     sleeper_status = True
 
 
@@ -42,7 +44,7 @@ def draw_button(sc, image, pos_y_diff, player, network):
                 if hero['selected']:
                     player.ready = True
                     pygame.mixer.music.stop()
-                    waitingForConnection(hero, player, network, hero)
+                    waitingForConnection(player, network, hero)
     sc.blit(surf, (x_lef_top, y_left_top))
 
 
@@ -52,11 +54,33 @@ def redrawWindow(win, player, player2):
 
 
 def main_game(server_player, network, player_main):
+    def update_server_player_pos():
+        server_player.x = WIDTH // 2
+        server_player.y = HEIGHT // 2
+
+    def server_player_settings():
+        server_player.name = player_main.name
+        server_player.power = player_main.power
+        server_player.maxHp = player_main.maxHp
+        server_player.width = player_main.width
+        server_player.height = player_main.height
+
     run = True
+    update_server_player_pos()
+    server_player_settings()
+    player_enemy = network.send(server_player)
+    sleep(0.5)
+    player_enemy = network.send(server_player)
+    level = LevelG(map, screen, player_main, player_enemy, network, server_player)
+
     while run:
-        player2 = network.send(server_player)
-        redrawWindow(screen, server_player, player2)
+        screen.fill((0, 0, 0))
+
+        level.run()
+        draw_cursor(screen)
+
         pygame.display.update()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -71,7 +95,6 @@ def map_preparation(player, network, player_settings):
     run = True
     player.x = WIDTH // 4
     player.y = round(HEIGHT * (2 / 3))
-    player.vel = 8
     level = Level(level1_map, screen, player_settings)
     start_new_thread(sleeper, ())
 
@@ -134,15 +157,9 @@ def map_preparation(player, network, player_settings):
         if sleeper_status:
             pygame.mixer.music.stop()
             main_game(player, network, level.player_sprite)
-        # screen.fill('#fefec2')  # '#fefec2'
         bgMapPreparation.draw()
-        # player.move()
         level.run()
-        # player.draw(screen)
         draw_cursor(screen)
-        if pygame.mouse.get_pressed()[0]:
-            if level.player.sprite.shoot_bool >= 1 and level.player.sprite.name == 'Hero1':
-                level.bullets.add(level.player.sprite.create_bullet())
 
         pygame.display.update()
         for event in pygame.event.get():
@@ -190,7 +207,6 @@ def change_objects(w, h):
 
 def main_menu():
     pygame.init()
-    print(pygame.display.Info())
     run = True
     network = Network()
     player = network.getP()
@@ -241,17 +257,14 @@ def main_menu():
         clock.tick(60)
 
 
-def waitingForConnection(character, player, network, player_settings):
+def waitingForConnection(player, network, player_settings):
     run = True
     waitingText = font.render('Waiting for a connection', False, (0, 255, 0))
     top_menu_text_pos_x = 10
 
-    # nez_image = pygame.image.load('static/nezuko-pixel-art.jpeg')
-
     while run:
         player2 = network.send(player)
         screen.fill((0, 0, 0))
-        # screen.blit(nez_image, (0, 0))
         screen.blit(waitingText, (top_menu_text_pos_x, top_menu_text_pos_x))
         pygame.display.flip()
 

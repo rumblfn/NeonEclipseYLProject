@@ -1,15 +1,15 @@
 import pygame
 import math
 
-
-bullet_image = pygame.transform.scale(pygame.image.load('static/Harchok.png').convert_alpha(), (32, 32))
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+size = 24 * WIDTH // 1440
+bullet_image = pygame.transform.scale(pygame.image.load('static/Harchok.png').convert_alpha(), (size, size))
 
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
-        self.image = pygame.Surface((32, 32), pygame.SRCALPHA)
+        self.image = pygame.Surface((size, size), pygame.SRCALPHA)
         self.image.blit(bullet_image, (0, 0))
         self.rect = self.image.get_rect(center=pos)
         self.speed = 10

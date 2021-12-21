@@ -1,7 +1,7 @@
 import pygame
 from tiles import Tile, Portal
 from map_preparation_settings import tile_size, level1_map
-from player import Player_map_preparation
+from player import Player_hero1, Player_hero2, Player_hero3
 from NPC import Class_npc
 from dataConsts import bgMapPreparation
 
@@ -13,42 +13,70 @@ class Level:
         self.player_settings = player_settings
         self.width = pygame.display.Info().current_w
         self.height = pygame.display.Info().current_h
+        self.player_col = 0
+        self.pos_x = 0
         self.setup_level(level_data)
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
 
-    def setup_level(self, layout):
+    def setup_level(self, layout, default_player=False):
+        self.all_sprites = pygame.sprite.Group()
         self.tiles = pygame.sprite.Group()
         self.decoration = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         self.portals = pygame.sprite.Group()
         self.npces = pygame.sprite.Group()
-        self.bullets = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level1_map)
 
         for row_index, row in enumerate(layout):
             for col_index, cell in enumerate(row):
+                if cell == 'P':
+                    self.player_col = col_index // 2
+                    break
+            if self.player_col != 0:
+                break
+
+        for row_index, row in enumerate(layout):
+            for col_index, cell in enumerate(row):
+                col_index -= self.player_col
                 x = col_index * tile_size
                 y = row_index * tile_size
                 # tile = Tile((col_index, row_index), tile_size, 'bg', level1_map)
                 # self.decoration.add(tile)
                 if cell == 'P':
-                    self.player_sprite = Player_map_preparation((x, y), self.player_settings)
-                    self.player.add(self.player_sprite)
+                    if not default_player:
+                        if self.player_settings['name'] == 'Hero1':
+                            self.player_sprite = Player_hero1((x, y), self.player_settings)
+                        elif self.player_settings['name'] == 'Hero2':
+                            self.player_sprite = Player_hero2((x, y), self.player_settings)
+                        elif self.player_settings['name'] == 'Hero3':
+                            self.player_sprite = Player_hero3((x, y), self.player_settings)
+                        self.player.add(self.player_sprite)
+                        self.all_sprites.add(self.player_sprite)
+                    else:
+                        pos = default_player.started_pos
+                        default_player.rect = default_player.image.get_rect(topleft=(pos[0], pos[1] - 300))
+                        self.player_sprite = default_player
+                        self.player.add(self.player_sprite)
+                        self.all_sprites.add(self.player_sprite)
                 elif cell == 'u':
                     portal = Portal((x, y))
                     self.portals.add(portal)
+                    self.all_sprites.add(portal)
                 elif cell == 'N':
                     npc = Class_npc((x, y), len(self.npces.sprites()), self.display_surface)
                     self.npces.add(npc)
+                    self.all_sprites.add(npc)
                 elif cell == 'п' or cell == 'П':
-                    tile = Tile((col_index, row_index), tile_size, cell, level1_map)
+                    tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.decoration.add(tile)
+                    self.all_sprites.add(tile)
                 elif cell != ' ':
-                    tile = Tile((col_index, row_index), tile_size, cell, level1_map)
+                    tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.tiles.add(tile)
+                    self.all_sprites.add(tile)
 
     def check_portals(self):
         player = self.player.sprite
@@ -73,19 +101,17 @@ class Level:
             self.world_shift_x = 0
             player.speed = player.control_speed
 
+    def player_pos_checker(self):
+        player = self.player_sprite
+        if player.rect.y > self.height + 300 or player.rect.y < - 300:
+            self.setup_level(self.level_data, self.player_sprite)
+
     def npc_collisions(self):
         player = self.player.sprite
 
         for sprite in self.npces.sprites():
             if sprite.rect.colliderect(player.rect):
                 sprite.show_msg()
-
-    def bullets_settings(self):
-        for sprite in self.bullets.sprites():
-            for tile in self.tiles.sprites():
-                if tile.rect.collidepoint(sprite.rect.center):
-                    sprite.kill()
-            sprite.move()
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -114,6 +140,18 @@ class Level:
                     player.direction.y = -0.01
                     # player.direction.y = 0  # feature
 
+    def bullets_settings(self):
+        for sprite in self.player_sprite.bullets.sprites():
+            for tile in self.tiles.sprites():
+                if tile.rect.collidepoint(sprite.rect.center):
+                    sprite.kill()
+            sprite.move()
+
+    def ESettings(self):
+        for sprite in self.player_sprite.attacksE:
+            sprite.rect.midbottom = self.player_sprite.rect.midbottom
+            sprite.run_attackE()
+
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
@@ -131,12 +169,17 @@ class Level:
         self.scroll_x()
 
         self.player.update()
+        self.player_pos_checker()
         self.check_portals()
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
         self.npc_collisions()
         self.player.draw(self.display_surface)
 
-        self.bullets.update((self.world_shift_x, self.world_shift_y))
-        self.bullets.draw(self.display_surface)
-        self.bullets_settings()
+        if self.player_sprite.name == 'Hero1':
+            self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))
+            self.player_sprite.bullets.draw(self.display_surface)
+            self.player_sprite.attacksE.update((self.world_shift_x, self.world_shift_y))
+            self.player_sprite.attacksE.draw(self.display_surface)
+            self.ESettings()
+            self.bullets_settings()

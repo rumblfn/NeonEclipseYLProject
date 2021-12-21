@@ -7,9 +7,6 @@ from menuWidgetSetScreen import ScreenSizeWindow
 from menuWidgetSlider import SliderWindow
 from backgtoundClasses import *
 
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Neon eclipse")
 pygame.font.init()
@@ -20,8 +17,6 @@ WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 WI, HE = WIDTH, HEIGHT
 clock = pygame.time.Clock()
 
-# imageButtonStartHost = pygame.image.load('static/startHost.png')
-# imageButtonJoinHost = pygame.image.load('static/JoinHostt.png')
 imageButtonStartGame = pygame.image.load('static/StartGame.png')
 buttonStartGameWidth = imageButtonStartGame.get_width()
 buttonStartGameHeight = imageButtonStartGame.get_height()
@@ -29,7 +24,6 @@ buttonStartGameHeight = imageButtonStartGame.get_height()
 background_menu = pygame.image.load('static/Bg-straight-echo.png')
 background_map_preparation_with_opacity = pygame.transform.scale(pygame.image.load('static/bg21920x2176.png'),
                                                                  (3840, 4352))
-
 
 imageCursorNormal = pygame.image.load('static/Cursor_normal.png')
 imageCursorClicked = pygame.image.load('static/Cursor_Clicked.png')
