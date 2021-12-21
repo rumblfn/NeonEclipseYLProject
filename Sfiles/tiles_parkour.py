@@ -285,6 +285,7 @@ class KeysAndDoors(pygame.sprite.Sprite):
     def __init__(self, pos, size, cell):
         super().__init__()
         self.cell = cell
+        self.size = size
         if cell == 'й':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(close_door_pink, (0, 0))
@@ -321,79 +322,75 @@ class KeysAndDoors(pygame.sprite.Sprite):
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(close_door_yellow, (0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'з':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.blit(open_door_pink, (0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'х':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.blit(open_door_white, (0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'ъ':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.blit(open_door_violet, (0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'ф':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.blit(open_door_orange, (0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'ы':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.blit(open_door_blue, (0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'в':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.blit(open_door_black, (0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'а':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.blit(open_door_green, (0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'ю':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.blit(open_door_red, (0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'р':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.blit(open_door_yellow, (0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'о':
+        if cell == 'Й':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(key_pink, (0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'л':
+        if cell == 'Ц':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(key_white, (0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'д':
+        if cell == 'У':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(key_violet, (0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'ж':
+        if cell == 'К':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(key_orange, (0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'э':
+        if cell == 'Е':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(key_blue, (0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'я':
+        if cell == 'Н':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(key_black, (0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'ч':
+        if cell == 'Г':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(key_green, (0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'с':
+        if cell == 'Ш':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(key_red, (0, 0))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        if cell == 'м':
+        if cell == 'Щ':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.blit(key_yellow, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'I':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((230, 230, 230))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
     def update(self, shift):
         self.rect.x += shift[0]
         self.rect.y += shift[1]
+
+    def open(self):
+        self.image = pygame.Surface((self.size, self.size), pygame.SRCALPHA)
+        if self.cell == 'й':
+            self.image.blit(open_door_pink, (0, 0))
+        if self.cell == 'ц':
+            self.image.blit(open_door_white, (0, 0))
+        if self.cell == 'у':
+            self.image.blit(open_door_violet, (0, 0))
+        if self.cell == 'к':
+            self.image.blit(open_door_orange, (0, 0))
+        if self.cell == 'е':
+            self.image.blit(open_door_blue, (0, 0))
+        if self.cell == 'н':
+            self.image.blit(open_door_black, (0, 0))
+        if self.cell == 'г':
+            self.image.blit(open_door_green, (0, 0))
+        if self.cell == 'ш':
+            self.image.blit(open_door_red, (0, 0))
+        if self.cell == 'щ':
+            self.image.blit(open_door_yellow, (0, 0))
+
+    def update_screen(self, key):
+        try:
+            self.image = pygame.Surface((self.size * 2, self.size * 2), pygame.SRCALPHA)
+            self.image = key.image
+        except:
+            pass

@@ -287,11 +287,11 @@ def waitingForConnection(player, network, player_settings):
                     network.send(player)
                     pygame.quit()
                     sys.exit()
-                if event.type == KEYDOWN:
+                if eveant.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         player.ready = False
                         network.send(player)
-                        run = False
+                        run = Fdalse
             if player2.ready:
                 map_preparation(player, network, player_settings)
             clock.tick(60)
