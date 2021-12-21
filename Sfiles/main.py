@@ -77,8 +77,9 @@ def main_game(server_player, network, player_main):
         screen.fill((0, 0, 0))
 
         level.run()
-        pygame.display.update()
         draw_cursor(screen)
+
+        pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -202,6 +203,12 @@ def change_objects(w, h):
     menuWidgetScreenSize = ScreenSizeWindow(screen, font, w, h)
     menuWidgetSlider = SliderWindow(screen, w, h)
     WIDTH, HEIGHT = w, h
+    if bool(menuWidgetSlider.vol_changed):
+        if menuWidgetSlider.vol_changed == 1:
+            pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed - 1)
+        else:
+            pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
+        menuWidgetSlider.vol_changed = None
 
 
 def main_menu():
@@ -242,6 +249,7 @@ def main_menu():
                 menuWidgetElector.change_image(('mouse', event))
                 menuWidgetScreenSize.change_size()
                 menuWidgetSlider.check_click_onslider()
+                menuWidgetSlider.check_sound_off()
 
         w, h = pygame.display.Info().current_w, pygame.display.Info().current_h
         if w != WIDTH or h != HEIGHT:
@@ -250,8 +258,10 @@ def main_menu():
                 pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
             change_objects(w, h)
         if bool(menuWidgetSlider.vol_changed):
-            print(menuWidgetSlider.vol_changed)
-            pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
+            if menuWidgetSlider.vol_changed == 1:
+                pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed - 1)
+            else:
+                pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
             menuWidgetSlider.vol_changed = None
         clock.tick(60)
 
@@ -262,26 +272,29 @@ def waitingForConnection(player, network, player_settings):
     top_menu_text_pos_x = 10
 
     while run:
-        player2 = network.send(player)
-        screen.fill((0, 0, 0))
-        screen.blit(waitingText, (top_menu_text_pos_x, top_menu_text_pos_x))
-        pygame.display.flip()
+        if True:
+            map_preparation(player, network, player_settings)
+        else:
+            player2 = network.send(player)
+            screen.fill((0, 0, 0))
+            screen.blit(waitingText, (top_menu_text_pos_x, top_menu_text_pos_x))
+            pygame.display.flip()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                player.ready = False
-                network.send(player)
-                pygame.quit()
-                sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
                     player.ready = False
                     network.send(player)
-                    run = False
-        if player2.ready:
-            map_preparation(player, network, player_settings)
-        clock.tick(60)
+                    pygame.quit()
+                    sys.exit()
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        player.ready = False
+                        network.send(player)
+                        run = False
+            if player2.ready:
+                map_preparation(player, network, player_settings)
+            clock.tick(60)
 
 
 if __name__ == '__main__':

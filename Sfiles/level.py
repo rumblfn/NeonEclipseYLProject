@@ -1,7 +1,7 @@
 import pygame
 from tiles import Tile, Portal
 from map_preparation_settings import tile_size, level1_map
-from player import Player_map_preparation
+from player import Player_hero1, Player_hero2, Player_hero3
 from NPC import Class_npc
 from dataConsts import bgMapPreparation
 
@@ -47,7 +47,12 @@ class Level:
                 # self.decoration.add(tile)
                 if cell == 'P':
                     if not default_player:
-                        self.player_sprite = Player_map_preparation((x, y), self.player_settings)
+                        if self.player_settings['name'] == 'Hero1':
+                            self.player_sprite = Player_hero1((x, y), self.player_settings)
+                        elif self.player_settings['name'] == 'Hero2':
+                            self.player_sprite = Player_hero2((x, y), self.player_settings)
+                        elif self.player_settings['name'] == 'Hero3':
+                            self.player_sprite = Player_hero3((x, y), self.player_settings)
                         self.player.add(self.player_sprite)
                         self.all_sprites.add(self.player_sprite)
                     else:
@@ -142,6 +147,11 @@ class Level:
                     sprite.kill()
             sprite.move()
 
+    def ESettings(self):
+        for sprite in self.player_sprite.attacksE:
+            sprite.rect.midbottom = self.player_sprite.rect.midbottom
+            sprite.run_attackE()
+
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
@@ -166,10 +176,10 @@ class Level:
         self.npc_collisions()
         self.player.draw(self.display_surface)
 
-        self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))
-        self.player_sprite.bullets.draw(self.display_surface)
-        self.player_sprite.attacksE.update((self.world_shift_x, self.world_shift_y))
-        self.player_sprite.attacksE.draw(self.display_surface)
-        for sprite in self.player_sprite.attacksE:
-            sprite.run_attackE()
-        self.bullets_settings()
+        if self.player_sprite.name == 'Hero1':
+            self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))
+            self.player_sprite.bullets.draw(self.display_surface)
+            self.player_sprite.attacksE.update((self.world_shift_x, self.world_shift_y))
+            self.player_sprite.attacksE.draw(self.display_surface)
+            self.ESettings()
+            self.bullets_settings()

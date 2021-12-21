@@ -17,7 +17,7 @@ class Hero1AtackE(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=pos)
 
     def run_attackE(self):
-        self.current_sprite += 0.1
+        self.current_sprite += 0.25
         self.image.fill((0, 0, 0, 0))
         self.image.blit(self.images[int(self.current_sprite)], (0, 0))
         if self.current_sprite >= 9:
