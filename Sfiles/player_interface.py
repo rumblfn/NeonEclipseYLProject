@@ -29,7 +29,7 @@ class Interface:
         self.screen = screen
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.font = pygame.font.SysFont('Avenir Next', 26)
+        self.font = pygame.font.SysFont('Avenir Next', round(26 * self.screen_width / 1440))
 
     def update_screen_size(self, w, h):
         self.screen_width = w
@@ -45,4 +45,3 @@ class Interface:
         titleSurface = self.font.render(str(power), False, (0, 255, 0))
         self.screen.blit(titleSurface, (20 + 50 * self.sprite_kef, 30 + 50 * self.sprite_kef))
         self.screen.blit(self.chestImageSurface, (self.screen_width - 50 * self.sprite_kef - 10, 10))
-        print(self.screen_width - 50 * self.sprite_kef - 10, 10)

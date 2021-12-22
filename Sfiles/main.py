@@ -202,7 +202,7 @@ def change_objects(w, h):
     menuWidgetAboutHero = AboutHeroWindow(screen, font, menuWidgetAllHeroes, w, h)
     menuWidgetScreenSize = ScreenSizeWindow(screen, font, w, h)
     menuWidgetSlider = SliderWindow(screen, w, h)
-    interface = Interface(WIDTH, HEIGHT, screen)
+    interface = Interface(w, h, screen)
     WIDTH, HEIGHT = w, h
     if bool(menuWidgetSlider.vol_changed):
         if menuWidgetSlider.vol_changed == 1:
