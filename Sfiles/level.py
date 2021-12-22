@@ -7,7 +7,7 @@ from dataConsts import bgMapPreparation
 
 
 class Level:
-    def __init__(self, level_data, surface, player_settings):
+    def __init__(self, level_data, surface, player_settings, interface):
         self.display_surface = surface
         self.level_data = level_data
         self.player_settings = player_settings
@@ -15,12 +15,14 @@ class Level:
         self.height = pygame.display.Info().current_h
         self.player_col = 0
         self.pos_x = 0
+        self.interface = interface
         self.setup_level(level_data)
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
 
     def setup_level(self, layout, default_player=False):
+        self.interface.update_screen_size(self.width, self.height)
         self.all_sprites = pygame.sprite.Group()
         self.tiles = pygame.sprite.Group()
         self.decoration = pygame.sprite.Group()
@@ -183,3 +185,5 @@ class Level:
             self.player_sprite.attacksE.draw(self.display_surface)
             self.ESettings()
             self.bullets_settings()
+
+        self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)

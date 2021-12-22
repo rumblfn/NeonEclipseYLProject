@@ -5,7 +5,7 @@ from enemyClass import Enemy
 
 
 class LevelG:
-    def __init__(self, level_data, surface, player_main, player_enemy, network, server_player):
+    def __init__(self, level_data, surface, player_main, player_enemy, network, server_player, interface):
         self.display_surface = surface
         self.level_data = level_data
         self.player_sprite = player_main
@@ -16,6 +16,7 @@ class LevelG:
         self.pos_x = 0
         self.network = network
         self.server_player = server_player
+        self.interface = interface
 
         self.enemy = pygame.sprite.GroupSingle()
         enemy = Enemy(self.player_enemy)
@@ -24,6 +25,7 @@ class LevelG:
         self.setup_level(level_data)
 
     def setup_level(self, layout, default_player=False):
+        self.interface.update_screen_size(self.width, self.height)
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         tile_size = self.height // len(map)
@@ -106,3 +108,5 @@ class LevelG:
             self.player_sprite.attacksE.draw(self.display_surface)
             self.ESettings()
             self.bullets_settings()
+
+        self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)

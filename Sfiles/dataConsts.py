@@ -6,6 +6,7 @@ from menuWidgetAboutHero import AboutHeroWindow
 from menuWidgetSetScreen import ScreenSizeWindow
 from menuWidgetSlider import SliderWindow
 from backgtoundClasses import *
+from player_interface import Interface
 
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Neon eclipse")
@@ -108,3 +109,4 @@ menuWidgetScreenSize = ScreenSizeWindow(screen, font, WIDTH, HEIGHT)
 menuWidgetSlider = SliderWindow(screen, WIDTH, HEIGHT)
 bgMenu = BackgroundMenu(screen, background_menu)
 bgMapPreparation = Background(screen, background_map_preparation_with_opacity)
+interface = Interface(WIDTH, HEIGHT, screen)

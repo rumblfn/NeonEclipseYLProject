@@ -25,6 +25,7 @@ class Player_hero1(pygame.sprite.Sprite):
         self.name = player_settings['name']
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
+        self.hp = player_settings['maxHp']
         self.started_pos = pos
 
         self.bullets = pygame.sprite.Group()
@@ -146,6 +147,7 @@ class Player_hero2(pygame.sprite.Sprite):
         self.name = player_settings['name']
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
+        self.hp = player_settings['maxHp']
         self.started_pos = pos
 
         self.K_x = False
@@ -205,6 +207,7 @@ class Player_hero3(pygame.sprite.Sprite):
         self.name = player_settings['name']
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
+        self.hp = player_settings['maxHp']
         self.started_pos = pos
 
         self.K_x = False
@@ -260,7 +263,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = None
+        self.ready = True # None
 
         self.name = None
         self.power = None
