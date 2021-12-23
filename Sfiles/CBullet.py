@@ -7,14 +7,17 @@ bullet_image = pygame.transform.scale(pygame.image.load('static/Harchok.png').co
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, pos):
+    def __init__(self, pos, mouse_pos=False):
         super().__init__()
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
         self.image.blit(bullet_image, (0, 0))
         self.rect = self.image.get_rect(center=pos)
         self.speed = 10
 
-        m_x, m_y = pygame.mouse.get_pos()
+        if not mouse_pos:
+            m_x, m_y = pygame.mouse.get_pos()
+        else:
+            m_x, m_y = mouse_pos
         bullet_x, bullet_y = pos
         distance_x = m_x - bullet_x
         distance_y = m_y - bullet_y

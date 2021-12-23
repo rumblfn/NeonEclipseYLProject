@@ -110,3 +110,4 @@ menuWidgetSlider = SliderWindow(screen, WIDTH, HEIGHT)
 bgMenu = BackgroundMenu(screen, background_menu)
 bgMapPreparation = Background(screen, background_map_preparation_with_opacity)
 interface = Interface(WIDTH, HEIGHT, screen)
+sleeper_status_for_loading = False

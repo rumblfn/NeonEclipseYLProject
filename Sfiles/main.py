@@ -24,9 +24,15 @@ def draw_cursor(sc):
 
 
 def sleeper():
-    global sleeper_status
+    global sleeper_status, sleeper_status_for_loading
+    sleeper_time = 5
+    sleeper_loading = 1
     sleeper_status = False
-    sleep(300)
+
+    sleep(sleeper_time - sleeper_loading)
+    sleeper_status_for_loading = True
+
+    sleep(sleeper_loading)
     sleeper_status = True
 
 
@@ -71,7 +77,9 @@ def main_game(server_player, network, player_main):
     player_enemy = network.send(server_player)
     sleep(0.5)
     player_enemy = network.send(server_player)
+
     level = LevelG(map, screen, player_main, player_enemy, network, server_player, interface)
+    level.player_sprite.block_moving = False
 
     while run:
         screen.fill((0, 0, 0))
@@ -159,6 +167,10 @@ def map_preparation(player, network, player_settings):
             main_game(player, network, level.player_sprite)
         bgMapPreparation.draw()
         level.run()
+
+        if sleeper_status_for_loading:
+            level.player_sprite.block_moving = True
+
         draw_cursor(screen)
 
         pygame.display.update()

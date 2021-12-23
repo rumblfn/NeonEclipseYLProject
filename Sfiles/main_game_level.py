@@ -1,7 +1,7 @@
 import pygame
 from tiles import Tile
 from main_map_settings import *
-from enemyClass import Enemy
+from enemyClass import Enemy_hero1, Enemy
 
 
 class LevelG:
@@ -19,7 +19,11 @@ class LevelG:
         self.interface = interface
 
         self.enemy = pygame.sprite.GroupSingle()
-        enemy = Enemy(self.player_enemy)
+        if self.player_enemy.name == 'Hero1':
+            self.enemy_hero1_bullets = pygame.sprite.Group()
+            enemy = Enemy_hero1(self.player_enemy)
+        else:
+            enemy = Enemy(self.player_enemy)
         self.enemy.add(enemy)
 
         self.setup_level(level_data)
@@ -71,13 +75,29 @@ class LevelG:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = -0.01
 
-    def update_enemy_pos(self):
+    def update_enemy(self):
         self.server_player.x = (self.player.sprite.rect.x / self.width) * 1920
         self.server_player.y = (self.player.sprite.rect.y / self.height) * 1080
 
         player_enemy = self.network.send(self.server_player)
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
+
+        if self.player_sprite.shoot_bool == 0:
+            self.server_player.simpleAttack = True
+            self.server_player.mouse_pos_x, self.server_player.mouse_pos_y = pygame.mouse.get_pos()
+        else:
+            self.server_player.simpleAttack = False
+
+        if player_enemy.name == 'Hero1':
+            if player_enemy.simpleAttack:
+                self.enemy_hero1_bullets.add(self.enemy.sprite.create_bullet((player_enemy.mouse_pos_x, player_enemy.mouse_pos_y)))
+            for sprite in self.enemy_hero1_bullets.sprites():
+                for tile in self.tiles.sprites():
+                    if tile.rect.collidepoint(sprite.rect.center):
+                        sprite.kill()
+                sprite.move()
+            self.enemy_hero1_bullets.draw(self.display_surface)
 
     def bullets_settings(self):
         for sprite in self.player_sprite.bullets.sprites():
@@ -93,7 +113,7 @@ class LevelG:
 
     def run(self):
         self.tiles.draw(self.display_surface)
-        self.update_enemy_pos()
+        self.update_enemy()
 
         # self.scroll_x(self.player.sprite)
         self.horizontal_movement_collisions(self.player.sprite)

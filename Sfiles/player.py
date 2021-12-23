@@ -20,6 +20,8 @@ except:
 class Player_hero1(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
+        self.block_moving = False
+
         HEIGHT = pygame.display.Info().current_h
         WIDTH = pygame.display.Info().current_w
         self.name = player_settings['name']
@@ -136,12 +138,15 @@ class Player_hero1(pygame.sprite.Sprite):
     def update(self):
         self.shoot_bool += 0.1
         self.attacksEBool += 1
-        self.get_input()
+        if not self.block_moving:
+            self.get_input()
 
 
 class Player_hero2(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
+        self.block_moving = False
+
         HEIGHT = pygame.display.Info().current_h
         WIDTH = pygame.display.Info().current_w
         self.name = player_settings['name']
@@ -196,12 +201,14 @@ class Player_hero2(pygame.sprite.Sprite):
         self.direction.y = self.jump_speed
 
     def update(self):
-        self.get_input()
+        if not self.block_moving:
+            self.get_input()
 
 
 class Player_hero3(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
+        self.block_moving = False
         HEIGHT = pygame.display.Info().current_h
         WIDTH = pygame.display.Info().current_w
         self.name = player_settings['name']
@@ -256,20 +263,28 @@ class Player_hero3(pygame.sprite.Sprite):
         self.direction.y = self.jump_speed
 
     def update(self):
-        self.get_input()
+        if not self.block_moving:
+            self.get_input()
 
 
 class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = True # None
+        self.ready = None # None
 
         self.name = None
         self.power = None
         self.maxHp = None
+
         self.width = None
         self.height = None
+
+        self.Q = False
+        self.E = False
+
+        self.simpleAttack = False
+        self.mouse_pos_x, self.mouse_pos_y = None, None
 
 
 class Player_map_parkour(pygame.sprite.Sprite):
