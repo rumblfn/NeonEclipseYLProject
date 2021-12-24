@@ -422,10 +422,6 @@ class Resizer(pygame.sprite.Sprite):
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.fill((255, 255, 0, 75))
             self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
-        elif cell == 'c':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            self.image.fill((0, 0, 0, 0))
-            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
         elif cell == 'C':
             self.image = pygame.Surface((size, size), pygame.SRCALPHA)
             self.image.fill((255, 0, 255, 75))
@@ -434,3 +430,4 @@ class Resizer(pygame.sprite.Sprite):
     def update(self, shift):
         self.rect.x += shift[0]
         self.rect.y += shift[1]
+

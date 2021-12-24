@@ -1,4 +1,5 @@
 import pygame
+import random
 
 from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird, KeysAndDoors, Invisible, Resizer
 from map_parkour_settings import level_parkour_map, gold_max
@@ -26,6 +27,7 @@ class LevelParkour:
         self.build_bird = False
         self.is_invisible = False
         self.is_resizable = False
+        self.resizer_worked = False
         self.cur_gold = ''
         self.last_bird_block = ''
         self.finsh_bridge = -100
@@ -429,7 +431,7 @@ class LevelParkour:
     def invisible_on(self):
         player = self.player.sprite
         player.invis_mode = True
-        player.image.fill((255, 255, 255, 0))
+        player.image.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 100)))
 
     def invisible_off(self):
         player = self.player.sprite
@@ -449,11 +451,14 @@ class LevelParkour:
     def resizer_on(self):
         player = self.player.sprite
         player.resize(True)
+        self.resizer_worked = True
 
     def resizer_off(self):
         player = self.player.sprite
-        player.resize_helper = 0
-        player.resize(False)
+        if self.resizer_worked:
+            player.resize_helper = 0
+            player.resize(False)
+        self.resizer_worked = False
 
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))

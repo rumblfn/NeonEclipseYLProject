@@ -256,6 +256,7 @@ class Player_map_parkour(pygame.sprite.Sprite):
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
         self.started_pos = pos
+        self.current_pos = pos
 
         self.K_x = False
         self.current_sprite = 0
@@ -271,8 +272,11 @@ class Player_map_parkour(pygame.sprite.Sprite):
         self.start_height = HEIGHT
         self.width = round(self.settings['width'] * re_size_w) - round(14 * re_size_w)
         self.height = round(self.settings['height'] * re_size_h) - round(14 * re_size_h)
+        self.start_width = self.width
+        self.start_height = self.height
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         self.images = False
+        self.player_settings = player_settings
         if player_settings['animations'] is None:
             self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
         else:
@@ -388,8 +392,9 @@ class Player_map_parkour(pygame.sprite.Sprite):
             self.resize_helper += 1
             if self.resize_helper % 50 == 0:
                 x, y = self.rect.x, self.rect.y
-                w = random.randint(18, 60)
-                h = random.randint(18, 60)
+                self.current_pos = self.rect.x, self.rect.y
+                w = random.randint(18, 48)
+                h = random.randint(18, 48)
                 self.width = w
                 self.height = h
                 self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
@@ -412,6 +417,6 @@ class Player_map_parkour(pygame.sprite.Sprite):
             else:
                 pass
         else:
-            pass
-            # TODO: при выключении resizer возвращать нормальный вид
-
+            self.image = pygame.Surface((self.start_width, self.start_height), pygame.SRCALPHA)
+            self.image.blit(pygame.transform.scale(self.player_settings['imagePreview'], (self.start_width, self.start_height)), (0, 0))
+            self.rect = self.image.get_rect(topleft=self.current_pos)
