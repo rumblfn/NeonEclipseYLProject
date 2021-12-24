@@ -8,6 +8,7 @@ from dataConsts import bgMapPreparation
 
 class Level:
     def __init__(self, level_data, surface, player_settings):
+        print(tile_size)
         self.display_surface = surface
         self.level_data = level_data
         self.player_settings = player_settings

@@ -99,7 +99,6 @@ def map_preparation(player, network, player_settings):
     start_new_thread(sleeper, ())
 
     def portalParkourMap(sc, player_parkour, to_print):
-
         def info_text_parkour():
             text = 'Press Esc to return to the spawn point'
             newFont = pygame.font.SysFont('SFCompact', 75)
@@ -113,11 +112,6 @@ def map_preparation(player, network, player_settings):
             sc.fill((255, 255, 255))
             bgMapPreparation.draw()
             level_p.run()
-            count += 1
-            if to_print:
-                info_text_parkour()
-                if count == 150:
-                    to_print = False
             pygame.display.update()
             for e in pygame.event.get():
                 if e.type == KEYDOWN:
@@ -128,34 +122,14 @@ def map_preparation(player, network, player_settings):
                     map_preparation(player, network, player_settings)
             if sleeper_status:
                 runParkourMap = False
+            count += 1
+            if to_print:
+                info_text_parkour()
+                if count == 150:
+                    to_print = False
             if level_p.check_fall:
                 portalParkourMap(sc, player_parkour, False)
-            if level_p.gold_taken:
-                level_p.take_gold()
-                level_p.gold_taken = False
-            if level_p.arrow_works:
-                level_p.raise_player()
-                level_p.arrow_works = False
-            if level_p.in_web:
-                level_p.web_work(True)
-            if not level_p.in_web:
-                level_p.web_work(False)
-            if level_p.ready_bridge:
-                cur = datetime.datetime.now().time().second
-                finish_time = cur + 8
-                level_p.build_bridge(finish_time, cur)
-            if level_p.build_bird:
-                level_p.make_bird()
-            if not level_p.build_bird:
-                level_p.crush_bird()
-            if level_p.is_invisible:
-                level_p.invisible_on()
-            if not level_p.is_invisible:
-                level_p.invisible_off()
-            if level_p.is_resizable:
-                level_p.resizer_on()
-            if not level_p.is_resizable:
-                level_p.resizer_off()
+            level_p.events_check()
             clock.tick(60)
 
     while run:

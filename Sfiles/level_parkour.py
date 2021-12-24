@@ -1,13 +1,15 @@
 import pygame
 import random
+import datetime
 
 from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird, KeysAndDoors, Invisible, Resizer
-from map_parkour_settings import level_parkour_map, gold_max
+from map_parkour_settings import level_parkour_map, gold_max, tile_size
 from player import Player_map_parkour
 
 
 class LevelParkour:
     def __init__(self, level_data, surface, player_settings):
+        print(tile_size)
         self.display_surface = surface
         self.level_data = level_data
         self.player_settings = player_settings
@@ -525,5 +527,33 @@ class LevelParkour:
 
         if self.player.sprite.rect.y > self.height:
             self.check_fall = True
+
+    def events_check(self):
+        if self.gold_taken:
+            self.take_gold()
+            self.gold_taken = False
+        if self.arrow_works:
+            self.raise_player()
+            self.arrow_works = False
+        if self.in_web:
+            self.web_work(True)
+        if not self.in_web:
+            self.web_work(False)
+        if self.ready_bridge:
+            cur = datetime.datetime.now().time().second
+            finish_time = cur + 8
+            self.build_bridge(finish_time, cur)
+        if self.build_bird:
+            self.make_bird()
+        if not self.build_bird:
+            self.crush_bird()
+        if self.is_invisible:
+            self.invisible_on()
+        if not self.is_invisible:
+            self.invisible_off()
+        if self.is_resizable:
+            self.resizer_on()
+        if not self.is_resizable:
+            self.resizer_off()
 
 

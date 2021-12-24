@@ -9,6 +9,7 @@ h = pygame.display.Info().current_h
 res = h // len(level_parkour_map)
 portal_res = round((82 / 900) * h)
 portal_res_x = round((32 / 900) * h)
+
 pipe_vertical = pygame.transform.scale(pygame.image.load('static/vertical_pipe.png'), (res, round(res * 1.5)))
 pipe_horizontal = pygame.transform.scale(pygame.image.load('static/pipe.png'), (round(res * 1.5), res))
 blockLeft = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockLeft.png'), (res, res))
@@ -86,7 +87,6 @@ class Tile(pygame.sprite.Sprite):
         # self.image.fill((10, 17, 25))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
         self.cell = cell
-        self.size = size
 
     def set_image(self, pos, cell, s, lvl_map, player_col):
         el_top, el_right, el_bottom, el_left = False, False, False, False
