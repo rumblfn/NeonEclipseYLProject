@@ -66,6 +66,10 @@ class Player_hero1(pygame.sprite.Sprite):
         self.jump_bool = True
         self.shoot_bool = 1
 
+        self.server_player = None
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
+
     def get_input(self):
         self.Q_SLEEPER += 1
         self.current_sprite += 0.25
@@ -106,9 +110,16 @@ class Player_hero1(pygame.sprite.Sprite):
         if not self.direction.y:
             self.jump_bool = True
 
+        if self.server_player:
+            if self.server_player.simpleAttack:
+                self.server_player.simpleAttack = False
         if pygame.mouse.get_pressed()[0]:
             if self.shoot_bool >= 1:
                 self.bullets.add(self.create_bullet())
+                if self.server_player:
+                    self.server_player.simpleAttack = True
+                    self.server_player.mouse_pos_x, self.server_player.mouse_pos_y = pygame.mouse.get_pos()
+
         if keys[pygame.K_e]:
             if self.attacksEBool >= 300:
                 self.attacksE.add(Hero1AtackE(self.rect.midbottom))
@@ -141,6 +152,13 @@ class Player_hero1(pygame.sprite.Sprite):
         if not self.block_moving:
             self.get_input()
 
+    def initialize_server_player(self, server_player):
+        self.server_player = server_player
+
+    def update_server(self):
+        self.server_player.x = (self.rect.x / self.WIDTH) * 1920
+        self.server_player.y = (self.rect.y / self.HEIGHT) * 1080
+
 
 class Player_hero2(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
@@ -171,6 +189,8 @@ class Player_hero2(pygame.sprite.Sprite):
         self.jump_speed = -18 * HEIGHT / 900
         self.jump_bool = True
 
+        self.server_player = None
+
     def get_input(self):
         keys = pygame.key.get_pressed()
 
@@ -203,6 +223,9 @@ class Player_hero2(pygame.sprite.Sprite):
     def update(self):
         if not self.block_moving:
             self.get_input()
+
+    def initialize_server_player(self, server_player):
+        self.server_player = server_player
 
 
 class Player_hero3(pygame.sprite.Sprite):
@@ -233,6 +256,8 @@ class Player_hero3(pygame.sprite.Sprite):
         self.jump_speed = -16 * HEIGHT / 900
         self.jump_bool = True
 
+        self.server_player = None
+
     def get_input(self):
         keys = pygame.key.get_pressed()
 
@@ -265,6 +290,9 @@ class Player_hero3(pygame.sprite.Sprite):
     def update(self):
         if not self.block_moving:
             self.get_input()
+
+    def initialize_server_player(self, server_player):
+        self.server_player = server_player
 
 
 class Player:

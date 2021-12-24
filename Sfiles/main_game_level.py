@@ -12,10 +12,10 @@ class LevelG:
         self.player_enemy = player_enemy
         self.height = pygame.display.Info().current_h
         self.width = pygame.display.Info().current_w
+        self.server_player = server_player
         self.player_col = 0
         self.pos_x = 0
         self.network = network
-        self.server_player = server_player
         self.interface = interface
 
         self.enemy = pygame.sprite.GroupSingle()
@@ -34,14 +34,15 @@ class LevelG:
         self.player = pygame.sprite.GroupSingle()
         tile_size = self.height // len(map)
         self.width = len(map[0]) * tile_size
+        self.player_sprite.initialize_server_player(self.server_player)
 
         for row_index, row in enumerate(layout):
             for col_index, cell in enumerate(row):
                 x = col_index * tile_size
                 y = row_index * tile_size
                 if cell == 'P':
-                    self.server_player.x = x
-                    self.server_player.y = y
+                    self.player_sprite.server_player.x = x
+                    self.player_sprite.server_player.y = y
                     self.player_sprite.x = x
                     self.player_sprite.y = y
                     self.enemy.sprite.rect.x = x
@@ -76,18 +77,11 @@ class LevelG:
                     player.direction.y = -0.01
 
     def update_enemy(self):
-        self.server_player.x = (self.player.sprite.rect.x / self.width) * 1920
-        self.server_player.y = (self.player.sprite.rect.y / self.height) * 1080
+        self.player_sprite.update_server()
 
-        player_enemy = self.network.send(self.server_player)
+        player_enemy = self.network.send(self.player_sprite.server_player)
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
-
-        if self.player_sprite.shoot_bool == 0:
-            self.server_player.simpleAttack = True
-            self.server_player.mouse_pos_x, self.server_player.mouse_pos_y = pygame.mouse.get_pos()
-        else:
-            self.server_player.simpleAttack = False
 
         if player_enemy.name == 'Hero1':
             if player_enemy.simpleAttack:
@@ -115,7 +109,6 @@ class LevelG:
         self.tiles.draw(self.display_surface)
         self.update_enemy()
 
-        # self.scroll_x(self.player.sprite)
         self.horizontal_movement_collisions(self.player.sprite)
         self.vertical_movement_collisions(self.player.sprite)
 
@@ -128,5 +121,9 @@ class LevelG:
             self.player_sprite.attacksE.draw(self.display_surface)
             self.ESettings()
             self.bullets_settings()
+        elif self.player_sprite.name == 'Hero2':
+            pass
+        elif self.player_sprite.name == 'Hero3':
+            pass
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)
