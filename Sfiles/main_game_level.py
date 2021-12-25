@@ -24,8 +24,8 @@ class LevelG:
             enemy = Enemy_hero1(self.player_enemy)
         else:
             enemy = Enemy(self.player_enemy)
-        self.enemy.add(enemy)
 
+        self.enemy.add(enemy)
         self.setup_level(level_data)
 
     def setup_level(self, layout, default_player=False):
@@ -80,17 +80,30 @@ class LevelG:
         self.player_sprite.update_server()
 
         player_enemy = self.network.send(self.player_sprite.server_player)
+        self.server_player.E = False
+
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
+        self.enemy.sprite.Q_ACTIVE = player_enemy.Q
+        self.enemy.sprite.E_ACTIVE = player_enemy.E
+        self.enemy.sprite.direction_x = player_enemy.direction_x
 
         if player_enemy.name == 'Hero1':
+            self.enemy.sprite.get_input()
             if player_enemy.simpleAttack:
                 self.enemy_hero1_bullets.add(self.enemy.sprite.create_bullet((player_enemy.mouse_pos_x, player_enemy.mouse_pos_y)))
+
             for sprite in self.enemy_hero1_bullets.sprites():
                 for tile in self.tiles.sprites():
                     if tile.rect.collidepoint(sprite.rect.center):
                         sprite.kill()
                 sprite.move()
+
+            self.enemy.sprite.attacksE.draw(self.display_surface)
+            for sprite in self.enemy.sprite.attacksE.sprites():
+                sprite.rect.midbottom = self.enemy.sprite.rect.midbottom
+                sprite.run_attackE()
+
             self.enemy_hero1_bullets.draw(self.display_surface)
 
     def bullets_settings(self):
@@ -107,14 +120,15 @@ class LevelG:
 
     def run(self):
         self.tiles.draw(self.display_surface)
-        self.update_enemy()
 
         self.horizontal_movement_collisions(self.player.sprite)
         self.vertical_movement_collisions(self.player.sprite)
 
+        self.enemy.draw(self.display_surface)
+        self.update_enemy()
+
         self.player.update()
         self.player.draw(self.display_surface)
-        self.enemy.draw(self.display_surface)
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.draw(self.display_surface)

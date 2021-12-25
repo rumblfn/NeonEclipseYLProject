@@ -88,6 +88,8 @@ class Player_hero1(pygame.sprite.Sprite):
                 self.Q_ACTIVE = False
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
+                if self.server_player:
+                    self.server_player.Q = False
 
         if keys[pygame.K_d]:
             self.direction.x = 1
@@ -95,14 +97,20 @@ class Player_hero1(pygame.sprite.Sprite):
             if not self.Q_ACTIVE:
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
+            if self.server_player:
+                self.server_player.direction_x = 1
         elif keys[pygame.K_a]:
             self.direction.x = -1
             self.q_side = 'q_left_animation'
             if not self.Q_ACTIVE:
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['left_walk'][int(self.current_sprite)], (0, 0))
+            if self.server_player:
+                self.server_player.direction_x = -1
         else:
             self.direction.x = 0
+            if self.server_player:
+                self.server_player.direction_x = 0
 
         if keys[pygame.K_SPACE]:
             if self.jump_bool:
@@ -124,12 +132,16 @@ class Player_hero1(pygame.sprite.Sprite):
             if self.attacksEBool >= 300:
                 self.attacksE.add(Hero1AtackE(self.rect.midbottom))
                 self.attacksEBool = 0
+                if self.server_player:
+                    self.server_player.E = True
         if keys[pygame.K_q]:
             if self.Q_SLEEPER >= 1800:
                 self.Q_ACTIVE = True
                 self.Q_ACTIVE_TIMER = 0
                 self.current_sprite = 0
                 self.Q_SLEEPER = 0
+                if self.server_player:
+                    self.server_player.Q = True
 
         if self.current_sprite >= 13:
             self.current_sprite = 0
@@ -313,6 +325,8 @@ class Player:
 
         self.simpleAttack = False
         self.mouse_pos_x, self.mouse_pos_y = None, None
+
+        self.direction_x = 1
 
 
 class Player_map_parkour(pygame.sprite.Sprite):
