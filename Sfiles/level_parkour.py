@@ -1,12 +1,15 @@
 import pygame
+import random
+import datetime
 
-from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird
-from map_parkour_settings import level_parkour_map, gold_max
+from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird, KeysAndDoors, Invisible, Resizer
+from map_parkour_settings import level_parkour_map, gold_max, tile_size
 from player import Player_map_parkour
 
 
 class LevelParkour:
     def __init__(self, level_data, surface, player_settings):
+        print(tile_size)
         self.display_surface = surface
         self.level_data = level_data
         self.player_settings = player_settings
@@ -24,10 +27,14 @@ class LevelParkour:
         self.ready_bridge = False
         self.bridge_work = False
         self.build_bird = False
+        self.is_invisible = False
+        self.is_resizable = False
+        self.resizer_worked = False
         self.cur_gold = ''
         self.last_bird_block = ''
         self.finsh_bridge = -100
         self.moving_t_direct = 'up'
+        self.cur_key = ''
         self.height = pygame.display.Info().current_h
         text = f'GEMS COLLECTED: {gold_max - len(list(self.golds))}'
         newFont = pygame.font.SysFont('SFCompact', 40)
@@ -44,6 +51,12 @@ class LevelParkour:
         self.webs = pygame.sprite.Group()
         self.bridge = pygame.sprite.Group()
         self.bird = pygame.sprite.Group()
+        self.keys = pygame.sprite.Group()
+        self.doors = pygame.sprite.Group()
+        self.open_doors = pygame.sprite.Group()
+        self.key_screen = pygame.sprite.Group()
+        self.invisible = pygame.sprite.Group()
+        self.resizer = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level_parkour_map)
         self.tile_size = tile_size
@@ -103,6 +116,21 @@ class LevelParkour:
                 elif cell == 'g':
                     tile = Gold((col_index, row_index), tile_size, cell)
                     self.golds.add(tile)
+                elif cell in 'йцукенгшщ':
+                    item = KeysAndDoors((col_index, row_index), tile_size, cell)
+                    self.doors.add(item)
+                elif cell in 'ЙЦУКЕНГШЩ':
+                    item = KeysAndDoors((col_index, row_index), tile_size, cell)
+                    self.keys.add(item)
+                elif cell == 'I':
+                    item = KeysAndDoors((col_index, row_index), tile_size, cell)
+                    self.key_screen.add(item)
+                elif cell in 'VY':
+                    item = Invisible((col_index, row_index), tile_size, cell)
+                    self.invisible.add(item)
+                elif cell in 'ZCc':
+                    item = Resizer((col_index, row_index), tile_size, cell)
+                    self.resizer.add(item)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map, self.player_col)
                     self.tiles.add(tile)
@@ -144,6 +172,15 @@ class LevelParkour:
                     player.rect.right = sprite.rect.left
                     player.direction.x = 0
 
+        for sprite in self.doors.sprites():
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.x < 0:
+                    player.rect.left = sprite.rect.right
+                    player.direction.x = 0
+                elif player.direction.x > 0:
+                    player.rect.right = sprite.rect.left
+                    player.direction.x = 0
+
         for sprite in self.bridge.sprites():
             if sprite.cell == 'B':
                 if sprite.rect.colliderect(player.rect):
@@ -177,6 +214,15 @@ class LevelParkour:
                     player.direction.y = -0.01
 
         for sprite in self.moving_tiles.sprites():
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.y > 0:
+                    player.rect.bottom = sprite.rect.top
+                    player.direction.y = 0
+                elif player.direction.y < 0:
+                    player.rect.top = sprite.rect.bottom
+                    player.direction.y = -0.01
+
+        for sprite in self.doors.sprites():
             if sprite.rect.colliderect(player.rect):
                 if player.direction.y > 0:
                     player.rect.bottom = sprite.rect.top
@@ -344,6 +390,78 @@ class LevelParkour:
                 elif bird.cell == 'D':
                     bird.image.fill((255, 0, 0, 0))
 
+    def check_key(self):
+        player = self.player.sprite
+        for key in self.keys:
+            if key.rect.colliderect(player.rect):
+                self.cur_key = key
+                self.update_key_screen()
+                self.keys.remove(key)
+
+    def update_key_screen(self):
+        for key in self.key_screen:
+            key.update_screen(self.cur_key)
+
+    def check_door(self):
+        player = self.player.sprite
+        for door in self.doors:
+            if door.rect.colliderect(player.rect):
+                self.compare_door_key(door)
+
+    def compare_door_key(self, door):
+        try:
+            if door.cell.upper() == self.cur_key.cell:
+                self.open_door(door)
+        except:
+            pass
+
+    def open_door(self, door):
+        door.open()
+        self.doors.remove(door)
+        self.open_doors.add(door)
+
+    def check_invisible(self):
+        player = self.player.sprite
+        for item in self.invisible:
+            if item.cell == 'V':
+                if item.rect.colliderect(player.rect):
+                    self.is_invisible = True
+            else:
+                if item.rect.colliderect(player.rect):
+                    self.is_invisible = False
+
+    def invisible_on(self):
+        player = self.player.sprite
+        player.invis_mode = True
+        player.image.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 100)))
+
+    def invisible_off(self):
+        player = self.player.sprite
+        player.invis_mode = False
+        player.image = player.start_img
+
+    def check_resizer(self):
+        player = self.player.sprite
+        for item in self.resizer:
+            if item.cell == 'Z':
+                if item.rect.colliderect(player.rect):
+                    self.is_resizable = True
+            elif item.cell == 'C':
+                if item.rect.colliderect(player.rect):
+                    self.is_resizable = False
+
+    def resizer_on(self):
+        player = self.player.sprite
+        player.resize(True)
+        self.resizer_worked = True
+
+    def resizer_off(self):
+        player = self.player.sprite
+        if self.resizer_worked:
+            player.resize_helper = 0
+            player.resize(False)
+        self.resizer_worked = False
+
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
@@ -366,6 +484,24 @@ class LevelParkour:
         self.bird.update((self.world_shift_x, self.world_shift_y))
         self.bird.draw(self.display_surface)
 
+        self.doors.update((self.world_shift_x, self.world_shift_y))
+        self.doors.draw(self.display_surface)
+
+        self.keys.update((self.world_shift_x, self.world_shift_y))
+        self.keys.draw(self.display_surface)
+
+        self.open_doors.update((self.world_shift_x, self.world_shift_y))
+        self.open_doors.draw(self.display_surface)
+
+        self.key_screen.update((self.world_shift_x, self.world_shift_y))
+        self.key_screen.draw(self.display_surface)
+
+        self.invisible.update((self.world_shift_x, self.world_shift_y))
+        self.invisible.draw(self.display_surface)
+
+        self.resizer.update((self.world_shift_x, self.world_shift_y))
+        self.resizer.draw(self.display_surface)
+
         self.scroll_x()
         self.player.update()
 
@@ -375,6 +511,10 @@ class LevelParkour:
         self.check_web()
         self.check_bridge()
         self.check_bird()
+        self.check_key()
+        self.check_door()
+        self.check_invisible()
+        self.check_resizer()
 
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
@@ -387,5 +527,33 @@ class LevelParkour:
 
         if self.player.sprite.rect.y > self.height:
             self.check_fall = True
+
+    def events_check(self):
+        if self.gold_taken:
+            self.take_gold()
+            self.gold_taken = False
+        if self.arrow_works:
+            self.raise_player()
+            self.arrow_works = False
+        if self.in_web:
+            self.web_work(True)
+        if not self.in_web:
+            self.web_work(False)
+        if self.ready_bridge:
+            cur = datetime.datetime.now().time().second
+            finish_time = cur + 8
+            self.build_bridge(finish_time, cur)
+        if self.build_bird:
+            self.make_bird()
+        if not self.build_bird:
+            self.crush_bird()
+        if self.is_invisible:
+            self.invisible_on()
+        if not self.is_invisible:
+            self.invisible_off()
+        if self.is_resizable:
+            self.resizer_on()
+        if not self.is_resizable:
+            self.resizer_off()
 
 

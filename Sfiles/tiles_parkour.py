@@ -9,6 +9,7 @@ h = pygame.display.Info().current_h
 res = h // len(level_parkour_map)
 portal_res = round((82 / 900) * h)
 portal_res_x = round((32 / 900) * h)
+
 pipe_vertical = pygame.transform.scale(pygame.image.load('static/vertical_pipe.png'), (res, round(res * 1.5)))
 pipe_horizontal = pygame.transform.scale(pygame.image.load('static/pipe.png'), (round(res * 1.5), res))
 blockLeft = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/blockLeft.png'), (res, res))
@@ -47,6 +48,36 @@ green_gem = pygame.transform.scale(pygame.image.load('static/green_gem.png'), (r
 yellow_gem = pygame.transform.scale(pygame.image.load('static/yellow_gem.png'), (res, res))
 bird = pygame.transform.scale(pygame.image.load('static/bird.png'), (res, res))
 
+open_door_red = pygame.transform.scale(pygame.image.load('static/keys_doors/door_open_red.png'), (res, res))
+open_door_green = pygame.transform.scale(pygame.image.load('static/keys_doors/door_open_green.png'), (res, res))
+open_door_yellow = pygame.transform.scale(pygame.image.load('static/keys_doors/door_open_yellow.png'), (res, res))
+open_door_blue = pygame.transform.scale(pygame.image.load('static/keys_doors/door_open_blue.png'), (res, res))
+open_door_black = pygame.transform.scale(pygame.image.load('static/keys_doors/door_open_black.png'), (res, res))
+open_door_white = pygame.transform.scale(pygame.image.load('static/keys_doors/door_open_white.png'), (res, res))
+open_door_violet = pygame.transform.scale(pygame.image.load('static/keys_doors/door_open_violet.png'), (res, res))
+open_door_orange = pygame.transform.scale(pygame.image.load('static/keys_doors/door_open_orange.png'), (res, res))
+open_door_pink = pygame.transform.scale(pygame.image.load('static/keys_doors/door_open_pink.png'), (res, res))
+
+close_door_red = pygame.transform.scale(pygame.image.load('static/keys_doors/door_close_red.png'), (res, res))
+close_door_green = pygame.transform.scale(pygame.image.load('static/keys_doors/door_close_green.png'), (res, res))
+close_door_yellow = pygame.transform.scale(pygame.image.load('static/keys_doors/door_close_yellow.png'), (res, res))
+close_door_blue = pygame.transform.scale(pygame.image.load('static/keys_doors/door_close_blue.png'), (res, res))
+close_door_black = pygame.transform.scale(pygame.image.load('static/keys_doors/door_close_black.png'), (res, res))
+close_door_white = pygame.transform.scale(pygame.image.load('static/keys_doors/door_close_white.png'), (res, res))
+close_door_violet = pygame.transform.scale(pygame.image.load('static/keys_doors/door_close_violet.png'), (res, res))
+close_door_orange = pygame.transform.scale(pygame.image.load('static/keys_doors/door_close_orange.png'), (res, res))
+close_door_pink = pygame.transform.scale(pygame.image.load('static/keys_doors/door_close_pink.png'), (res, res))
+
+key_red = pygame.transform.scale(pygame.image.load('static/keys_doors/key_red.png'), (res, res))
+key_green = pygame.transform.scale(pygame.image.load('static/keys_doors/key_green.png'), (res, res))
+key_yellow = pygame.transform.scale(pygame.image.load('static/keys_doors/key_yellow.png'), (res, res))
+key_blue = pygame.transform.scale(pygame.image.load('static/keys_doors/key_blue.png'), (res, res))
+key_black = pygame.transform.scale(pygame.image.load('static/keys_doors/key_black.png'), (res, res))
+key_white = pygame.transform.scale(pygame.image.load('static/keys_doors/key_white.png'), (res, res))
+key_violet = pygame.transform.scale(pygame.image.load('static/keys_doors/key_violet.png'), (res, res))
+key_orange = pygame.transform.scale(pygame.image.load('static/keys_doors/key_orange.png'), (res, res))
+key_pink = pygame.transform.scale(pygame.image.load('static/keys_doors/key_pink.png'), (res, res))
+
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, size, cell, map, player_col):
@@ -56,7 +87,6 @@ class Tile(pygame.sprite.Sprite):
         # self.image.fill((10, 17, 25))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
         self.cell = cell
-        self.size = size
 
     def set_image(self, pos, cell, s, lvl_map, player_col):
         el_top, el_right, el_bottom, el_left = False, False, False, False
@@ -249,3 +279,155 @@ class Bird(pygame.sprite.Sprite):
             self.image.blit(block2, (0, 0))
         else:
             self.image.fill((255, 255, 255, 0))
+
+
+class KeysAndDoors(pygame.sprite.Sprite):
+    def __init__(self, pos, size, cell):
+        super().__init__()
+        self.cell = cell
+        self.size = size
+        if cell == 'й':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(close_door_pink, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'ц':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(close_door_white, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'у':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(close_door_violet, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'к':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(close_door_orange, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'е':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(close_door_blue, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'н':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(close_door_black, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'г':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(close_door_green, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'ш':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(close_door_red, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'щ':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(close_door_yellow, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'Й':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(key_pink, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'Ц':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(key_white, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'У':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(key_violet, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'К':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(key_orange, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'Е':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(key_blue, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'Н':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(key_black, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'Г':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(key_green, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'Ш':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(key_red, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'Щ':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.blit(key_yellow, (0, 0))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        if cell == 'I':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((230, 230, 230))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+    def open(self):
+        self.image = pygame.Surface((self.size, self.size), pygame.SRCALPHA)
+        if self.cell == 'й':
+            self.image.blit(open_door_pink, (0, 0))
+        if self.cell == 'ц':
+            self.image.blit(open_door_white, (0, 0))
+        if self.cell == 'у':
+            self.image.blit(open_door_violet, (0, 0))
+        if self.cell == 'к':
+            self.image.blit(open_door_orange, (0, 0))
+        if self.cell == 'е':
+            self.image.blit(open_door_blue, (0, 0))
+        if self.cell == 'н':
+            self.image.blit(open_door_black, (0, 0))
+        if self.cell == 'г':
+            self.image.blit(open_door_green, (0, 0))
+        if self.cell == 'ш':
+            self.image.blit(open_door_red, (0, 0))
+        if self.cell == 'щ':
+            self.image.blit(open_door_yellow, (0, 0))
+
+    def update_screen(self, key):
+        try:
+            self.image = pygame.Surface((self.size * 2, self.size * 2), pygame.SRCALPHA)
+            self.image = key.image
+        except:
+            pass
+
+
+class Invisible(pygame.sprite.Sprite):
+    def __init__(self, pos, size, cell):
+        super().__init__()
+        self.cell = cell
+        if cell == 'V':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((255, 255, 0, 75))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        elif cell == 'Y':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((255, 0, 255, 75))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+
+class Resizer(pygame.sprite.Sprite):
+    def __init__(self, pos, size, cell):
+        super().__init__()
+        self.cell = cell
+        if cell == 'Z':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((255, 255, 0, 75))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        elif cell == 'C':
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+            self.image.fill((255, 0, 255, 75))
+            self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+

@@ -12,20 +12,20 @@ class ElectorWindow:
         self.WIDGET_HEIGHT = round((203 / 750) * h)
         self.WIDGET_WIDTH = round(0.432 * w)
 
-        self.ARROW_LEFT_X1 = round((self.WIDGET_WIDTH / 10) * self.w // 1536 + self.X_LEFT_TOP * self.w // 1536)
-        self.ARROW_LEFT_Y1 = round((self.WIDGET_HEIGHT / 2 - 70) * self.h // 864 + self.Y_LEFT_TOP * self.h // 864)
+        self.ARROW_HEIGHT = round((140 / 864) * h)
+        self.ARROW_WIDTH = round((90 / 1536) * w)
+        self.IMAGE_BLOCK_HEIGHT = round((140 / 864) * h)
+        self.IMAGE_BLOCK_WIDTH = round((140 / 1536) * w)
+        self.BORDER_WIDTH = 4
+
+        self.ARROW_LEFT_X1 = round((self.WIDGET_WIDTH / 10) + self.X_LEFT_TOP)
+        self.ARROW_LEFT_Y1 = round((self.WIDGET_HEIGHT / 2 - self.ARROW_HEIGHT / 2) + self.Y_LEFT_TOP)
 
         self.ARROW_RIGHT_X1 = round(self.WIDGET_WIDTH - (self.ARROW_LEFT_X1 - self.X_LEFT_TOP))
-        self.ARROW_RIGHT_Y1 = round(self.WIDGET_HEIGHT / 2 - 70 + self.Y_LEFT_TOP)
+        self.ARROW_RIGHT_Y1 = round(self.WIDGET_HEIGHT / 2 - self.ARROW_HEIGHT / 2 + self.Y_LEFT_TOP)
 
-        self.IMAGE_BLOCK_X1 = round(self.WIDGET_WIDTH / 2 - 70 + self.X_LEFT_TOP)
-        self.IMAGE_BLOCK_Y1 = round(self.WIDGET_HEIGHT / 2 - 70 + self.Y_LEFT_TOP)
-
-        self.ARROW_HEIGHT = 140
-        self.ARROW_WIDTH = 92
-        self.IMAGE_BLOCK_HEIGHT = 140
-        self.IMAGE_BLOCK_WIDTH = 140
-        self.BORDER_WIDTH = 4
+        self.IMAGE_BLOCK_X1 = round(self.WIDGET_WIDTH / 2 - self.IMAGE_BLOCK_WIDTH / 2 + self.X_LEFT_TOP)
+        self.IMAGE_BLOCK_Y1 = round(self.WIDGET_HEIGHT / 2 - self.IMAGE_BLOCK_HEIGHT / 2 + self.Y_LEFT_TOP)
 
         self.heroes = obj.heroes
         self.heroes = self.heroes[1:] + [self.heroes[0]]
@@ -56,30 +56,32 @@ class ElectorWindow:
         self.draw_image_block(self.heroes[-1]['imagePreviewBig'])
 
     def draw_arrows(self):
-        arr_left = pygame.Surface((self.ARROW_WIDTH * self.w // 1536, self.ARROW_HEIGHT * self.h // 864))
+        arr_left = pygame.Surface((self.ARROW_WIDTH, self.ARROW_HEIGHT))
         img_l = pygame.transform.scale(pygame.image.load('static/leftArrow.png'),
-                                       (self.ARROW_WIDTH * self.w // 1536, self.ARROW_HEIGHT * self.h // 864))
+                                       (self.ARROW_WIDTH, self.ARROW_HEIGHT))
         arr_left.blit(img_l, (0, 0))
         self.btl = pygame.draw.rect(self.screen, self.borderColor,
-                                    (self.ARROW_LEFT_X1 * self.w // 1536, self.ARROW_LEFT_Y1 * self.h // 864,
-                                     self.ARROW_WIDTH * self.w // 1536, self.ARROW_HEIGHT * self.h // 864))
-        self.screen.blit(arr_left, (self.ARROW_LEFT_X1 * self.w // 1536, self.ARROW_LEFT_Y1 * self.h // 864))
+                                    (self.ARROW_LEFT_X1, self.ARROW_LEFT_Y1,
+                                     self.ARROW_WIDTH, self.ARROW_HEIGHT))
+        self.screen.blit(arr_left, (self.ARROW_LEFT_X1, self.ARROW_LEFT_Y1))
 
-        arr_right = pygame.Surface((self.ARROW_WIDTH * self.w // 1536, self.ARROW_HEIGHT * self.h // 864), 1)
+        arr_right = pygame.Surface((self.ARROW_WIDTH, self.ARROW_HEIGHT), 1)
         img_r = pygame.transform.scale(pygame.image.load('static/rightArrow.png'),
-                                       (self.ARROW_WIDTH * self.w // 1536, self.ARROW_HEIGHT * self.h // 864))
+                                       (self.ARROW_WIDTH, self.ARROW_HEIGHT))
         arr_right.blit(img_r, (0, 0))
         self.btr = pygame.draw.rect(self.screen, self.borderColor,
-                                    (self.ARROW_RIGHT_X1 * self.w // 1536, self.ARROW_RIGHT_Y1 * self.h // 864,
-                                     self.ARROW_WIDTH * self.w // 1536, self.ARROW_HEIGHT * self.h // 864))
-        self.screen.blit(arr_right, (self.ARROW_RIGHT_X1 * self.w // 1536, self.ARROW_RIGHT_Y1 * self.h // 864))
+                                    (self.ARROW_RIGHT_X1, self.ARROW_RIGHT_Y1,
+                                     self.ARROW_WIDTH, self.ARROW_HEIGHT))
+        self.screen.blit(arr_right, (self.ARROW_RIGHT_X1, self.ARROW_RIGHT_Y1))
 
     def draw_image_block(self, src):
+        img = pygame.transform.scale(src,
+                                       (self.IMAGE_BLOCK_WIDTH - self.BORDER_WIDTH, self.IMAGE_BLOCK_HEIGHT - self.BORDER_WIDTH))
         pygame.draw.rect(self.screen, self.borderColor,
                          (self.IMAGE_BLOCK_X1, self.IMAGE_BLOCK_Y1, self.IMAGE_BLOCK_WIDTH, self.IMAGE_BLOCK_HEIGHT),
                          self.BORDER_WIDTH)
-        self.screen.blit(src,
-                         (self.IMAGE_BLOCK_X1 + self.BORDER_WIDTH // 2, self.IMAGE_BLOCK_Y1 + self.BORDER_WIDTH // 2))
+        self.screen.blit(img,
+                         (self.IMAGE_BLOCK_X1 + self.BORDER_WIDTH / 2, self.IMAGE_BLOCK_Y1 + self.BORDER_WIDTH / 2))
 
     def change_image(self, arg):
         if arg[0] == 'mouse':

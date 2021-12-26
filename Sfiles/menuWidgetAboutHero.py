@@ -55,7 +55,7 @@ class AboutHeroWindow:
         for i, el in enumerate(list(info.items())):
             surf = pygame.Surface((50, 50))
             surf.blit(pygame.image.load(el[1]), (0, 0))
-            self.screen.blit(surf, ((self.X_LEFT_TOP + 30), (self.Y_LEFT_TOP + 60 * self.width // 1536) + 20 * i + 50 * i * self.width // 1536))
+            self.screen.blit(surf, ((self.X_LEFT_TOP + 30), (self.Y_LEFT_TOP + 50 * self.width // 1536) + 20 * i + 50 * i * self.width // 1536))
 
             textSurface = self.font.render(str(el[0]), True, self.textAndBlockColor)
             self.screen.blit(textSurface, (self.X_LEFT_TOP + 100, (self.Y_LEFT_TOP + 76 * self.width // 1536) + 20 * i + 50 * i * self.width // 1536))
