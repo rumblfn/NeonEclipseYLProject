@@ -390,7 +390,7 @@ class Player_map_parkour(pygame.sprite.Sprite):
         self.gravity = 0.8 * HEIGHT / 900
         self.jump_speed = -18 * HEIGHT / 900
         self.jump_bool = True
-        self.bird_mode = True
+        self.bird_mode = False
         self.invis_mode = False
         self.resize_helper = 0
 
@@ -487,8 +487,8 @@ class Player_map_parkour(pygame.sprite.Sprite):
             if self.resize_helper % 50 == 0:
                 x, y = self.rect.x, self.rect.y
                 self.current_pos = self.rect.x, self.rect.y
-                w = random.randint(18, 48)
-                h = random.randint(18, 48)
+                w = 10
+                h = 10
                 self.width = w
                 self.height = h
                 self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
@@ -508,10 +508,5 @@ class Player_map_parkour(pygame.sprite.Sprite):
                     self.image.blit(pygame.transform.scale(self.settings['imagePreview'], (self.width, self.height)),
                                     (0, 0))
                 self.rect = self.image.get_rect(topleft=(x, y))
-            else:
-                pass
-        else:
-            self.image = pygame.Surface((self.start_width, self.start_height), pygame.SRCALPHA)
-            self.image.blit(pygame.transform.scale(self.player_settings['imagePreview'], (self.start_width, self.start_height)), (0, 0))
-            self.rect = self.image.get_rect(topleft=self.current_pos)
+
 
