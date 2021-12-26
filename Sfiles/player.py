@@ -97,8 +97,11 @@ class Player_hero1(pygame.sprite.Sprite):
                 self.Q_ACTIVE = False
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
+                self.speed = self.control_speed
+                self.power /= 1.5
                 if self.server_player:
                     self.server_player.Q = False
+                    self.server_player.power /= 1.5
 
         if keys[pygame.K_d]:
             self.direction.x = 1
@@ -150,8 +153,19 @@ class Player_hero1(pygame.sprite.Sprite):
                 self.Q_ACTIVE_TIMER = 0
                 self.current_sprite = 0
                 self.Q_SLEEPER = 0
+                self.speed *= 1.3
+                self.power *= 1.5
+                if self.hp <= self.maxHp - 10:
+                    self.hp += 10
+                else:
+                    self.hp = self.maxHp
                 if self.server_player:
                     self.server_player.Q = True
+                    self.server_player.power *= 1.5
+                    if self.server_player.hp <= self.server_player.maxHp - 10:
+                        self.server_player.hp += 10
+                    else:
+                        self.server_player.hp = self.server_player.maxHp
 
         if self.current_sprite >= 13:
             self.current_sprite = 0
@@ -176,6 +190,9 @@ class Player_hero1(pygame.sprite.Sprite):
 
     def initialize_server_player(self, server_player):
         self.server_player = server_player
+        self.server_player.hp = self.hp
+        self.server_player.maxHp = self.maxHp
+        self.server_player.power = self.power
 
     def update_server(self):
         self.server_player.x = (self.rect.x / self.WIDTH) * 1920

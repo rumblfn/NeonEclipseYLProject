@@ -87,10 +87,9 @@ class LevelG:
 
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
-        self.enemy.sprite.Q_ACTIVE = player_enemy.Q
-        self.enemy.sprite.E_ACTIVE = player_enemy.E
-        self.enemy.sprite.direction_x = player_enemy.direction_x
         self.player_sprite.hp -= player_enemy.damage_given
+        self.server_player.hp -= player_enemy.damage_given
+        self.enemy.sprite.update_values(player_enemy)
 
         if player_enemy.name == 'Hero1':
             self.enemy.sprite.get_input()

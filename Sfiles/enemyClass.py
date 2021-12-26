@@ -106,3 +106,9 @@ class Enemy_hero1(pygame.sprite.Sprite):
 
     def create_bullet(self, mouse_pos):
         return Bullet((self.rect.centerx + 10, self.rect.centery - self.height / 4), mouse_pos)
+
+    def update_values(self, enemy):
+        self.Q_ACTIVE = enemy.Q
+        self.E_ACTIVE = enemy.E
+        self.direction_x = enemy.direction_x
+        self.hp = enemy.hp

@@ -25,7 +25,7 @@ def draw_cursor(sc):
 
 def sleeper():
     global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 300
+    sleeper_time = 5
     sleeper_loading = 1
     sleeper_status = False
 
@@ -68,6 +68,7 @@ def main_game(server_player, network, player_main):
         server_player.name = player_main.name
         server_player.power = player_main.power
         server_player.maxHp = player_main.maxHp
+        server_player.hp = player_main.hp
         server_player.width = player_main.width
         server_player.height = player_main.height
 
