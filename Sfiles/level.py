@@ -21,6 +21,8 @@ class Level:
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
+        for i in range(5):
+            self.interface.add_inventory('')
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -116,11 +118,12 @@ class Level:
 
     def npc_collisions(self):
         player = self.player.sprite
-
         for sprite in self.npces.sprites():
-            if sprite.rect.colliderect(player.rect):
-                sprite.show_msg()
-                sprite.check_click()
+            if sprite.name == 'librarian':
+                sprite.update_npc()
+                if sprite.rect.colliderect(player.rect):
+                    sprite.show_msg()
+                    sprite.check_click(self.player_settings)
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -167,6 +170,17 @@ class Level:
         txt_surf = newFont.render(text, False, (255, 183, 0))
         self.display_surface.blit(txt_surf, (round((20 * self.width) / 1536), round((190 * self.height) / 864)))
 
+    def check_inventory(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = pygame.mouse.get_pos()
+                if self.interface.chest_rect.collidepoint((mx, my)):
+                    self.interface.show_inventory()
+            if event.type == KEYDOWN:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_TAB]:
+                    self.interface.show_inventory()
+
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
@@ -191,6 +205,8 @@ class Level:
         self.npc_collisions()
         self.player.draw(self.display_surface)
         self.print_current_gold()
+        self.check_inventory()
+        self.interface.draw_inventory()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))

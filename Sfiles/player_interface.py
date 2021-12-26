@@ -30,6 +30,10 @@ class Interface:
                                             (round(50 * sprite_kef), round(45 * sprite_kef)))
         self.chestImageSurface = pygame.Surface((round(50 * sprite_kef), round(45 * sprite_kef)), pygame.SRCALPHA)
         self.chestImageSurface.blit(chestImage, (0, 0))
+        self.chest_rect = self.chestImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef - 10, self.screen_height - 45 * self.sprite_kef - 10))
+
+        self.inventory = []
+        self.inventory_visible = False
 
         self.screen = screen
         self.font = pygame.font.SysFont('Avenir Next', round(26 * self.screen_width / 1440))
@@ -63,3 +67,23 @@ class Interface:
         titleSurface = self.font.render(f'{hp}/{max_hp}', False, (0, 255, 0))
         pos = titleSurface.get_rect(midleft=(self.screen_width - self.hpBarWidth, 28 + self.hpBarHeight // 2))
         self.screen.blit(titleSurface, pos)
+
+    def add_inventory(self, item):
+        self.inventory.append(item)
+
+    def show_inventory(self):
+        if self.inventory_visible:
+            self.inventory_visible = False
+        else:
+            self.inventory_visible = True
+
+    def draw_inventory(self):
+        if self.inventory_visible:
+            for i, item in enumerate(self.inventory, 2):
+                itemImage = pygame.transform.scale(pygame.image.load('static/green_gem.png'),
+                                                    (round(50 * self.sprite_kef), round(50 * self.sprite_kef)))
+                self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)), pygame.SRCALPHA)
+                self.itemImageSurface.blit(itemImage, (0, 0))
+                self.screen.blit(self.itemImageSurface, ((self.screen_width - 50 * self.sprite_kef * i - 10 * i),
+                                                          self.screen_height - 45 * self.sprite_kef - 10))
+

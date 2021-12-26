@@ -49,17 +49,6 @@ class BlackSmith(pygame.sprite.Sprite):
         self.rect.x += shift[0]
         self.rect.y += shift[1]
 
-    def check_click(self):
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = pygame.mouse.get_pos()
-                if self.btn_a.collidepoint((mx, my)):
-                    if pygame.mouse.get_pressed():
-                        self.plus_health()
-                elif self.btn_h.collidepoint((mx, my)):
-                    if pygame.mouse.get_pressed():
-                        self.plus_attack()
-
 
 class Librarian(pygame.sprite.Sprite):
     def __init__(self, pos, count, sc):
@@ -68,18 +57,31 @@ class Librarian(pygame.sprite.Sprite):
         self.w = pygame.display.Info().current_w
         self.name = npcDisc[count]['name']
         self.screen = sc
-
         re_size = (self.h / len(level1_map)) / 64
         self.width = round(npcDisc[count]['width'] * re_size)
         self.height = round(npcDisc[count]['height'] * re_size)
+
+        self.images = []
+        for i in range(1, 13):
+            self.images.append(pygame.transform.scale(
+                pygame.image.load(f'static/npc_librarian/Shop_new_book{str(i)}.png').convert_alpha(),
+                (self.width, self.height)))
+        self.count = 0
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.image.blit(pygame.transform.scale(npcLibrarian, (self.width, self.height)), (0, 0))
+        self.image.blit(pygame.transform.scale(self.images[int(self.count)], (self.width, self.height)), (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0], pos[1] - self.height // 2))
+
+    def update_npc(self):
+        if self.count >= len(self.images) - 1:
+            self.count = 0
+        self.count += 0.25
+        self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        self.image.blit(pygame.transform.scale(self.images[int(self.count)], (self.width, self.height)), (0, 0))
 
     def show_msg(self):
         self.h = pygame.display.Info().current_h
         self.w = pygame.display.Info().current_w
-        self.msg_w = round((740 * self.w) / 1563)
+        self.msg_w = round((740 * self.w) / 1536)
         self.msg_h = round((200 * self.h) / 864)
         self.msg_x = self.w // 2 - self.msg_w // 2
         self.msg_y = 10
@@ -151,47 +153,57 @@ class Librarian(pygame.sprite.Sprite):
         self.rect.x += shift[0]
         self.rect.y += shift[1]
 
-    def check_click(self):
+    def check_click(self, player):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
                 if self.btn_h.collidepoint((mx, my)):
-                    if pygame.mouse.get_pressed():
-                        self.plus_health()
+                    self.plus_health(player)
                 elif self.btn_a.collidepoint((mx, my)):
-                    if pygame.mouse.get_pressed():
-                        self.plus_attack()
+                    self.plus_attack(player)
                 elif self.btn_q.collidepoint((mx, my)):
-                    if pygame.mouse.get_pressed():
-                        self.plus_q()
+                    self.plus_q(player)
                 elif self.btn_e.collidepoint((mx, my)):
-                    if pygame.mouse.get_pressed():
-                        self.plus_e()
+                    self.plus_e(player)
                 elif self.btn_k.collidepoint((mx, my)):
-                    if pygame.mouse.get_pressed():
-                        self.plus_k()
+                    self.plus_k(player)
 
-    def plus_health(self):
-        print('+h')
-        pygame.draw.rect(self.screen, (0, 255, 0),
-                         (self.icon_h_x, self.icon_y, self.icon_w, self.icon_h))
-
-    def plus_attack(self):
-        print('+a')
-        pygame.draw.rect(self.screen, (0, 255, 0),
+    def plus_attack(self, player):
+        col = (255, 0, 0)
+        if player['gold'] - 1 >= 0:
+            player['gold'] -= 1
+            col = (0, 255, 0)
+        pygame.draw.rect(self.screen, col,
                          (self.icon_a_x, self.icon_y, self.icon_w, self.icon_h))
 
-    def plus_q(self):
-        print('+q')
-        pygame.draw.rect(self.screen, (0, 255, 0),
+    def plus_health(self, player):
+        col = (255, 0, 0)
+        if player['gold'] - 2 >= 0:
+            player['gold'] -= 2
+            col = (0, 255, 0)
+        pygame.draw.rect(self.screen, col,
+                         (self.icon_h_x, self.icon_y, self.icon_w, self.icon_h))
+
+    def plus_q(self, player):
+        col = (255, 0, 0)
+        if player['gold'] - 3 >= 0:
+            player['gold'] -= 3
+            col = (0, 255, 0)
+        pygame.draw.rect(self.screen, col,
                          (self.icon_q_x, self.icon_y, self.icon_w, self.icon_h))
 
-    def plus_e(self):
-        print('+e')
-        pygame.draw.rect(self.screen, (0, 255, 0),
+    def plus_e(self, player):
+        col = (255, 0, 0)
+        if player['gold'] - 4 >= 0:
+            player['gold'] -= 4
+            col = (0, 255, 0)
+        pygame.draw.rect(self.screen, col,
                          (self.icon_e_x, self.icon_y, self.icon_w, self.icon_h))
 
-    def plus_k(self):
-        print('+k')
-        pygame.draw.rect(self.screen, (0, 255, 0),
+    def plus_k(self, player):
+        col = (255, 0, 0)
+        if player['gold'] - 5 >= 0:
+            player['gold'] -= 5
+            col = (0, 255, 0)
+        pygame.draw.rect(self.screen, col,
                          (self.icon_k_x, self.icon_y, self.icon_w, self.icon_h))
