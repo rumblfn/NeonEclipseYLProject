@@ -1,4 +1,6 @@
 import pygame
+from time import sleep
+from _thread import start_new_thread
 from pygame.constants import *
 
 try:
@@ -15,6 +17,12 @@ try:
     }
 except:
     print('game not started')
+
+
+def speed_to_low(player):
+    player.speed = 4
+    sleep(4)
+    player.speed = player.control_speed
 
 
 class Player_hero1(pygame.sprite.Sprite):
@@ -121,6 +129,7 @@ class Player_hero1(pygame.sprite.Sprite):
         if self.server_player:
             if self.server_player.simpleAttack:
                 self.server_player.simpleAttack = False
+
         if pygame.mouse.get_pressed()[0]:
             if self.shoot_bool >= 1:
                 self.bullets.add(self.create_bullet())
@@ -316,6 +325,7 @@ class Player:
         self.name = None
         self.power = None
         self.maxHp = None
+        self.hp = None
 
         self.width = None
         self.height = None
@@ -327,6 +337,7 @@ class Player:
         self.mouse_pos_x, self.mouse_pos_y = None, None
 
         self.direction_x = 1
+        self.damage_given = 0
 
 
 class Player_map_parkour(pygame.sprite.Sprite):

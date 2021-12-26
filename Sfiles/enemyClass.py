@@ -23,6 +23,7 @@ class Enemy(pygame.sprite.Sprite):
         self.name = player_enemy.name
         self.power = player_enemy.power
         self.maxHp = player_enemy.maxHp
+        self.hp = player_enemy.maxHp
         self.width = player_enemy.width
         self.height = player_enemy.height
         self.pos = (player_enemy.x, player_enemy.y)
@@ -44,6 +45,7 @@ class Enemy_hero1(pygame.sprite.Sprite):
         self.name = player_enemy.name
         self.power = player_enemy.power
         self.maxHp = player_enemy.maxHp
+        self.hp = player_enemy.maxHp
         self.width = player_enemy.width
         self.height = player_enemy.height
         self.pos = (player_enemy.x, player_enemy.y)

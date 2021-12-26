@@ -2,6 +2,8 @@ import pygame
 from tiles import Tile
 from main_map_settings import *
 from enemyClass import Enemy_hero1, Enemy
+from _thread import start_new_thread
+from player import speed_to_low
 
 
 class LevelG:
@@ -81,12 +83,14 @@ class LevelG:
 
         player_enemy = self.network.send(self.player_sprite.server_player)
         self.server_player.E = False
+        self.server_player.damage_given = 0
 
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
         self.enemy.sprite.Q_ACTIVE = player_enemy.Q
         self.enemy.sprite.E_ACTIVE = player_enemy.E
         self.enemy.sprite.direction_x = player_enemy.direction_x
+        self.player_sprite.hp -= player_enemy.damage_given
 
         if player_enemy.name == 'Hero1':
             self.enemy.sprite.get_input()
@@ -94,6 +98,8 @@ class LevelG:
                 self.enemy_hero1_bullets.add(self.enemy.sprite.create_bullet((player_enemy.mouse_pos_x, player_enemy.mouse_pos_y)))
 
             for sprite in self.enemy_hero1_bullets.sprites():
+                if sprite.rect.colliderect(self.player_sprite.rect):
+                    sprite.kill()
                 for tile in self.tiles.sprites():
                     if tile.rect.collidepoint(sprite.rect.center):
                         sprite.kill()
@@ -103,6 +109,12 @@ class LevelG:
             for sprite in self.enemy.sprite.attacksE.sprites():
                 sprite.rect.midbottom = self.enemy.sprite.rect.midbottom
                 sprite.run_attackE()
+                if sprite.rect.colliderect(self.player_sprite.rect):
+                    if sprite.rect.x < self.player_sprite.rect.x:
+                        self.player_sprite.rect.left = sprite.rect.right
+                    else:
+                        self.player_sprite.rect.right = sprite.rect.left
+                    start_new_thread(speed_to_low, (self.player_sprite,))
 
             self.enemy_hero1_bullets.draw(self.display_surface)
 
@@ -133,6 +145,11 @@ class LevelG:
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.draw(self.display_surface)
             self.player_sprite.attacksE.draw(self.display_surface)
+            for sprite in self.player_sprite.bullets.sprites():
+                if sprite.rect.colliderect(self.enemy.sprite.rect):
+                    self.enemy.sprite.hp -= self.player_sprite.power
+                    self.server_player.damage_given = self.player_sprite.power
+                    sprite.kill()
             self.ESettings()
             self.bullets_settings()
         elif self.player_sprite.name == 'Hero2':
@@ -141,3 +158,4 @@ class LevelG:
             pass
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)
+        self.interface.draw_enemy_health(self.enemy.sprite.hp, self.enemy.sprite.maxHp)
