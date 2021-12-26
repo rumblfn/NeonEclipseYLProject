@@ -2,8 +2,9 @@ import pygame
 from tiles import Tile, Portal
 from map_preparation_settings import tile_size, level1_map
 from player import Player_hero1, Player_hero2, Player_hero3
-from NPC import Class_npc
+from NPC import Librarian, BlackSmith
 from dataConsts import bgMapPreparation
+from pygame.locals import *
 
 
 class Level:
@@ -67,8 +68,12 @@ class Level:
                     portal = Portal((x, y))
                     self.portals.add(portal)
                     self.all_sprites.add(portal)
-                elif cell == 'N':
-                    npc = Class_npc((x, y), len(self.npces.sprites()), self.display_surface)
+                elif cell == 'L':
+                    npc = Librarian((x, y), len(self.npces.sprites()), self.display_surface)
+                    self.npces.add(npc)
+                    self.all_sprites.add(npc)
+                elif cell == 'B':
+                    npc = BlackSmith((x, y), len(self.npces.sprites()), self.display_surface)
                     self.npces.add(npc)
                     self.all_sprites.add(npc)
                 elif cell == 'п' or cell == 'П':
@@ -107,6 +112,7 @@ class Level:
         player = self.player_sprite
         if player.rect.y > self.height + 300 or player.rect.y < - 300:
             self.setup_level(self.level_data, self.player_sprite)
+            self.player_settings['gold'] = 0
 
     def npc_collisions(self):
         player = self.player.sprite
@@ -114,6 +120,7 @@ class Level:
         for sprite in self.npces.sprites():
             if sprite.rect.colliderect(player.rect):
                 sprite.show_msg()
+                sprite.check_click()
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -154,6 +161,12 @@ class Level:
             sprite.rect.midbottom = self.player_sprite.rect.midbottom
             sprite.run_attackE()
 
+    def print_current_gold(self):
+        text = f'GEMS COLLECTED: {self.player_settings["gold"]}'
+        newFont = pygame.font.SysFont('SFCompact', round((40 * self.width) / 1536))
+        txt_surf = newFont.render(text, False, (255, 183, 0))
+        self.display_surface.blit(txt_surf, (round((20 * self.width) / 1536), round((190 * self.height) / 864)))
+
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
@@ -177,6 +190,7 @@ class Level:
         self.vertical_movement_collisions()
         self.npc_collisions()
         self.player.draw(self.display_surface)
+        self.print_current_gold()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))

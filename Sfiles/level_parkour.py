@@ -258,6 +258,7 @@ class LevelParkour:
         if player.K_x:
             for portal in self.portals:
                 if portal.rect.colliderect(player.rect):
+                    self.player_settings['gold'] = gold_max - len(list(self.golds))
                     self.portalParkour = True
                     return True
 
