@@ -21,8 +21,6 @@ class Level:
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
-        for i in range(5):
-            self.interface.add_inventory('')
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -171,6 +169,7 @@ class Level:
         self.display_surface.blit(txt_surf, (round((20 * self.width) / 1536), round((190 * self.height) / 864)))
 
     def check_inventory(self):
+        player = self.player.sprite
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
@@ -179,6 +178,7 @@ class Level:
             if event.type == KEYDOWN:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_TAB]:
+                    player.button_clicked = True
                     self.interface.show_inventory()
 
     def run(self):

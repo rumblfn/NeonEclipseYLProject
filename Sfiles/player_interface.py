@@ -33,6 +33,8 @@ class Interface:
         self.chest_rect = self.chestImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef - 10, self.screen_height - 45 * self.sprite_kef - 10))
 
         self.inventory = []
+        for i in range(5):
+            self.add_inventory('')
         self.inventory_visible = False
 
         self.screen = screen

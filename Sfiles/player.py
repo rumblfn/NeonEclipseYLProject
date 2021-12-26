@@ -74,6 +74,7 @@ class Player_hero1(pygame.sprite.Sprite):
         self.jump_speed = -18 * HEIGHT / 900
         self.jump_bool = True
         self.shoot_bool = 1
+        self.button_clicked = False
 
         self.server_player = None
         self.WIDTH = WIDTH
@@ -132,11 +133,12 @@ class Player_hero1(pygame.sprite.Sprite):
                 self.server_player.simpleAttack = False
 
         if pygame.mouse.get_pressed()[0]:
-            if self.shoot_bool >= 1:
-                self.bullets.add(self.create_bullet())
-                if self.server_player:
-                    self.server_player.simpleAttack = True
-                    self.server_player.mouse_pos_x, self.server_player.mouse_pos_y = pygame.mouse.get_pos()
+            if not self.button_clicked:
+                if self.shoot_bool >= 1:
+                    self.bullets.add(self.create_bullet())
+                    if self.server_player:
+                        self.server_player.simpleAttack = True
+                        self.server_player.mouse_pos_x, self.server_player.mouse_pos_y = pygame.mouse.get_pos()
 
         if keys[pygame.K_e]:
             if self.attacksEBool >= 300:
