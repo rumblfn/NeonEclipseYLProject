@@ -2,9 +2,9 @@ import pygame
 
 level_parkour_map = [  # 18
     'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                                                00000000   G   00000000                                             XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-    'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXCGGGGGGX   0   0                                       0000   0000                                         0              GXXШ     a XXXXXXXXXXXXXXXXXXXXXXX',
-    'XXXXXXXXXXXXXXXXXXXXXXXGWWWWWW XXXXXXXXX            0                  0      Z            0 0            V      0                 0             Y       uXXXXXXXXXa к ЙXXXXXXXXXXXXXXXXXXXX',
-    'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   a                                            0   00 00 00     00 00 00   0                                      0      GXXXЩ    г aXXXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXGGGGGGGX   0   0                                       0000   0000                                         0              GXXШ     a XXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXXXXXGWWWWWW XXXXXXXXX            0                  0                 Z 0 0 V                 0                 0             Y       uXXXXXXXXXa к ЙXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   a                                            0   00000 00     00 00000   0                                      0      GXXXЩ    г aXXXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXaXXXX                0      0      0                     0   0                     0      0      0                    GXXXXXXXXXXXa ц УXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXaXXXXX                                                    0 0        DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD   GXXXXК     у aXXXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXG a  XXXXXaXXXXX                                                    0 0         d D   D   D   D   D   D   D   D   D        D XXXXXXXXXXXXXXXa е НXXXXXXXXXXXXXXXXXXXX',

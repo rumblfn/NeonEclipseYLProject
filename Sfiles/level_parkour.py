@@ -553,7 +553,5 @@ class LevelParkour:
             self.invisible_off()
         if self.is_resizable:
             self.resizer_on()
-        if not self.is_resizable:
-            self.resizer_off()
 
 
