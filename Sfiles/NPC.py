@@ -5,6 +5,7 @@ from map_preparation_settings import level1_map
 
 
 npcImage = pygame.image.load('static/npcNormal2_64x64-export.png').convert_alpha()
+npcLibrarian = pygame.image.load('static/librarian.png').convert_alpha()
 fontTitle = pygame.font.SysFont('SFCompact', 14)
 
 npcDisc = [
@@ -72,7 +73,7 @@ class Librarian(pygame.sprite.Sprite):
         self.width = round(npcDisc[count]['width'] * re_size)
         self.height = round(npcDisc[count]['height'] * re_size)
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.image.blit(pygame.transform.scale(npcImage, (self.width, self.height)), (0, 0))
+        self.image.blit(pygame.transform.scale(npcLibrarian, (self.width, self.height)), (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0], pos[1] - self.height // 2))
 
     def show_msg(self):
