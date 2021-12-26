@@ -24,9 +24,15 @@ def draw_cursor(sc):
 
 
 def sleeper():
-    global sleeper_status
+    global sleeper_status, sleeper_status_for_loading
+    sleeper_time = 300
+    sleeper_loading = 1
     sleeper_status = False
-    sleep(300)
+
+    sleep(sleeper_time - sleeper_loading)
+    sleeper_status_for_loading = True
+
+    sleep(sleeper_loading)
     sleeper_status = True
 
 
@@ -71,7 +77,9 @@ def main_game(server_player, network, player_main):
     player_enemy = network.send(server_player)
     sleep(0.5)
     player_enemy = network.send(server_player)
-    level = LevelG(map, screen, player_main, player_enemy, network, server_player)
+
+    level = LevelG(map, screen, player_main, player_enemy, network, server_player, interface)
+    level.player_sprite.block_moving = False
 
     while run:
         screen.fill((0, 0, 0))
@@ -95,7 +103,7 @@ def map_preparation(player, network, player_settings):
     run = True
     player.x = WIDTH // 4
     player.y = round(HEIGHT * (2 / 3))
-    level = Level(level1_map, screen, player_settings)
+    level = Level(level1_map, screen, player_settings, interface)
     start_new_thread(sleeper, ())
 
     def portalParkourMap(sc, player_parkour, to_print):
@@ -141,6 +149,10 @@ def map_preparation(player, network, player_settings):
             main_game(player, network, level.player_sprite)
         bgMapPreparation.draw()
         level.run()
+
+        if sleeper_status_for_loading:
+            level.player_sprite.block_moving = True
+
         draw_cursor(screen)
 
         pygame.display.update()
@@ -167,7 +179,7 @@ def change_objects(w, h):
         menuWidgetScreenSize, \
         menuWidgetSlider, \
         WIDTH, HEIGHT, \
-        HEROES
+        HEROES, interface
     objAllHeroesWidget = {'x1': round(0.545 * w), 'y1': round((87 / 750) * h),
                           'x2': round(0.872 * w), 'y2': round((289 / 750) * h),
                           'width': round(0.327 * w), 'height': round((202 / 750) * h),
@@ -184,6 +196,7 @@ def change_objects(w, h):
     menuWidgetAboutHero = AboutHeroWindow(screen, font, menuWidgetAllHeroes, w, h)
     menuWidgetScreenSize = ScreenSizeWindow(screen, font, w, h)
     menuWidgetSlider = SliderWindow(screen, w, h)
+    interface = Interface(w, h, screen)
     WIDTH, HEIGHT = w, h
     if bool(menuWidgetSlider.vol_changed):
         if menuWidgetSlider.vol_changed == 1:

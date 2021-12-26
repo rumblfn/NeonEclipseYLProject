@@ -17,9 +17,9 @@ map = [
     '                     XXX       ',
     '                               ',
     '            XXXXXX             ',
-    '             XXXX              ',
-    '                               ',
-    '                               ',
+    '             XXXXXXXXXXX       ',
+    '             XXXXXXXXX         ',
+    '       XXXXXXXXXX              ',
 ]
 
 try:

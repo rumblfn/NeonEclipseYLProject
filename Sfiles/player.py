@@ -1,4 +1,6 @@
 import pygame
+from time import sleep
+from _thread import start_new_thread
 from pygame.constants import *
 import random
 
@@ -18,14 +20,23 @@ except:
     print('game not started')
 
 
+def speed_to_low(player):
+    player.speed = 4
+    sleep(4)
+    player.speed = player.control_speed
+
+
 class Player_hero1(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
+        self.block_moving = False
+
         HEIGHT = pygame.display.Info().current_h
         WIDTH = pygame.display.Info().current_w
         self.name = player_settings['name']
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
+        self.hp = player_settings['maxHp']
         self.started_pos = pos
 
         self.bullets = pygame.sprite.Group()
@@ -34,6 +45,11 @@ class Player_hero1(pygame.sprite.Sprite):
         self.K_x = False
         self.attacksEBool = 300
         self.current_sprite = 0
+
+        self.Q_ACTIVE = False
+        self.Q_ACTIVE_TIMER = 600
+        self.q_side = 'q_right_animation'
+        self.Q_SLEEPER = self.Q_ACTIVE_TIMER * 3
 
         re_size = (HEIGHT / len(level1_map)) / 64
         self.width = round(player_settings['width'] * re_size) - 1
@@ -59,7 +75,12 @@ class Player_hero1(pygame.sprite.Sprite):
         self.jump_bool = True
         self.shoot_bool = 1
 
+        self.server_player = None
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
+
     def get_input(self):
+        self.Q_SLEEPER += 1
         self.current_sprite += 0.25
         keys = pygame.key.get_pressed()
 
@@ -68,18 +89,37 @@ class Player_hero1(pygame.sprite.Sprite):
         else:
             self.K_x = False
 
-        if keys[pygame.K_d]:
-            self.direction.x = 1
-            if self.images:
+        if self.Q_ACTIVE:
+            self.Q_ACTIVE_TIMER += 1
+            self.image.fill((0, 0, 0, 0))
+            self.image.blit(self.images[self.q_side][int(self.current_sprite)], (0, 0))
+            if self.Q_ACTIVE_TIMER >= 600:
+                self.Q_ACTIVE = False
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
+                if self.server_player:
+                    self.server_player.Q = False
+
+        if keys[pygame.K_d]:
+            self.direction.x = 1
+            self.q_side = 'q_right_animation'
+            if not self.Q_ACTIVE:
+                self.image.fill((0, 0, 0, 0))
+                self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
+            if self.server_player:
+                self.server_player.direction_x = 1
         elif keys[pygame.K_a]:
             self.direction.x = -1
-            if self.images:
+            self.q_side = 'q_left_animation'
+            if not self.Q_ACTIVE:
                 self.image.fill((0, 0, 0, 0))
                 self.image.blit(self.images['left_walk'][int(self.current_sprite)], (0, 0))
+            if self.server_player:
+                self.server_player.direction_x = -1
         else:
             self.direction.x = 0
+            if self.server_player:
+                self.server_player.direction_x = 0
 
         if keys[pygame.K_SPACE]:
             if self.jump_bool:
@@ -87,13 +127,31 @@ class Player_hero1(pygame.sprite.Sprite):
         if not self.direction.y:
             self.jump_bool = True
 
+        if self.server_player:
+            if self.server_player.simpleAttack:
+                self.server_player.simpleAttack = False
+
         if pygame.mouse.get_pressed()[0]:
             if self.shoot_bool >= 1:
                 self.bullets.add(self.create_bullet())
+                if self.server_player:
+                    self.server_player.simpleAttack = True
+                    self.server_player.mouse_pos_x, self.server_player.mouse_pos_y = pygame.mouse.get_pos()
+
         if keys[pygame.K_e]:
             if self.attacksEBool >= 300:
                 self.attacksE.add(Hero1AtackE(self.rect.midbottom))
                 self.attacksEBool = 0
+                if self.server_player:
+                    self.server_player.E = True
+        if keys[pygame.K_q]:
+            if self.Q_SLEEPER >= 1800:
+                self.Q_ACTIVE = True
+                self.Q_ACTIVE_TIMER = 0
+                self.current_sprite = 0
+                self.Q_SLEEPER = 0
+                if self.server_player:
+                    self.server_player.Q = True
 
         if self.current_sprite >= 13:
             self.current_sprite = 0
@@ -113,17 +171,28 @@ class Player_hero1(pygame.sprite.Sprite):
     def update(self):
         self.shoot_bool += 0.1
         self.attacksEBool += 1
-        self.get_input()
+        if not self.block_moving:
+            self.get_input()
+
+    def initialize_server_player(self, server_player):
+        self.server_player = server_player
+
+    def update_server(self):
+        self.server_player.x = (self.rect.x / self.WIDTH) * 1920
+        self.server_player.y = (self.rect.y / self.HEIGHT) * 1080
 
 
 class Player_hero2(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
+        self.block_moving = False
+
         HEIGHT = pygame.display.Info().current_h
         WIDTH = pygame.display.Info().current_w
         self.name = player_settings['name']
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
+        self.hp = player_settings['maxHp']
         self.started_pos = pos
 
         self.K_x = False
@@ -142,6 +211,8 @@ class Player_hero2(pygame.sprite.Sprite):
         self.jump_speed = -18 * HEIGHT / 900
         self.jump_bool = True
 
+        self.server_player = None
+
     def get_input(self):
         keys = pygame.key.get_pressed()
 
@@ -172,17 +243,23 @@ class Player_hero2(pygame.sprite.Sprite):
         self.direction.y = self.jump_speed
 
     def update(self):
-        self.get_input()
+        if not self.block_moving:
+            self.get_input()
+
+    def initialize_server_player(self, server_player):
+        self.server_player = server_player
 
 
 class Player_hero3(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
+        self.block_moving = False
         HEIGHT = pygame.display.Info().current_h
         WIDTH = pygame.display.Info().current_w
         self.name = player_settings['name']
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
+        self.hp = player_settings['maxHp']
         self.started_pos = pos
 
         self.K_x = False
@@ -201,6 +278,8 @@ class Player_hero3(pygame.sprite.Sprite):
         self.jump_speed = -16 * HEIGHT / 900
         self.jump_bool = True
 
+        self.server_player = None
+
     def get_input(self):
         keys = pygame.key.get_pressed()
 
@@ -231,20 +310,35 @@ class Player_hero3(pygame.sprite.Sprite):
         self.direction.y = self.jump_speed
 
     def update(self):
-        self.get_input()
+        if not self.block_moving:
+            self.get_input()
+
+    def initialize_server_player(self, server_player):
+        self.server_player = server_player
 
 
 class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = None
+        self.ready = None # None
 
         self.name = None
         self.power = None
         self.maxHp = None
+        self.hp = None
+
         self.width = None
         self.height = None
+
+        self.Q = False
+        self.E = False
+
+        self.simpleAttack = False
+        self.mouse_pos_x, self.mouse_pos_y = None, None
+
+        self.direction_x = 1
+        self.damage_given = 0
 
 
 class Player_map_parkour(pygame.sprite.Sprite):
@@ -414,3 +508,5 @@ class Player_map_parkour(pygame.sprite.Sprite):
                     self.image.blit(pygame.transform.scale(self.settings['imagePreview'], (self.width, self.height)),
                                     (0, 0))
                 self.rect = self.image.get_rect(topleft=(x, y))
+
+
