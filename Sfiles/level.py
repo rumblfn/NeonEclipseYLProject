@@ -1,7 +1,9 @@
 import pygame
 from tiles import Tile, Portal
 from map_preparation_settings import tile_size, level1_map
-from player import Player_hero1, Player_hero2, Player_hero3
+from Hero1Player import Player_hero1
+from Hero2Player import Player_hero2
+from Hero3Player import Player_hero3
 from NPC import Class_npc
 from dataConsts import bgMapPreparation
 
