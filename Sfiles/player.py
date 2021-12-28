@@ -18,7 +18,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = True  # None
+        self.ready = None  # True
 
         self.name = None
         self.power = None
@@ -33,6 +33,8 @@ class Player:
 
         self.simpleAttack = False
         self.mouse_pos_x, self.mouse_pos_y = None, None
+
+        self.E_ACTIVE_SHIELD = False
 
         self.direction_x = 1
         self.damage_given = 0
