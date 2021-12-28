@@ -262,13 +262,14 @@ def main_menu():
 
 
 def waitingForConnection(player, network, player_settings):
+    run = True
+    waitingText = font.render('Waiting for a connection', False, (0, 255, 0))
+    top_menu_text_pos_x = 10
+
     if True:
         map_preparation(player, network, player_settings)
+        clock.tick(60)
     else:
-        run = True
-        waitingText = font.render('Waiting for a connection', False, (0, 255, 0))
-        top_menu_text_pos_x = 10
-
         while run:
             player2 = network.send(player)
             screen.fill((0, 0, 0))

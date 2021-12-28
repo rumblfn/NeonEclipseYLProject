@@ -163,10 +163,10 @@ class Level:
             sprite.run_attackE()
 
     def print_current_gold(self):
-        text = f'GEMS COLLECTED: {self.player_settings["gold"]}'
+        text = f'{self.player_settings["gold"]}'
         newFont = pygame.font.SysFont('SFCompact', round((40 * self.width) / 1536))
         txt_surf = newFont.render(text, False, (255, 183, 0))
-        self.display_surface.blit(txt_surf, (round((20 * self.width) / 1536), round((190 * self.height) / 864)))
+        self.display_surface.blit(txt_surf, (self.width - round((40 * self.width) / 1536), round((20 * self.width) / 1536)))
 
     def check_inventory(self):
         player = self.player.sprite
@@ -175,6 +175,11 @@ class Level:
                 mx, my = pygame.mouse.get_pos()
                 if self.interface.chest_rect.collidepoint((mx, my)):
                     self.interface.show_inventory()
+                for i, rect in enumerate(self.interface.item_rects):
+                    if rect.collidepoint((mx, my)):
+                        self.interface.current_item = i
+                        print(self.interface.current_item)
+
             if event.type == KEYDOWN:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_TAB]:
@@ -207,6 +212,7 @@ class Level:
         self.print_current_gold()
         self.check_inventory()
         self.interface.draw_inventory()
+        self.interface.check_item_choice()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))

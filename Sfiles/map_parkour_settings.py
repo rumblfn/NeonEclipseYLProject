@@ -12,7 +12,7 @@ level_parkour_map = [  # 18
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXX      XXXXX                                                    0 0         d g   D       D           D   g   D        D XXXXXXXXXXXXXXXa щ ЕXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXX                               00000000G00000000                   d g           D       g           g        D XXXIXGGGGGGGGй aXXXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXu P                               0    0    0          0L0         d g   g   D   g   D       g                D XXXXXXXXXXXXXXXa ш ГXXXXXXXXXXXXXXXXXXXX',
-    'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXX0  0                                0                           d D       D       D   D       D            D  XXXXXXXXXXXXXXaXXXXXXXXXXXXXXXXXXXXXXXX',
+    'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXX0  0                                                            d D       D       D   D       D            D  XXXXXXXXXXXXXXaXXXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXG           0                    0       0           0G0         d D   D   D       D   D   D   D   D      R D                aXXXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXX                   0                0        000    000    000  DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXXXXXXXXXXXXX',
     'XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXX                                              G0           0G                                      XXXXXXXXXXXXXXXXXXXXXXXXXaXXXXXXXXXXXXXXXXXXXXXXXX',
@@ -29,4 +29,4 @@ gold_max = 0
 for el in level_parkour_map:
     for s in el:
         if s in ['G', 'g']:
-            gold_max += 1
+            gold_max = 60

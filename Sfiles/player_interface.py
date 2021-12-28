@@ -1,4 +1,5 @@
 import pygame
+import time
 
 
 class Interface:
@@ -30,16 +31,20 @@ class Interface:
                                             (round(50 * sprite_kef), round(45 * sprite_kef)))
         self.chestImageSurface = pygame.Surface((round(50 * sprite_kef), round(45 * sprite_kef)), pygame.SRCALPHA)
         self.chestImageSurface.blit(chestImage, (0, 0))
-        self.chest_rect = self.chestImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef - 10, self.screen_height - 45 * self.sprite_kef - 10))
-
-        self.inventory = []
-        for i in range(5):
-            self.add_inventory('')
-        self.inventory_visible = False
+        self.chest_rect = self.chestImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef - 10,
+                                                                   self.screen_height - 45 * self.sprite_kef - 10))
 
         self.screen = screen
         self.font = pygame.font.SysFont('Avenir Next', round(26 * self.screen_width / 1440))
         self.fontTitle = pygame.font.SysFont('SFCompactItalic', 42)
+
+        self.inventory = []
+        self.current_item = 0
+        self.inventory_visible = False
+        for i in range(5):
+            self.add_inventory('')
+
+        self.item_rects = []
 
     def update_screen_size(self, w, h):
         self.screen_width = w
@@ -55,14 +60,16 @@ class Interface:
         self.screen.blit(self.powerImageSurface, (10, 20 + 50 * self.sprite_kef))
         titleSurface = self.font.render(str(power), False, (0, 255, 0))
         self.screen.blit(titleSurface, (20 + 50 * self.sprite_kef, 30 + 50 * self.sprite_kef))
-        self.screen.blit(self.chestImageSurface, (self.screen_width - 50 * self.sprite_kef - 10, self.screen_height - 45 * self.sprite_kef - 10))
+        self.screen.blit(self.chestImageSurface, (self.screen_width - 50 * self.sprite_kef - 10,
+                                                  self.screen_height - 45 * self.sprite_kef - 10))
 
     def draw_enemy_health(self, hp, max_hp):
         titleSurface = self.fontTitle.render("VS", False, (12, 255, 17))
         pos = titleSurface.get_rect(midtop=(self.screen_width // 2, 10))
         self.screen.blit(titleSurface, pos)
         pygame.draw.rect(self.screen, (255, 0, 0),
-                         (self.screen_width - self.hpBarWidth - 7, 28, (hp / max_hp) * self.hpBarWidth - 6, self.hpBarHeight - 6))
+                         (self.screen_width - self.hpBarWidth - 7, 28, (hp / max_hp) * self.hpBarWidth - 6,
+                          self.hpBarHeight - 6))
         pygame.draw.rect(self.screen, (64, 128, 255),
                          (self.screen_width - self.hpBarWidth - 7, 28, self.hpBarWidth - 6,
                           self.hpBarHeight - 6), 4)
@@ -81,11 +88,27 @@ class Interface:
 
     def draw_inventory(self):
         if self.inventory_visible:
-            for i, item in enumerate(self.inventory, 2):
+            for i, item in enumerate(self.inventory):
                 itemImage = pygame.transform.scale(pygame.image.load('static/green_gem.png'),
                                                     (round(50 * self.sprite_kef), round(50 * self.sprite_kef)))
-                self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)), pygame.SRCALPHA)
+                self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)),
+                                                       pygame.SRCALPHA)
+                if i == self.current_item:
+                    self.itemImageSurface.fill((0, 255, 0, 50))
                 self.itemImageSurface.blit(itemImage, (0, 0))
-                self.screen.blit(self.itemImageSurface, ((self.screen_width - 50 * self.sprite_kef * i - 10 * i),
-                                                          self.screen_height - 45 * self.sprite_kef - 10))
+                self.screen.blit(self.itemImageSurface,
+                                 ((self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
+                                                          self.screen_height - 45 * self.sprite_kef - 10)))
+                self.item_rect = self.itemImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
+                                                                         self.screen_height - 45 * self.sprite_kef - 10))
+                if i + 1 > len(self.item_rects):
+                    self.item_rects.append(self.item_rect)
 
+    def check_item_choice(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = pygame.mouse.get_pos()
+                for i, rect in enumerate(self.item_rects):
+                    if rect.collidepoint((mx, my)):
+                        self.current_item = i
+                        print(self.current_item)
