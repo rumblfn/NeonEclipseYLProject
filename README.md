@@ -1,2 +1,1 @@
-# NeonEclipseDesign
 by Artem
