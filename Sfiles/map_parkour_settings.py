@@ -29,4 +29,4 @@ gold_max = 0
 for el in level_parkour_map:
     for s in el:
         if s in ['G', 'g']:
-            gold_max = 60
+            gold_max += 1

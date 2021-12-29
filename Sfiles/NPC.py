@@ -71,6 +71,14 @@ class Librarian(pygame.sprite.Sprite):
         self.image.blit(pygame.transform.scale(self.images[int(self.count)], (self.width, self.height)), (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0], pos[1] - self.height // 2))
 
+        self.items = {'1': 'static/hero1_librarian/upgrade_power.png',
+                      '2': 'static/hero1_librarian/upgrade_hp.png',
+                      '3': 'static/hero1_librarian/hero1_q_hp_boost.png',
+                      '4': 'static/hero1_librarian/e_hero1_freeze_time_upgrade.png',
+                      '5': 'static/hero1_librarian/hero1_e_power_keff.png'}
+
+        self.bought_items = []
+
     def update_npc(self):
         if self.count >= len(self.images) - 1:
             self.count = 0
@@ -101,34 +109,49 @@ class Librarian(pygame.sprite.Sprite):
         self.screen.blit(msgImage, (self.msg_x, self.msg_y))
 
         attack = pygame.Surface((self.icon_w, self.icon_h))
-        attack_img = pygame.transform.scale(pygame.image.load('static/hero1_librarian/upgrade_power.png'), (self.icon_w, self.icon_h))
-        attack.blit(attack_img, (0, 0))
+        if '1' not in self.bought_items:
+            attack_img = pygame.transform.scale(pygame.image.load(self.items['1']), (self.icon_w, self.icon_h))
+            attack.blit(attack_img, (0, 0))
+        else:
+            attack.fill((255, 255, 255, 50))
         self.btn_a = pygame.draw.rect(self.screen, (255, 255, 255), (self.icon_a_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(attack, (self.icon_a_x, self.icon_y))
 
         health = pygame.Surface((self.icon_w, self.icon_h))
-        health_img = pygame.transform.scale(pygame.image.load('static/hero1_librarian/upgrade_hp.png'), (self.icon_w, self.icon_h))
-        health.blit(health_img, (0, 0))
+        if '2' not in self.bought_items:
+            health_img = pygame.transform.scale(pygame.image.load(self.items['2']), (self.icon_w, self.icon_h))
+            health.blit(health_img, (0, 0))
+        else:
+            health.fill((255, 255, 255, 50))
         self.btn_h = pygame.draw.rect(self.screen, (255, 255, 255), (self.icon_h_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(health, (self.icon_h_x, self.icon_y))
 
         q = pygame.Surface((self.icon_w, self.icon_h))
-        q_img = pygame.transform.scale(pygame.image.load('static/hero1_librarian/hero1_q_hp_boost.png'), (self.icon_w, self.icon_h))
-        q.blit(q_img, (0, 0))
+        if '3' not in self.bought_items:
+            q_img = pygame.transform.scale(pygame.image.load(self.items['3']), (self.icon_w, self.icon_h))
+            q.blit(q_img, (0, 0))
+        else:
+            q.fill((255, 255, 255, 50))
         self.btn_q = pygame.draw.rect(self.screen, (255, 255, 255),
                                       (self.icon_q_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(q, (self.icon_q_x, self.icon_y))
 
         e = pygame.Surface((self.icon_w, self.icon_h))
-        e_img = pygame.transform.scale(pygame.image.load('static/hero1_librarian/e_hero1_freeze_time_upgrade.png'), (self.icon_w, self.icon_h))
-        e.blit(e_img, (0, 0))
+        if '4' not in self.bought_items:
+            e_img = pygame.transform.scale(pygame.image.load(self.items['4']), (self.icon_w, self.icon_h))
+            e.blit(e_img, (0, 0))
+        else:
+            e.fill((255, 255, 255, 50))
         self.btn_e = pygame.draw.rect(self.screen, (255, 255, 255),
                                       (self.icon_e_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(e, (self.icon_e_x, self.icon_y))
 
         k = pygame.Surface((self.icon_w, self.icon_h))
-        k_img = pygame.transform.scale(pygame.image.load('static/hero1_librarian/hero1_e_power_keff.png'), (self.icon_w, self.icon_h))
-        k.blit(k_img, (0, 0))
+        if '5' not in self.bought_items:
+            k_img = pygame.transform.scale(pygame.image.load(self.items['5']), (self.icon_w, self.icon_h))
+            k.blit(k_img, (0, 0))
+        else:
+            k.fill((255, 255, 255, 50))
         self.btn_k = pygame.draw.rect(self.screen, (255, 255, 255),
                                       (self.icon_k_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(k, (self.icon_k_x, self.icon_y))
@@ -169,41 +192,26 @@ class Librarian(pygame.sprite.Sprite):
                     self.plus_k(player)
 
     def plus_attack(self, player):
-        col = (255, 0, 0)
-        if player['gold'] - 1 >= 0:
+        if player['gold'] - 1 >= 0 and '1' not in self.bought_items:
             player['gold'] -= 1
-            col = (0, 255, 0)
-        pygame.draw.rect(self.screen, col,
-                                        (self.msg_x, self.msg_y, self.msg_w, self.msg_h))
+            self.bought_items.append('1')
 
     def plus_health(self, player):
-        col = (255, 0, 0)
-        if player['gold'] - 2 >= 0:
+        if player['gold'] - 2 >= 0 and '2' not in self.bought_items:
             player['gold'] -= 2
-            col = (0, 255, 0)
-        pygame.draw.rect(self.screen, col,
-                         (self.msg_x, self.msg_y, self.msg_w, self.msg_h))
+            self.bought_items.append('2')
 
     def plus_q(self, player):
-        col = (255, 0, 0)
-        if player['gold'] - 3 >= 0:
+        if player['gold'] - 3 >= 0 and '3' not in self.bought_items:
             player['gold'] -= 3
-            col = (0, 255, 0)
-        pygame.draw.rect(self.screen, col,
-                         (self.msg_x, self.msg_y, self.msg_w, self.msg_h))
+            self.bought_items.append('3')
 
     def plus_e(self, player):
-        col = (255, 0, 0)
-        if player['gold'] - 4 >= 0:
+        if player['gold'] - 4 >= 0 and '4' not in self.bought_items:
             player['gold'] -= 4
-            col = (0, 255, 0)
-        pygame.draw.rect(self.screen, col,
-                         (self.msg_x, self.msg_y, self.msg_w, self.msg_h))
+            self.bought_items.append('4')
 
     def plus_k(self, player):
-        col = (255, 0, 0)
-        if player['gold'] - 5 >= 0:
+        if player['gold'] - 5 >= 0 and '5' not in self.bought_items:
             player['gold'] -= 5
-            col = (0, 255, 0)
-        pygame.draw.rect(self.screen, col,
-                                        (self.msg_x, self.msg_y, self.msg_w, self.msg_h))
+            self.bought_items.append('5')

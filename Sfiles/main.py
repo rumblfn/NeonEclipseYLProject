@@ -125,10 +125,13 @@ def map_preparation(player, network, player_settings):
             for e in pygame.event.get():
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
+                        level.portalParkour = False
+                        runParkourMap = False
                         portalParkourMap(sc, player_parkour, False)
                     level_p.check_fall = False
                 if level_p.portalParkour:
-                    map_preparation(player, network, player_settings)
+                    level.portalParkour = False
+                    runParkourMap = False
             if sleeper_status:
                 runParkourMap = False
             count += 1
@@ -137,6 +140,8 @@ def map_preparation(player, network, player_settings):
                 if count == 150:
                     to_print = False
             if level_p.check_fall:
+                level.portalParkour = False
+                runParkourMap = False
                 portalParkourMap(sc, player_parkour, False)
             level_p.events_check()
             clock.tick(60)
@@ -267,31 +272,27 @@ def waitingForConnection(player, network, player_settings):
     waitingText = font.render('Waiting for a connection', False, (0, 255, 0))
     top_menu_text_pos_x = 10
 
-    if True:
-        map_preparation(player, network, player_settings)
-        clock.tick(60)
-    else:
-        while run:
-            player2 = network.send(player)
-            screen.fill((0, 0, 0))
-            screen.blit(waitingText, (top_menu_text_pos_x, top_menu_text_pos_x))
-            pygame.display.flip()
+    while run:
+        player2 = network.send(player)
+        screen.fill((0, 0, 0))
+        screen.blit(waitingText, (top_menu_text_pos_x, top_menu_text_pos_x))
+        pygame.display.flip()
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                player.ready = False
+                network.send(player)
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
                     player.ready = False
                     network.send(player)
-                    pygame.quit()
-                    sys.exit()
-                if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        player.ready = False
-                        network.send(player)
-                        run = False
-            if player2.ready:
-                map_preparation(player, network, player_settings)
-                clock.tick(60)
+                    run = False
+        if player2.ready:
+            map_preparation(player, network, player_settings)
+        clock.tick(60)
 
 
 if __name__ == '__main__':

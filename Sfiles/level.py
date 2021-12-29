@@ -1,7 +1,9 @@
 import pygame
 from tiles import Tile, Portal
-from map_preparation_settings import tile_size, level1_map
-from player import Player_hero1, Player_hero2, Player_hero3
+from map_preparation_settings import level1_map
+from Hero1Player import Player_hero1
+from Hero2Player import Player_hero2
+from Hero3Player import Player_hero3
 from NPC import Librarian, BlackSmith
 from dataConsts import bgMapPreparation
 from pygame.locals import *
@@ -112,7 +114,6 @@ class Level:
         player = self.player_sprite
         if player.rect.y > self.height + 300 or player.rect.y < - 300:
             self.setup_level(self.level_data, self.player_sprite)
-            self.player_settings['gold'] = 0
 
     def npc_collisions(self):
         player = self.player.sprite
@@ -122,6 +123,7 @@ class Level:
                 if sprite.rect.colliderect(player.rect):
                     sprite.show_msg()
                     sprite.check_click(self.player_settings)
+                    self.interface.add_inventory(sprite.bought_items, sprite.items)
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -179,7 +181,6 @@ class Level:
                     if rect.collidepoint((mx, my)):
                         self.interface.current_item = i
                         print(self.interface.current_item)
-
             if event.type == KEYDOWN:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_TAB]:

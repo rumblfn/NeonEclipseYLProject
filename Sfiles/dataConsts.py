@@ -1,4 +1,5 @@
 import pygame
+from PIL import ImageOps, Image
 from menuWidgetAllHeroes import AllHeroesWindow
 from menuWidgetAboutGame import AboutGameWindow
 from menuWidgetElector import ElectorWindow
@@ -32,6 +33,7 @@ imageCursorClicked = pygame.image.load('static/Cursor_Clicked.png')
 player1Preview = pygame.image.load('static/charackter64x64Preview.png')
 player1BigGif = pygame.image.load('static/charackter136x136Bigt.gif')
 player2Paladin = pygame.image.load('static/paladin27x78.png')
+player2PaladinReverse = pygame.image.load('static/paladin27x78_REVERSE.png')
 player2PaladinBig = pygame.image.load('static/paladin27x78Big1.png')
 player3Sniper = pygame.image.load('static/sniper37x75.png')
 player3SniperBig = pygame.image.load('static/sniper136Big.png')
@@ -54,8 +56,6 @@ HEROES = [
             'left_walk': 'static/hero1animations/leftWalkImages/leftwalk',
             'right_jump': 'static/hero1animations/rightjump/rightjump',
             'left_jump': 'static/hero1animations/leftjump/leftjump',
-            'q_right_animation': 'static/hero1animations/atackQ/rightQ/Q',
-            'q_left_animation': 'static/hero1animations/atackQ/leftQ/Q'
         },
         'gold': 0
     },
@@ -86,7 +86,10 @@ HEROES = [
         'width': 27,
         'height': 78,
         'simpleAttack': 'attackLBM - 3',
-        'animations': None,
+        'animations': {  # paths
+            'left_walk': 'static/paladin27x78_REVERSE',  # + 14 + $ 1...2...14 + .png
+            'right_walk': 'static/paladin27x78',
+        },
         'gold': 0
     }
 ]

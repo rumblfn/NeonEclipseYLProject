@@ -41,10 +41,10 @@ class Interface:
         self.inventory = []
         self.current_item = 0
         self.inventory_visible = False
-        for i in range(5):
-            self.add_inventory('')
 
         self.item_rects = []
+
+        self.bought_items_interface = []
 
     def update_screen_size(self, w, h):
         self.screen_width = w
@@ -77,8 +77,11 @@ class Interface:
         pos = titleSurface.get_rect(midleft=(self.screen_width - self.hpBarWidth, 28 + self.hpBarHeight // 2))
         self.screen.blit(titleSurface, pos)
 
-    def add_inventory(self, item):
-        self.inventory.append(item)
+    def add_inventory(self, bought_items, all_items):
+        for i in bought_items:
+            if i not in self.bought_items_interface:
+                self.bought_items_interface.append(i)
+                self.inventory.append(all_items[i])
 
     def show_inventory(self):
         if self.inventory_visible:
@@ -89,13 +92,13 @@ class Interface:
     def draw_inventory(self):
         if self.inventory_visible:
             for i, item in enumerate(self.inventory):
-                itemImage = pygame.transform.scale(pygame.image.load('static/green_gem.png'),
-                                                    (round(50 * self.sprite_kef), round(50 * self.sprite_kef)))
+                itemImage = pygame.transform.scale(pygame.image.load(item),
+                                                    (round(50 * self.sprite_kef) - 6, round(50 * self.sprite_kef) - 6))
                 self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)),
                                                        pygame.SRCALPHA)
                 if i == self.current_item:
-                    self.itemImageSurface.fill((0, 255, 0, 50))
-                self.itemImageSurface.blit(itemImage, (0, 0))
+                    self.itemImageSurface.fill((0, 255, 0))
+                self.itemImageSurface.blit(itemImage, (3, 3))
                 self.screen.blit(self.itemImageSurface,
                                  ((self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
                                                           self.screen_height - 45 * self.sprite_kef - 10)))

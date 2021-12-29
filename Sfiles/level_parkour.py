@@ -3,7 +3,7 @@ import random
 import datetime
 
 from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird, KeysAndDoors, Invisible, Resizer
-from map_parkour_settings import level_parkour_map, gold_max, tile_size
+from map_parkour_settings import level_parkour_map, gold_max
 from player import Player_map_parkour
 
 
