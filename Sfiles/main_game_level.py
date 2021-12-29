@@ -1,7 +1,9 @@
 import pygame
 from tiles import Tile
 from main_map_settings import *
-from enemyClass import Enemy_hero1, Enemy
+from enemyClass import Enemy
+from hero1Enemy import Enemy_hero1
+from hero3Enemy import Enemy_hero3
 from _thread import start_new_thread
 from player import speed_to_low
 
@@ -24,13 +26,15 @@ class LevelG:
         if self.player_enemy.name == 'Hero1':
             self.enemy_hero1_bullets = pygame.sprite.Group()
             enemy = Enemy_hero1(self.player_enemy)
+        elif self.player_enemy.name == 'Hero3':
+            enemy = Enemy_hero3(self.player_enemy)
         else:
             enemy = Enemy(self.player_enemy)
 
         self.enemy.add(enemy)
         self.setup_level(level_data)
 
-    def setup_level(self, layout, default_player=False):
+    def setup_level(self, layout):
         self.interface.update_screen_size(self.width, self.height)
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
@@ -87,10 +91,9 @@ class LevelG:
 
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
-        self.enemy.sprite.Q_ACTIVE = player_enemy.Q
-        self.enemy.sprite.E_ACTIVE = player_enemy.E
-        self.enemy.sprite.direction_x = player_enemy.direction_x
         self.player_sprite.hp -= player_enemy.damage_given
+        self.server_player.hp -= player_enemy.damage_given
+        self.enemy.sprite.update_values(player_enemy)
 
         if player_enemy.name == 'Hero1':
             self.enemy.sprite.get_input()
@@ -117,6 +120,8 @@ class LevelG:
                     start_new_thread(speed_to_low, (self.player_sprite,))
 
             self.enemy_hero1_bullets.draw(self.display_surface)
+        elif player_enemy.name == 'Hero3':
+            self.enemy.sprite.get_input()
 
     def bullets_settings(self):
         for sprite in self.player_sprite.bullets.sprites():

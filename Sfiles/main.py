@@ -68,6 +68,7 @@ def main_game(server_player, network, player_main):
         server_player.name = player_main.name
         server_player.power = player_main.power
         server_player.maxHp = player_main.maxHp
+        server_player.hp = player_main.hp
         server_player.width = player_main.width
         server_player.height = player_main.height
 

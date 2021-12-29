@@ -37,6 +37,34 @@ blockLeftBottomRight = pygame.transform.scale(
         pygame.image.load('static/map_preparation_blocks/blockLeftBottomRightt.png'), (res, res))
 block = pygame.transform.scale(pygame.image.load('static/map_preparation_blocks/block.png'), (res, res))
 
+blockLeft_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockLeft.png'), (res, res))
+blockTop_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockTop.png'), (res, res))
+blockRight_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockRight.png'), (res, res))
+blockBottom_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockBottom.png'), (res, res))
+blockLeftTop_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockLeftRight.png'),
+                                          (res, res))
+blockTopRight_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockTopRight.png'),
+                                           (res, res))
+blockRightBottom_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockRightBottom.png'),
+                                              (res, res))
+blockBottomLeft_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockLeftBottom.png'),
+                                             (res, res))
+blockTopBottom_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockBottomTop.png'),
+                                            (res, res))
+blockTopLeftBottom_main = pygame.transform.scale(
+        pygame.image.load('static/main_game_blocks/blockBottomLeftTop.png'), (res, res))
+blockTopRightBottom_main = pygame.transform.scale(
+        pygame.image.load('static/main_game_blocks/blockBottomRightTop.png'), (res, res))
+blockBorders_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockBorders.png'),
+                                          (res, res))
+blockLeftTopRight_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/blockLeftTopRight.png'),
+                                               (res, res))
+blockRightLeft_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/BlockRightLeft.png'),
+                                            (res, res))
+blockLeftBottomRight_main = pygame.transform.scale(
+        pygame.image.load('static/main_game_blocks/blockLeftBottomRightt.png'), (res, res))
+block_main = pygame.transform.scale(pygame.image.load('static/main_game_blocks/block.png'), (res, res))
+
 windowBlock1 = pygame.transform.scale(pygame.image.load('static/WindowBlock.png'), (res, res))
 windowBlock2 = pygame.transform.scale(pygame.image.load('static/WindowBlock2.png'), (res, res))
 windowBlock3 = pygame.transform.scale(pygame.image.load('static/WindowBlock3.png'), (res, res))
@@ -58,25 +86,28 @@ class Tile(pygame.sprite.Sprite):
         self.new_tile_size = size
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
         self.set_image(pos, cell, size, map, player_col)
-        # self.image.fill((10, 17, 25))
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
 
     def set_image(self, pos, cell, s, lvl_map, player_col):
         el_top, el_right, el_bottom, el_left = False, False, False, False
         try:
-            el_top = True if lvl_map[pos[1] - 1][pos[0] + player_col] == 'X' else False
+            el_top = True if lvl_map[pos[1] - 1][pos[0] + player_col] == 'X' \
+                             or lvl_map[pos[1] - 1][pos[0] + player_col] == '#' else False
         except:
             pass
         try:
-            el_right = True if lvl_map[pos[1]][pos[0] + player_col + 1] == 'X' else False
+            el_right = True if lvl_map[pos[1]][pos[0] + player_col + 1] == 'X' \
+                               or lvl_map[pos[1]][pos[0] + player_col + 1] == '#' else False
         except:
             pass
         try:
-            el_left = True if lvl_map[pos[1]][pos[0] + player_col - 1] == 'X' else False
+            el_left = True if lvl_map[pos[1]][pos[0] + player_col - 1] == 'X' \
+                              or lvl_map[pos[1]][pos[0] + player_col - 1] == '#' else False
         except:
             pass
         try:
-            el_bottom = True if lvl_map[pos[1] + 1][pos[0] + player_col] == 'X' else False
+            el_bottom = True if lvl_map[pos[1] + 1][pos[0] + player_col] == 'X' \
+                                or lvl_map[pos[1] + 1][pos[0] + player_col] == '#' else False
         except:
             pass
         if cell == '0':
@@ -116,6 +147,39 @@ class Tile(pygame.sprite.Sprite):
                 self.draw_block(block)
             elif el_top and not el_left and not el_right and not el_bottom:
                 self.draw_block(blockLeftBottomRight)
+        elif cell == '#':
+            if not el_left and all([el_top, el_right, el_bottom]):
+                self.draw_block(blockLeft_main)
+            elif not el_left and not el_right and all([el_top, el_bottom]):
+                self.draw_block(blockRightLeft_main)
+            elif not el_top and all([el_left, el_bottom, el_right]):
+                self.draw_block(blockTop_main)
+            elif not el_right and all([el_top, el_bottom, el_left]):
+                self.draw_block(blockRight_main)
+            elif not el_bottom and all([el_left, el_top, el_right]):
+                self.draw_block(blockBottom_main)
+            elif el_right and el_bottom and not any([el_left, el_top]):
+                self.draw_block(blockLeftTop_main)
+            elif el_left and el_bottom and not any([el_top, el_right]):
+                self.draw_block(blockTopRight_main)
+            elif el_left and el_top and not any([el_right, el_bottom]):
+                self.draw_block(blockRightBottom_main)
+            elif el_top and el_right and not any([el_left, el_bottom]):
+                self.draw_block(blockBottomLeft_main)
+            elif el_left and el_right and not any([el_top, el_bottom]):
+                self.draw_block(blockTopBottom_main)
+            elif el_right and not any([el_bottom, el_left, el_top]):
+                self.draw_block(blockTopLeftBottom_main)
+            elif el_left and not any([el_top, el_right, el_bottom]):
+                self.draw_block(blockTopRightBottom_main)
+            elif el_bottom and not any([el_left, el_top, el_right]):
+                self.draw_block(blockLeftTopRight_main)
+            elif el_top and el_left and el_bottom and el_right:
+                self.draw_block(block_main)
+            elif el_top and not el_left and not el_right and not el_bottom:
+                self.draw_block(blockLeftBottomRight_main)
+            elif not any([el_left, el_top, el_right, el_bottom]):
+                self.draw_block(blockBorders_main)
         elif cell == 'п':  # vertical
             self.image = pygame.Surface((res, round(res * 1.5)), pygame.SRCALPHA)
             self.image.blit(pipe_vertical, (0, 0))
@@ -123,8 +187,8 @@ class Tile(pygame.sprite.Sprite):
             self.image = pygame.Surface((round(res * 1.5), res), pygame.SRCALPHA)
             self.image.blit(pipe_horizontal, (0, 0))
 
-    def draw_block(self, block_main):
-        self.image.blit(pygame.transform.scale(block_main, (self.new_tile_size, self.new_tile_size)), (0, 0))
+    def draw_block(self, block_to_draw):
+        self.image.blit(pygame.transform.scale(block_to_draw, (self.new_tile_size, self.new_tile_size)), (0, 0))
 
     def update(self, shift):
         self.rect.x += shift[0]
