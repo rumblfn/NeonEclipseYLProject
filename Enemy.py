@@ -9,6 +9,7 @@ class Enemy(pygame.sprite.Sprite):
         self.block_moving = False
         HEIGHT = pygame.display.Info().current_h
         WIDTH = pygame.display.Info().current_w
+        self.dif = 0
         self.map = map
         self.map_w = len(self.map[0])
         self.map_h = len(self.map)
@@ -18,8 +19,6 @@ class Enemy(pygame.sprite.Sprite):
         self.hp = enemy_settings['maxHp']
         self.started_pos = self.pos_change(self.map, self.map_w, self.map_h)
 
-        self.K_x = False
-
         re_size = (HEIGHT / len(map)) / 64
         self.width = round(enemy_settings['width'] * re_size) - 1
         self.height = round(enemy_settings['height'] * re_size) - 1
@@ -27,14 +26,6 @@ class Enemy(pygame.sprite.Sprite):
         self.images = False
         self.image.blit(pygame.transform.scale(enemy_settings['imagePreview'], (self.width, self.height)), (0, 0))
         self.rect = self.image.get_rect(topleft=pos)
-        # self.direction = pygame.math.Vector2(0, 0)
-        # self.control_speed = round(9 * WIDTH / 1440)
-        # self.speed = round(9 * WIDTH / 1440)
-        self.gravity = 0.7 * HEIGHT / 900
-        # self.jump_speed = -16 * HEIGHT / 900
-        # self.jump_bool = True
-
-        self.server_player = None
 
     def pos_change(self, current_map, widht, height):
         new_pos = randrange(0, widht), randrange(0, height)
@@ -47,17 +38,10 @@ class Enemy(pygame.sprite.Sprite):
             return True
         return False
 
-    # def apply_gravity(self):
-    #     self.direction.y += self.gravity
-    #     self.rect.y += self.direction.y
-    #
-    # def jump(self):
-    #     self.jump_bool = False
-    #     self.direction.y = self.jump_speed
+    def poser(self):
+        self.pos_change(self.map, self.map_w, self.map_h)
 
-    def update(self):
-        if not self.block_moving:
-            self.get_input()
-
-    def initialize_server_player(self, server_player):
-        self.server_player = server_player
+    def update(self, shift):
+        self.dif += shift[0]
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
