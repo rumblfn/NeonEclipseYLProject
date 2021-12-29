@@ -52,6 +52,7 @@ class Player_hero1(pygame.sprite.Sprite):
         self.jump_speed = -18 * HEIGHT / 900
         self.jump_bool = True
         self.shoot_bool = 1
+        self.interface_mode = False
 
         self.server_player = None
         self.WIDTH = WIDTH
@@ -161,8 +162,9 @@ class Player_hero1(pygame.sprite.Sprite):
         self.direction.y = self.jump_speed
 
     def update(self):
-        self.shoot_bool += 0.1
-        self.attacksEBool += 1
+        if not self.interface_mode:
+            self.shoot_bool += 0.1
+            self.attacksEBool += 1
         if not self.block_moving:
             self.get_input()
 

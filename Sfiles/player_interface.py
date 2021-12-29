@@ -109,3 +109,11 @@ class Interface:
                                                                          self.screen_height - 45 * self.sprite_kef - 10))
                 if i + 1 > len(self.item_rects):
                     self.item_rects.append(self.item_rect)
+
+    def check_item_choice(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = pygame.mouse.get_pos()
+                for i, rect in enumerate(self.item_rects):
+                    if rect.collidepoint((mx, my)):
+                        self.current_item = i

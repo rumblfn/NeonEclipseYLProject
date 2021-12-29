@@ -24,6 +24,7 @@ class Level:
         self.world_shift_y = 0
         self.portalParkour = False
         self.showed_inv_by_shop = False
+        self.item_clicked = False
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -119,9 +120,11 @@ class Level:
     def npc_collisions(self):
         player = self.player.sprite
         for sprite in self.npces.sprites():
+
             if sprite.name == 'librarian':
                 sprite.update_npc()
                 if sprite.rect.colliderect(player.rect):
+                    player.interface_mode = True
                     sprite.show_msg()
                     sprite.check_click(self.player_settings)
                     self.interface.add_inventory(sprite.bought_items, sprite.items)
@@ -129,6 +132,7 @@ class Level:
                     self.showed_inv_by_shop = True
                 else:
                     if self.showed_inv_by_shop:
+                            player.interface_mode = False
                             self.interface.show_inventory(True)
                             self.showed_inv_by_shop = False
 
@@ -182,17 +186,24 @@ class Level:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
                 if self.interface.chest_rect.collidepoint((mx, my)):
+                    self.player.sprite.interface_mode = True
                     self.interface.show_inventory()
+                else:
+                    self.player.sprite.interface_mode = False
                 for i, rect in enumerate(self.interface.item_rects):
                     if rect.collidepoint((mx, my)):
                         self.interface.current_item = i
+                        self.item_clicked = True
+                        self.player.sprite.interface_mode = True
+                if not self.item_clicked:
+                    self.player.sprite.interface_mode = False
+                    self.item_clicked = False
             if event.type == KEYDOWN:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_TAB]:
                     self.interface.show_inventory()
                 if keys[pygame.K_RIGHT]:
                     self.interface.current_item -= 1
-                    print(self.interface.current_item)
                     if self.interface.current_item < 0:
                         self.interface.current_item = len(self.interface.inventory) - 1
                 if keys[pygame.K_LEFT]:
@@ -216,6 +227,10 @@ class Level:
 
         self.scroll_x()
 
+        self.npc_collisions()
+        self.check_inventory()
+        self.interface.check_item_choice()
+        self.interface.draw_inventory()
         self.player.update()
         self.player_pos_checker()
         self.check_portals()
@@ -223,10 +238,6 @@ class Level:
         self.vertical_movement_collisions()
         self.player.draw(self.display_surface)
         self.print_current_gold()
-        self.npc_collisions()
-        self.check_inventory()
-        self.interface.check_item_choice()
-        self.interface.draw_inventory()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))
