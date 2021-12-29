@@ -51,6 +51,7 @@ class ScreenSizeWindow:
             if pygame.mouse.get_pressed():
                 pygame.display.set_mode((960, 600))
                 self.colors = [self.borderColor, self.borderColor, self.borderColor]
+                h = pygame.display.Info().current_h
         elif self.ch2.collidepoint((mx, my)):
             if pygame.mouse.get_pressed():
                 pygame.display.set_mode((1024, 640))

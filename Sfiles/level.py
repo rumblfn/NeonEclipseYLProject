@@ -180,7 +180,6 @@ class Level:
                 for i, rect in enumerate(self.interface.item_rects):
                     if rect.collidepoint((mx, my)):
                         self.interface.current_item = i
-                        print(self.interface.current_item)
             if event.type == KEYDOWN:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_TAB]:

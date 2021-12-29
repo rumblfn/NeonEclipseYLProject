@@ -374,8 +374,6 @@ class LevelParkour:
                     self.build_bird = False
                     player.bird_mode = False
                     self.last_bird_block = 'D'
-            elif bird.cell == 'R':
-                bird.image.fill((255, 0, 0, 0))
 
     def crush_bird(self):
         for gold in self.golds:
