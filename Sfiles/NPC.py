@@ -167,10 +167,10 @@ class Librarian(pygame.sprite.Sprite):
             self.gem_x = self.msg_x + self.msg_space * (i + 3) + self.icon_w * i + self.gem_size - round((10 * self.w) / 1536) + round((10 * self.w) / 1536)
             gold_img = pygame.transform.scale(pygame.image.load('static/green_gem.png'),
                 (self.gem_size, self.gem_size))
-            self.screen.blit(gold_img, (self.gem_x, self.msg_y + self.msg_h - self.icon_y - 2 * self.gem_size))
+            self.screen.blit(gold_img, (self.gem_x, self.msg_y + round((39 * self.h) / 864)))
 
-            titleSurface = font.render(f'{i + 1}', True, (255, 255, 255))
-            self.screen.blit(titleSurface, (self.text_x, self.msg_y + self.msg_h - self.icon_y - 2 * self.gem_size + round((7 * self.w) / 1536)))
+            price = font.render('5', True, (255, 255, 255))
+            self.screen.blit(price, (self.text_x, self.msg_y + round((43 * self.h) / 864)))
 
     def update(self, shift):
         self.rect.x += shift[0]
@@ -192,23 +192,23 @@ class Librarian(pygame.sprite.Sprite):
                     self.plus_k(player)
 
     def plus_attack(self, player):
-        if player['gold'] - 1 >= 0 and '1' not in self.bought_items:
-            player['gold'] -= 1
+        if player['gold'] - 5 >= 0 and '1' not in self.bought_items:
+            player['gold'] -= 5
             self.bought_items.append('1')
 
     def plus_health(self, player):
-        if player['gold'] - 2 >= 0 and '2' not in self.bought_items:
-            player['gold'] -= 2
+        if player['gold'] - 5 >= 0 and '2' not in self.bought_items:
+            player['gold'] -= 5
             self.bought_items.append('2')
 
     def plus_q(self, player):
-        if player['gold'] - 3 >= 0 and '3' not in self.bought_items:
-            player['gold'] -= 3
+        if player['gold'] - 5 >= 0 and '3' not in self.bought_items:
+            player['gold'] -= 5
             self.bought_items.append('3')
 
     def plus_e(self, player):
-        if player['gold'] - 4 >= 0 and '4' not in self.bought_items:
-            player['gold'] -= 4
+        if player['gold'] - 5 >= 0 and '4' not in self.bought_items:
+            player['gold'] -= 5
             self.bought_items.append('4')
 
     def plus_k(self, player):

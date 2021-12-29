@@ -23,6 +23,7 @@ class Level:
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
+        self.showed_inv_by_shop = False
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -124,6 +125,12 @@ class Level:
                     sprite.show_msg()
                     sprite.check_click(self.player_settings)
                     self.interface.add_inventory(sprite.bought_items, sprite.items)
+                    self.interface.show_inventory(False)
+                    self.showed_inv_by_shop = True
+                else:
+                    if self.showed_inv_by_shop:
+                            self.interface.show_inventory(True)
+                            self.showed_inv_by_shop = False
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -171,7 +178,6 @@ class Level:
         self.display_surface.blit(txt_surf, (self.width - round((40 * self.width) / 1536), round((20 * self.width) / 1536)))
 
     def check_inventory(self):
-        player = self.player.sprite
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
@@ -183,8 +189,16 @@ class Level:
             if event.type == KEYDOWN:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_TAB]:
-                    player.button_clicked = True
                     self.interface.show_inventory()
+                if keys[pygame.K_RIGHT]:
+                    self.interface.current_item -= 1
+                    print(self.interface.current_item)
+                    if self.interface.current_item < 0:
+                        self.interface.current_item = len(self.interface.inventory) - 1
+                if keys[pygame.K_LEFT]:
+                    self.interface.current_item += 1
+                    if self.interface.current_item > len(self.interface.inventory) - 1:
+                        self.interface.current_item = 0
 
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
@@ -207,12 +221,12 @@ class Level:
         self.check_portals()
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
-        self.npc_collisions()
         self.player.draw(self.display_surface)
         self.print_current_gold()
+        self.npc_collisions()
         self.check_inventory()
-        self.interface.draw_inventory()
         self.interface.check_item_choice()
+        self.interface.draw_inventory()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))

@@ -83,15 +83,18 @@ class Interface:
                 self.bought_items_interface.append(i)
                 self.inventory.append(all_items[i])
 
-    def show_inventory(self):
-        if self.inventory_visible:
-            self.inventory_visible = False
+    def show_inventory(self, arg=True):
+        if arg:
+            if self.inventory_visible:
+                self.inventory_visible = False
+            else:
+                self.inventory_visible = True
         else:
             self.inventory_visible = True
 
     def draw_inventory(self):
         if self.inventory_visible:
-            for i, item in enumerate(self.inventory):
+            for i, item in enumerate(self.inventory[-1::-1]):
                 itemImage = pygame.transform.scale(pygame.image.load(item),
                                                     (round(50 * self.sprite_kef) - 6, round(50 * self.sprite_kef) - 6))
                 self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)),
@@ -106,12 +109,3 @@ class Interface:
                                                                          self.screen_height - 45 * self.sprite_kef - 10))
                 if i + 1 > len(self.item_rects):
                     self.item_rects.append(self.item_rect)
-
-    def check_item_choice(self):
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = pygame.mouse.get_pos()
-                for i, rect in enumerate(self.item_rects):
-                    if rect.collidepoint((mx, my)):
-                        self.current_item = i
-                        print(self.current_item)

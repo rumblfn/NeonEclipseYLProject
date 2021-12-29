@@ -60,21 +60,6 @@ HEROES = [
         'gold': 0
     },
     {
-        'name': 'Hero2',
-        'attack power': 20,
-        'maxHp': 70,
-        'imagePreview': player3Sniper,
-        'imagePreviewBig': player3SniperBig,
-        'selected': False,
-        'attackE': 'attackE - 2',
-        'attackQ': 'attackQ - 2',
-        'simpleAttack': 'attackLBM - 2',
-        'width': 37,
-        'height': 75,
-        'animations': None,
-        'gold': 0
-    },
-    {
         'name': 'Hero3',
         'attack power': 5,
         'maxHp': 200,
