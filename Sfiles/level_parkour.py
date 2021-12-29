@@ -9,7 +9,6 @@ from player import Player_map_parkour
 
 class LevelParkour:
     def __init__(self, level_data, surface, player_settings):
-        print(tile_size)
         self.display_surface = surface
         self.level_data = level_data
         self.player_settings = player_settings
@@ -258,6 +257,7 @@ class LevelParkour:
         if player.K_x:
             for portal in self.portals:
                 if portal.rect.colliderect(player.rect):
+                    self.player_settings['gold'] = gold_max - len(list(self.golds))
                     self.portalParkour = True
                     return True
 

@@ -4,8 +4,9 @@ from map_preparation_settings import tile_size, level1_map
 from Hero1Player import Player_hero1
 from Hero2Player import Player_hero2
 from Hero3Player import Player_hero3
-from NPC import Class_npc
+from NPC import Librarian, BlackSmith
 from dataConsts import bgMapPreparation
+from pygame.locals import *
 
 
 class Level:
@@ -69,8 +70,12 @@ class Level:
                     portal = Portal((x, y))
                     self.portals.add(portal)
                     self.all_sprites.add(portal)
-                elif cell == 'N':
-                    npc = Class_npc((x, y), len(self.npces.sprites()), self.display_surface)
+                elif cell == 'L':
+                    npc = Librarian((x, y), len(self.npces.sprites()), self.display_surface)
+                    self.npces.add(npc)
+                    self.all_sprites.add(npc)
+                elif cell == 'B':
+                    npc = BlackSmith((x, y), len(self.npces.sprites()), self.display_surface)
                     self.npces.add(npc)
                     self.all_sprites.add(npc)
                 elif cell == 'п' or cell == 'П':
@@ -112,10 +117,12 @@ class Level:
 
     def npc_collisions(self):
         player = self.player.sprite
-
         for sprite in self.npces.sprites():
-            if sprite.rect.colliderect(player.rect):
-                sprite.show_msg()
+            if sprite.name == 'librarian':
+                sprite.update_npc()
+                if sprite.rect.colliderect(player.rect):
+                    sprite.show_msg()
+                    sprite.check_click(self.player_settings)
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -156,6 +163,30 @@ class Level:
             sprite.rect.midbottom = self.player_sprite.rect.midbottom
             sprite.run_attackE()
 
+    def print_current_gold(self):
+        text = f'{self.player_settings["gold"]}'
+        newFont = pygame.font.SysFont('SFCompact', round((40 * self.width) / 1536))
+        txt_surf = newFont.render(text, False, (255, 183, 0))
+        self.display_surface.blit(txt_surf, (self.width - round((40 * self.width) / 1536), round((20 * self.width) / 1536)))
+
+    def check_inventory(self):
+        player = self.player.sprite
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = pygame.mouse.get_pos()
+                if self.interface.chest_rect.collidepoint((mx, my)):
+                    self.interface.show_inventory()
+                for i, rect in enumerate(self.interface.item_rects):
+                    if rect.collidepoint((mx, my)):
+                        self.interface.current_item = i
+                        print(self.interface.current_item)
+
+            if event.type == KEYDOWN:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_TAB]:
+                    player.button_clicked = True
+                    self.interface.show_inventory()
+
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
@@ -179,6 +210,10 @@ class Level:
         self.vertical_movement_collisions()
         self.npc_collisions()
         self.player.draw(self.display_surface)
+        self.print_current_gold()
+        self.check_inventory()
+        self.interface.draw_inventory()
+        self.interface.check_item_choice()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))

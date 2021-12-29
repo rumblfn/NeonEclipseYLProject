@@ -56,7 +56,8 @@ HEROES = [
             'left_jump': 'static/hero1animations/leftjump/leftjump',
             'q_right_animation': 'static/hero1animations/atackQ/rightQ/Q',
             'q_left_animation': 'static/hero1animations/atackQ/leftQ/Q'
-        }
+        },
+        'gold': 0
     },
     {
         'name': 'Hero2',
@@ -70,7 +71,8 @@ HEROES = [
         'simpleAttack': 'attackLBM - 2',
         'width': 37,
         'height': 75,
-        'animations': None
+        'animations': None,
+        'gold': 0
     },
     {
         'name': 'Hero3',
@@ -84,7 +86,8 @@ HEROES = [
         'width': 27,
         'height': 78,
         'simpleAttack': 'attackLBM - 3',
-        'animations': None
+        'animations': None,
+        'gold': 0
     }
 ]
 
