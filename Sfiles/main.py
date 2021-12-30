@@ -73,6 +73,8 @@ def main_game(server_player, network, player_main):
         server_player.height = player_main.height
         if player_main.name == 'Hero1':
             server_player.e_time_speed_to_low = player_main.e_time_speed_to_low
+        elif player_main.name == 'Hero3':
+            server_player.SHIELD_HP = player_main.SHIELD_HP
 
     run = True
     update_server_player_pos()

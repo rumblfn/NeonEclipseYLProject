@@ -170,6 +170,8 @@ class Player_hero1(pygame.sprite.Sprite):
         self.attacksEBool += 1
         if not self.block_moving:
             self.get_input()
+        else:
+            self.direction.x = 0
 
     def initialize_server_player(self, server_player):
         self.server_player = server_player

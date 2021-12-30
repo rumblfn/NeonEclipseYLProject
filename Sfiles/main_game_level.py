@@ -91,8 +91,20 @@ class LevelG:
 
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
-        self.player_sprite.hp -= player_enemy.damage_given
-        self.server_player.hp -= player_enemy.damage_given
+
+        if self.player_sprite.name != 'Hero3':
+            self.player_sprite.hp -= player_enemy.damage_given
+            self.server_player.hp -= player_enemy.damage_given
+        else:
+            if self.player_sprite.SHIELD_ACTIVE:
+                self.player_sprite.SHIELD_HP -= player_enemy.damage_given
+                if self.player_sprite.SHIELD_HP < 0:
+                    self.player_sprite.hp += self.player_sprite.SHIELD_HP
+                    self.server_player.hp += self.player_sprite.SHIELD_HP
+            else:
+                self.player_sprite.hp -= player_enemy.damage_given
+                self.server_player.hp -= player_enemy.damage_given
+
         self.player_sprite.rect.x += player_enemy.diff_x
         self.enemy.sprite.update_values(player_enemy)
 
@@ -122,6 +134,9 @@ class LevelG:
                     start_new_thread(speed_to_low, (self.player_sprite, self.enemy.sprite.e_time_speed_to_low))
 
             self.enemy_hero1_bullets.draw(self.display_surface)
+
+        if player_enemy.name == 'Hero3':
+            self.player_sprite.block_moving = player_enemy.Q_STUN
 
     def bullets_settings(self):
         for sprite in self.player_sprite.bullets.sprites():
@@ -167,6 +182,12 @@ class LevelG:
                     else:
                         self.server_player.diff_x = -130
                     self.server_player.damage_given = self.player_sprite.power
+                if self.player_sprite.Q_ACTIVE:
+                    self.player_sprite.Q_END = True
+                    self.server_player.Q_STUN = True
+                    self.player_sprite.Q_STUN_TIMER = 0
+            if self.player_sprite.Q_STUN_TIMER >= 120:
+                self.server_player.Q_STUN = False
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)
         self.interface.draw_enemy_health(self.enemy.sprite.hp, self.enemy.sprite.maxHp)

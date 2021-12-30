@@ -35,6 +35,8 @@ class Player:
         self.mouse_pos_x, self.mouse_pos_y = None, None
 
         self.E_ACTIVE_SHIELD = False
+        self.SHIELD_HP = None
+        self.Q_STUN = False
 
         self.direction_x = 1
         self.damage_given = 0
