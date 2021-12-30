@@ -25,7 +25,7 @@ def draw_cursor(sc):
 
 def sleeper():
     global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 300
+    sleeper_time = 3
     sleeper_loading = 1
     sleeper_status = False
 
@@ -71,6 +71,8 @@ def main_game(server_player, network, player_main):
         server_player.hp = player_main.hp
         server_player.width = player_main.width
         server_player.height = player_main.height
+        if player_main.name == 'Hero1':
+            server_player.e_time_speed_to_low = player_main.e_time_speed_to_low
 
     run = True
     update_server_player_pos()

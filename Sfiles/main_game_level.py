@@ -93,10 +93,12 @@ class LevelG:
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
         self.player_sprite.hp -= player_enemy.damage_given
         self.server_player.hp -= player_enemy.damage_given
+        self.player_sprite.rect.x += player_enemy.diff_x
         self.enemy.sprite.update_values(player_enemy)
 
+        self.enemy.sprite.get_input()
+
         if player_enemy.name == 'Hero1':
-            self.enemy.sprite.get_input()
             if player_enemy.simpleAttack:
                 self.enemy_hero1_bullets.add(self.enemy.sprite.create_bullet((player_enemy.mouse_pos_x, player_enemy.mouse_pos_y)))
 
@@ -117,11 +119,9 @@ class LevelG:
                         self.player_sprite.rect.left = sprite.rect.right
                     else:
                         self.player_sprite.rect.right = sprite.rect.left
-                    start_new_thread(speed_to_low, (self.player_sprite,))
+                    start_new_thread(speed_to_low, (self.player_sprite, self.enemy.sprite.e_time_speed_to_low))
 
             self.enemy_hero1_bullets.draw(self.display_surface)
-        elif player_enemy.name == 'Hero3':
-            self.enemy.sprite.get_input()
 
     def bullets_settings(self):
         for sprite in self.player_sprite.bullets.sprites():
@@ -152,7 +152,6 @@ class LevelG:
             self.player_sprite.attacksE.draw(self.display_surface)
             for sprite in self.player_sprite.bullets.sprites():
                 if sprite.rect.colliderect(self.enemy.sprite.rect):
-                    self.enemy.sprite.hp -= self.player_sprite.power
                     self.server_player.damage_given = self.player_sprite.power
                     sprite.kill()
             self.ESettings()
@@ -160,7 +159,14 @@ class LevelG:
         elif self.player_sprite.name == 'Hero2':
             pass
         elif self.player_sprite.name == 'Hero3':
-            pass
+            self.server_player.diff_x = 0
+            if self.player_sprite.AA_ACTIVE and self.player_sprite.CURRENT_SPRITE_AA == 2:
+                if self.player_sprite.rect.colliderect(self.enemy.sprite.rect):
+                    if self.player_sprite.SIDE == 'right':
+                        self.server_player.diff_x = 130
+                    else:
+                        self.server_player.diff_x = -130
+                    self.server_player.damage_given = self.player_sprite.power
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)
         self.interface.draw_enemy_health(self.enemy.sprite.hp, self.enemy.sprite.maxHp)

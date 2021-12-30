@@ -24,6 +24,8 @@ class Enemy_hero1(pygame.sprite.Sprite):
         self.direction_x = 1
         self.current_sprite = 0
 
+        self.e_time_speed_to_low = player_enemy.e_time_speed_to_low
+
         self.normalImage = pygame.transform.scale(playerImages[self.name], (self.width, self.height))
         self.QImage = pygame.transform.scale(player1QImage, (self.width, self.height))
 
