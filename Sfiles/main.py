@@ -1,3 +1,5 @@
+from copy import copy
+
 from dataConsts import *
 import pygame.mixer_music
 from main_game_level import *
@@ -59,7 +61,7 @@ def redrawWindow(win, player, player2):
     pygame.display.update()
 
 
-def main_game(server_player, network, player_main):
+def main_game(server_player, net, play_main):
     def update_server_player_pos():
         server_player.x = WIDTH // 2
         server_player.y = HEIGHT // 2
@@ -68,37 +70,79 @@ def main_game(server_player, network, player_main):
         server_player.name = player_main.name
         server_player.power = player_main.power
         server_player.maxHp = player_main.maxHp
-        server_player.hp = player_main.hp
+        server_player.hp = player_main.maxHp
         server_player.width = player_main.width
         server_player.height = player_main.height
+        server_player.ready = True
         if player_main.name == 'Hero1':
             server_player.e_time_speed_to_low = player_main.e_time_speed_to_low
         elif player_main.name == 'Hero3':
             server_player.SHIELD_HP = player_main.SHIELD_HP
 
+    maps = [map1, map2, map3, map4, map5]
+    i = -1
+    while server_player.wins < 3 and server_player.loses < 3:
+        i += 1
+        network = copy(net)
+        player_main = copy(play_main)
+        player_enemy = network.send(server_player)
+        run = True
+        player_main.hp = player_main.maxHp
+        update_server_player_pos()
+        server_player_settings()
+        player_enemy = network.send(server_player)
+        sleep(0.5)
+        player_enemy = network.send(server_player)
+        level = LevelG(maps[i], screen, player_main, player_enemy, network, server_player, interface)
+        level.player_sprite.block_moving = False
+        print(server_player.wins, server_player.loses)
+        if server_player.loses >= 3:
+            server_player.win = False
+            break
+
+        while run:
+            screen.fill((0, 0, 0))
+            level.run()
+
+            if not level.player_enemy.ready:
+                server_player.wins += 1
+                run = False
+            if not level.round:
+                run = False
+                server_player.loses += 1
+
+            draw_cursor(screen)
+            pygame.display.update()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                    server_player.ready = False
+                    network.send(server_player)
+                    pygame.quit()
+                    sys.exit()
+            clock.tick(60)
+
+        if server_player.wins >= 3:
+            server_player.win = True
+    game_end(server_player)
+
+
+def game_end(server_player):
+    f2 = pygame.font.SysFont('serif', 48)
+    if server_player.win:
+        text = f2.render("Congratulations, You win", False, (0, 180, 0))
+    else:
+        text = f2.render("Loooooooser", False, (0, 180, 0))
     run = True
-    update_server_player_pos()
-    server_player_settings()
-    player_enemy = network.send(server_player)
-    sleep(0.5)
-    player_enemy = network.send(server_player)
-
-    level = LevelG(map, screen, player_main, player_enemy, network, server_player, interface)
-    level.player_sprite.block_moving = False
-
     while run:
         screen.fill((0, 0, 0))
-
-        level.run()
-        draw_cursor(screen)
-
+        screen.blit(text, (10, 10))
+        print('update')
         pygame.display.update()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-                server_player.ready = False
-                network.send(server_player)
                 pygame.quit()
                 sys.exit()
         clock.tick(60)

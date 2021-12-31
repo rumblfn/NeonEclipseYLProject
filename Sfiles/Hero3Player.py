@@ -5,6 +5,8 @@ from map_preparation_settings import level1_map
 class Player_hero3(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
+        self.wins = 0
+
         self.block_moving = False
 
         self.HEIGHT = pygame.display.Info().current_h

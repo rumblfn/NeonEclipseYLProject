@@ -19,6 +19,9 @@ class Player:
         self.x = x
         self.y = y
         self.ready = None  # True
+        self.wins = 0
+        self.loses = 0
+        self.win = None
 
         self.name = None
         self.power = None

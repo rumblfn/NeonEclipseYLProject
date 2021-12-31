@@ -6,10 +6,13 @@ from hero1Enemy import Enemy_hero1
 from hero3Enemy import Enemy_hero3
 from _thread import start_new_thread
 from player import speed_to_low
+from time import sleep
 
 
 class LevelG:
     def __init__(self, level_data, surface, player_main, player_enemy, network, server_player, interface):
+        self.round = True
+
         self.display_surface = surface
         self.level_data = level_data
         self.player_sprite = player_main
@@ -86,6 +89,7 @@ class LevelG:
         self.player_sprite.update_server()
 
         player_enemy = self.network.send(self.player_sprite.server_player)
+        self.player_enemy = player_enemy
         self.server_player.E = False
         self.server_player.damage_given = 0
 
@@ -138,6 +142,8 @@ class LevelG:
         if player_enemy.name == 'Hero3':
             self.player_sprite.block_moving = player_enemy.Q_STUN
 
+
+
     def bullets_settings(self):
         for sprite in self.player_sprite.bullets.sprites():
             for tile in self.tiles.sprites():
@@ -151,8 +157,11 @@ class LevelG:
             sprite.run_attackE()
 
     def run(self):
-        self.tiles.draw(self.display_surface)
+        if self.player_sprite.hp <= 0 and self.round:
+            self.server_player.ready = False
+            self.round = False
 
+        self.tiles.draw(self.display_surface)
         self.horizontal_movement_collisions(self.player.sprite)
         self.vertical_movement_collisions(self.player.sprite)
 
