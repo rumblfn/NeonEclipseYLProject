@@ -1,4 +1,5 @@
 from copy import copy
+from player import  Player
 
 from dataConsts import *
 import pygame.mixer_music
@@ -27,7 +28,7 @@ def draw_cursor(sc):
 
 def sleeper():
     global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 3
+    sleeper_time = 10
     sleeper_loading = 1
     sleeper_status = False
 
@@ -125,27 +126,60 @@ def main_game(server_player, net, play_main):
 
         if server_player.wins >= 3:
             server_player.win = True
-    game_end(server_player)
+    game_end(server_player, net)
 
 
-def game_end(server_player):
+def default_server_player_settings(server_player):
+    server_player.ready = None  # True
+    server_player.wins = 0
+    server_player.loses = 0
+    server_player.win = None
+
+    server_player.name = None
+    server_player.power = None
+    server_player.maxHp = None
+    server_player.hp = None
+
+    server_player.width = None
+    server_player.height = None
+
+    server_player.Q = False
+    server_player.E = False
+
+    server_player.simpleAttack = False
+    server_player.mouse_pos_x, server_player.mouse_pos_y = None, None
+
+    server_player.E_ACTIVE_SHIELD = False
+    server_player.SHIELD_HP = None
+    server_player.Q_STUN = False
+
+    server_player.direction_x = 1
+    server_player.damage_given = 0
+    server_player.diff_x = 0
+    server_player.e_time_speed_to_low = 4
+
+
+def game_end(server_player, network):
     f2 = pygame.font.SysFont('serif', 48)
     if server_player.win:
         text = f2.render("Congratulations, You win", False, (0, 180, 0))
     else:
         text = f2.render("Loooooooser", False, (0, 180, 0))
     run = True
+    server_player.ready = False
     while run:
         screen.fill((0, 0, 0))
         screen.blit(text, (10, 10))
-        print('update')
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
                 sys.exit()
-        clock.tick(60)
+        sleep(5)
+        break
+    default_server_player_settings(server_player)
+    main_menu(server_player, network)
 
 
 def map_preparation(player, network, player_settings):
@@ -255,12 +289,16 @@ def change_objects(w, h):
         menuWidgetSlider.vol_changed = None
 
 
-def main_menu():
+def main_menu(server_player=False, net=False):
     pygame.init()
     run = True
-    network = Network()
-    player = network.getP()
-    player.ready = False
+    if not server_player:
+        network = Network()
+        player = network.getP()
+        player.ready = False
+    else:
+        network = net
+        player = server_player
     while run:
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/menu.mp3')
