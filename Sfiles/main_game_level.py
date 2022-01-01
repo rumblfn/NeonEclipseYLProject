@@ -41,8 +41,8 @@ class LevelG:
         self.interface.update_screen_size(self.width, self.height)
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
-        tile_size = self.height // len(map)
-        self.width = len(map[0]) * tile_size
+        tile_size = self.height // len(self.level_data)
+        self.width = len(self.level_data[0]) * tile_size
         self.player_sprite.initialize_server_player(self.server_player)
 
         for row_index, row in enumerate(layout):
@@ -58,7 +58,7 @@ class LevelG:
                     self.enemy.sprite.rect.y = y
                     self.player.add(self.player_sprite)
                 elif cell != ' ':
-                    tile = Tile((col_index, row_index), tile_size, cell, map, self.player_col)
+                    tile = Tile((col_index, row_index), tile_size, cell, self.level_data, self.player_col)
                     self.tiles.add(tile)
 
     def horizontal_movement_collisions(self, player):

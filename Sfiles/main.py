@@ -1,11 +1,8 @@
 from copy import copy
-from player import  Player
-
 from dataConsts import *
 import pygame.mixer_music
 from main_game_level import *
 import sys
-import datetime
 
 import pygame.mixer_music
 from pygame.locals import *
@@ -129,34 +126,8 @@ def main_game(server_player, net, play_main):
     game_end(server_player, net)
 
 
-def default_server_player_settings(server_player):
-    server_player.ready = None  # True
-    server_player.wins = 0
-    server_player.loses = 0
-    server_player.win = None
-
-    server_player.name = None
-    server_player.power = None
-    server_player.maxHp = None
-    server_player.hp = None
-
-    server_player.width = None
-    server_player.height = None
-
-    server_player.Q = False
-    server_player.E = False
-
-    server_player.simpleAttack = False
-    server_player.mouse_pos_x, server_player.mouse_pos_y = None, None
-
-    server_player.E_ACTIVE_SHIELD = False
-    server_player.SHIELD_HP = None
-    server_player.Q_STUN = False
-
-    server_player.direction_x = 1
-    server_player.damage_given = 0
-    server_player.diff_x = 0
-    server_player.e_time_speed_to_low = 4
+def default_settings():
+    pass
 
 
 def game_end(server_player, network):
@@ -178,11 +149,12 @@ def game_end(server_player, network):
                 sys.exit()
         sleep(5)
         break
-    default_server_player_settings(server_player)
+
     main_menu(server_player, network)
 
 
 def map_preparation(player, network, player_settings):
+    global sleeper_status_for_loading
     run = True
     player.x = WIDTH // 4
     player.y = round(HEIGHT * (2 / 3))
@@ -235,6 +207,7 @@ def map_preparation(player, network, player_settings):
 
         if sleeper_status_for_loading:
             level.player_sprite.block_moving = True
+            sleeper_status_for_loading = False
 
         draw_cursor(screen)
 
@@ -290,15 +263,22 @@ def change_objects(w, h):
 
 
 def main_menu(server_player=False, net=False):
-    pygame.init()
     run = True
     if not server_player:
+        pygame.init()
         network = Network()
         player = network.getP()
         player.ready = False
     else:
         network = net
         player = server_player
+        player.ready = False
+        player.name = None
+        player.wins = 0
+        player.loses = 0
+        network.send(player)
+        sleep(0.2)
+        network.send(player)
     while run:
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/menu.mp3')

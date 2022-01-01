@@ -58,6 +58,7 @@ class Level:
                             self.player_sprite = Player_hero2((x, y), self.player_settings)
                         elif self.player_settings['name'] == 'Hero3':
                             self.player_sprite = Player_hero3((x, y), self.player_settings)
+                        self.player_sprite.block_moving = False
                         self.player.add(self.player_sprite)
                         self.all_sprites.add(self.player_sprite)
                     else:
