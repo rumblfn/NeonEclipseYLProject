@@ -1,3 +1,4 @@
+import random
 from copy import copy
 from dataConsts import *
 import pygame.mixer_music
@@ -78,6 +79,7 @@ def main_game(server_player, net, play_main):
             server_player.SHIELD_HP = player_main.SHIELD_HP
 
     maps = [map1, map2, map3, map4, map5]
+    # random.shuffle(maps)
     i = -1
     while server_player.wins < 3 and server_player.loses < 3:
         i += 1
@@ -101,6 +103,7 @@ def main_game(server_player, net, play_main):
         while run:
             screen.fill((0, 0, 0))
             level.run()
+            level.interface.draw_game_progress(str(server_player.wins), str(server_player.loses))
 
             if starting:
                 for j in range(0, 50, 5):

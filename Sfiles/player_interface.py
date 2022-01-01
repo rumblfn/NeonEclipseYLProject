@@ -63,10 +63,16 @@ class Interface:
         self.screen.blit(self.chestImageSurface, (self.screen_width - 50 * self.sprite_kef - 10,
                                                   self.screen_height - 45 * self.sprite_kef - 10))
 
+    def draw_game_progress(self, wins_player, wins_enemy):
+        wins_text = self.fontTitle.render(wins_player, False, (0, 0, 255))
+        vs = self.fontTitle.render("VS", False, (12, 255, 17))
+        loses_text = self.fontTitle.render(wins_enemy, False, (0, 0, 255))
+        pos_midtop = vs.get_rect(midtop=(self.screen_width // 2, 10))
+        self.screen.blit(vs, pos_midtop)
+        self.screen.blit(wins_text, (pos_midtop[0] - 50, pos_midtop[1]))
+        self.screen.blit(loses_text, (pos_midtop[0] + 100, pos_midtop[1]))
+
     def draw_enemy_health(self, hp, max_hp):
-        titleSurface = self.fontTitle.render("VS", False, (12, 255, 17))
-        pos = titleSurface.get_rect(midtop=(self.screen_width // 2, 10))
-        self.screen.blit(titleSurface, pos)
         pygame.draw.rect(self.screen, (255, 0, 0),
                          (self.screen_width - self.hpBarWidth - 7, 28, (hp / max_hp) * self.hpBarWidth - 6,
                           self.hpBarHeight - 6))
