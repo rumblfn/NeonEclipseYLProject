@@ -97,10 +97,16 @@ def main_game(server_player, net, play_main):
         if server_player.loses >= 3:
             server_player.win = False
             break
-
+        starting = True
         while run:
             screen.fill((0, 0, 0))
             level.run()
+
+            if starting:
+                for j in range(0, 50, 5):
+                    screen.blit(images_round_starting[int(j / 10)], (0, 0))
+                    pygame.display.update()
+                starting = False
 
             if not level.player_enemy.ready:
                 server_player.wins += 1
@@ -120,7 +126,9 @@ def main_game(server_player, net, play_main):
                     pygame.quit()
                     sys.exit()
             clock.tick(60)
-
+        for j in range(0, 50, 5):
+            screen.blit(images_round_ending[int(j / 10)], (0, 0))
+            pygame.display.update()
         if server_player.wins >= 3:
             server_player.win = True
     game_end(server_player, net)
@@ -235,7 +243,7 @@ def change_objects(w, h):
         menuWidgetScreenSize, \
         menuWidgetSlider, \
         WIDTH, HEIGHT, \
-        HEROES, interface
+        HEROES, interface, images_round_starting, images_round_ending
     objAllHeroesWidget = {'x1': round(0.545 * w), 'y1': round((87 / 750) * h),
                           'x2': round(0.872 * w), 'y2': round((289 / 750) * h),
                           'width': round(0.327 * w), 'height': round((202 / 750) * h),
@@ -260,6 +268,15 @@ def change_objects(w, h):
         else:
             pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
         menuWidgetSlider.vol_changed = None
+
+    images_round_ending = []
+    for i in range(1, 7):
+        images_round_ending.append(pygame.transform.scale(pygame.image.load(f'static/game_round/round_bg{i}.png'),
+                                                          (WIDTH, HEIGHT)))
+    images_round_starting = []
+    for i in range(7, 13):
+        images_round_starting.append(pygame.transform.scale(pygame.image.load(f'static/game_round/round_bg{i}.png'),
+                                                            (WIDTH, HEIGHT)))
 
 
 def main_menu(server_player=False, net=False):
