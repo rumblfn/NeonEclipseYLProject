@@ -143,6 +143,7 @@ def map_preparation(player, network, player_settings):
                 level.portalParkour = False
                 runParkourMap = False
                 portalParkourMap(sc, player_parkour, False)
+            player_settings['keys'] = level_p.keys_taken
             level_p.events_check()
             clock.tick(60)
 

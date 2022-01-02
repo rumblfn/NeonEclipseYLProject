@@ -116,6 +116,8 @@ key_violet = pygame.transform.scale(pygame.image.load('static/keys_doors/key_vio
 key_orange = pygame.transform.scale(pygame.image.load('static/keys_doors/key_orange.png'), (res, res))
 key_pink = pygame.transform.scale(pygame.image.load('static/keys_doors/key_pink.png'), (res, res))
 
+key_chest = pygame.transform.scale(pygame.image.load('static/chest_key.png'), (res, res))
+
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, size, cell, map, player_col):
@@ -538,3 +540,19 @@ class Resizer(pygame.sprite.Sprite):
     def draw_block(self, block_to_draw):
         self.image.blit(pygame.transform.scale(block_to_draw, (self.new_tile_size, self.new_tile_size)), (0, 0))
 
+
+class KeysChests(pygame.sprite.Sprite):
+    def __init__(self, pos, size, cell):
+        super().__init__()
+        self.cell = cell
+        self.new_tile_size = size
+        self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+        self.draw_block(key_chest)
+        self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+    def draw_block(self, block_to_draw):
+        self.image.blit(pygame.transform.scale(block_to_draw, (self.new_tile_size, self.new_tile_size)), (0, 0))

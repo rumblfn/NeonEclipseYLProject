@@ -86,6 +86,11 @@ potion2 = pygame.transform.scale(pygame.image.load('static/potion2.png'),
 potion3 = pygame.transform.scale(pygame.image.load('static/potion3.png'),
                                           (res, res))
 
+close_chest = pygame.transform.scale(pygame.image.load('static/close_chest.png'),
+                                          (res, res))
+open_chest = pygame.transform.scale(pygame.image.load('static/open_chest.png'),
+                                          (res, res))
+
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, size, cell, map, player_col):
@@ -238,3 +243,28 @@ class Potion(pygame.sprite.Sprite):
 
     def draw_block(self, block_to_draw):
         self.image.blit(pygame.transform.scale(block_to_draw, (self.new_tile_size, self.new_tile_size)), (0, 0))
+
+    def anim_potion(self):
+        pass
+
+
+class Chest(pygame.sprite.Sprite):
+    def __init__(self, pos, size, cell):
+        super().__init__()
+        self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+        self.cell = cell
+        self.new_tile_size = size
+        self.draw_block(close_chest)
+        self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
+        self.opened = False
+
+    def update(self, shift):
+        self.rect.x += shift[0]
+        self.rect.y += shift[1]
+
+    def draw_block(self, block_to_draw):
+        self.image.blit(pygame.transform.scale(block_to_draw, (self.new_tile_size, self.new_tile_size)), (0, 0))
+
+    def redraw_block(self):
+        self.image = pygame.Surface((self.new_tile_size, self.new_tile_size), pygame.SRCALPHA)
+        self.image.blit(pygame.transform.scale(open_chest, (self.new_tile_size, self.new_tile_size)), (0, 0))

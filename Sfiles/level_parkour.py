@@ -2,7 +2,8 @@ import pygame
 import random
 import datetime
 
-from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird, KeysAndDoors, Invisible, Resizer
+from tiles_parkour import Tile, Portal, MovingTile, Gold, UpArrow, Web, Bridge, Bird, KeysAndDoors, Invisible, Resizer, \
+    KeysChests
 from map_parkour_settings import level_parkour_map, gold_max
 from player import Player_map_parkour
 
@@ -34,11 +35,15 @@ class LevelParkour:
         self.finsh_bridge = -100
         self.moving_t_direct = 'up'
         self.cur_key = ''
+        self.keys_taken = 0
         self.height = pygame.display.Info().current_h
-        text = f'GEMS COLLECTED: {gold_max - len(list(self.golds))}'
+        text = f'GEMS: {gold_max - len(list(self.golds))}'
+        text_keys = f'KEYS: {self.keys_taken}'
         newFont = pygame.font.SysFont('SFCompact', 40)
         txt_surf = newFont.render(text, False, (255, 183, 0))
+        txt_keys_surf = newFont.render(text_keys, False, (255, 183, 0))
         self.txt_surf = txt_surf
+        self.txt_keys_surf = txt_keys_surf
 
     def setup_level(self, layout):
         self.tiles = pygame.sprite.Group()
@@ -56,6 +61,7 @@ class LevelParkour:
         self.key_screen = pygame.sprite.Group()
         self.invisible = pygame.sprite.Group()
         self.resizer = pygame.sprite.Group()
+        self.keys_chests = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level_parkour_map)
         self.tile_size = tile_size
@@ -130,6 +136,9 @@ class LevelParkour:
                 elif cell in 'ZCc':
                     item = Resizer((col_index, row_index), tile_size, cell)
                     self.resizer.add(item)
+                elif cell == 'K':
+                    item = KeysChests((col_index, row_index), tile_size, cell)
+                    self.keys_chests.add(item)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level_parkour_map, self.player_col)
                     self.tiles.add(tile)
@@ -289,7 +298,7 @@ class LevelParkour:
 
     def take_gold(self):
         self.golds.remove(self.cur_gold)
-        text = f'GEMS COLLECTED: {gold_max - len(list(self.golds))}'
+        text = f'GEMS: {gold_max - len(list(self.golds))}'
         newFont = pygame.font.SysFont('SFCompact', 40)
         txt_surf = newFont.render(text, False, (255, 183, 0))
         self.txt_surf = txt_surf
@@ -460,6 +469,24 @@ class LevelParkour:
             player.resize(False)
         self.resizer_worked = False
 
+    def check_keys_chests(self):
+        player = self.player.sprite
+        for key in self.keys_chests:
+            if key.rect.colliderect(player.rect):
+                self.take_keys_chests(key)
+
+    def take_keys_chests(self, key):
+        self.keys_chests.remove(key)
+        self.keys_taken += 1
+        text_keys = f'KEYS: {self.keys_taken}'
+        newFont = pygame.font.SysFont('SFCompact', 40)
+        txt_keys_surf = newFont.render(text_keys, False, (255, 183, 0))
+        self.txt_keys_surf = txt_keys_surf
+        self.print_keys_chests()
+
+    def print_keys_chests(self):
+        self.display_surface.blit(self.txt_keys_surf, (20, 70))
+
     def run(self):
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
@@ -500,6 +527,9 @@ class LevelParkour:
         self.resizer.update((self.world_shift_x, self.world_shift_y))
         self.resizer.draw(self.display_surface)
 
+        self.keys_chests.update((self.world_shift_x, self.world_shift_y))
+        self.keys_chests.draw(self.display_surface)
+
         self.scroll_x()
         self.player.update()
 
@@ -513,6 +543,7 @@ class LevelParkour:
         self.check_door()
         self.check_invisible()
         self.check_resizer()
+        self.check_keys_chests()
 
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
@@ -522,6 +553,7 @@ class LevelParkour:
         self.moving_tiles.update((self.world_shift_x, self.world_shift_y))
         self.moving_tiles.draw(self.display_surface)
         self.print_current_gold()
+        self.print_keys_chests()
 
         if self.player.sprite.rect.y > self.height:
             self.check_fall = True

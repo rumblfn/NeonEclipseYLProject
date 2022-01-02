@@ -57,7 +57,8 @@ HEROES = [
             'right_jump': 'static/hero1animations/rightjump/rightjump',
             'left_jump': 'static/hero1animations/leftjump/leftjump',
         },
-        'gold': 0
+        'gold': 0,
+        'keys': 0
     },
     {
         'name': 'Hero3',
@@ -75,7 +76,8 @@ HEROES = [
             'left_walk': 'static/paladin27x78_REVERSE',  # + 14 + $ 1...2...14 + .png
             'right_walk': 'static/paladin27x78',
         },
-        'gold': 0
+        'gold': 0,
+        'keys': 0
     }
 ]
 

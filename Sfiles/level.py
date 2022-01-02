@@ -1,5 +1,5 @@
 import pygame
-from tiles import Tile, Portal, Potion
+from tiles import Tile, Portal, Potion, Chest
 from map_preparation_settings import level1_map
 from Hero1Player import Player_hero1
 from Hero2Player import Player_hero2
@@ -36,6 +36,7 @@ class Level:
         self.portals = pygame.sprite.Group()
         self.npces = pygame.sprite.Group()
         self.potions = pygame.sprite.Group()
+        self.chests = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level1_map)
 
@@ -95,6 +96,9 @@ class Level:
                 elif cell == 'Y':
                     potion = Potion((col_index, row_index), tile_size, cell)
                     self.potions.add(potion)
+                elif cell == 'C':
+                    chest = Chest((col_index, row_index), tile_size, cell)
+                    self.chests.add(chest)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.tiles.add(tile)
@@ -127,6 +131,15 @@ class Level:
         player = self.player_sprite
         if player.rect.y > self.height + 300 or player.rect.y < - 300:
             self.setup_level(self.level_data, self.player_sprite)
+            for sprite in self.npces.sprites():
+                if sprite.name == 'librarian':
+                    sprite.bought_items = []
+            self.interface.inventory = []
+            self.interface.item_rects = []
+            self.interface.bought_items_interface = []
+            self.interface.current_item = 0
+            self.interface.inventory_visible = False
+            self.player_settings['keys'] = 0
 
     def npc_collisions(self):
         player = self.player.sprite
@@ -186,10 +199,13 @@ class Level:
             sprite.run_attackE()
 
     def print_current_gold(self):
-        text = f'{self.player_settings["gold"]}'
+        text = f'GEMS: {self.player_settings["gold"]}'
         newFont = pygame.font.SysFont('SFCompact', round((40 * self.width) / 1536))
         txt_surf = newFont.render(text, False, (255, 183, 0))
-        self.display_surface.blit(txt_surf, (self.width - round((40 * self.width) / 1536), round((20 * self.width) / 1536)))
+        self.display_surface.blit(txt_surf, (self.width - round((150 * self.width) / 1536), round((20 * self.width) / 1536)))
+
+    def add_keys_to_inv(self):
+        self.interface.update_keys_in_inventory(self.player_settings["keys"])
 
     def check_inventory(self):
         for event in pygame.event.get():
@@ -231,6 +247,21 @@ class Level:
         self.potions.remove(potion)
         self.interface.add_inventory_potions(potion, potion.all_potions)
 
+    def check_chest(self):
+        player = self.player.sprite
+        for chest in self.chests:
+            if chest.rect.colliderect(player.rect):
+                self.open_chest(chest)
+
+    def open_chest(self, chest):
+        if not chest.opened:
+            if self.interface.keys_count - 1 >= 0:
+                self.interface.keys_count -= 1
+                self.player_settings["keys"] -= 1
+                chest.redraw_block()
+                chest.opened = True
+                self.interface.add_blacksmith_card()
+
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
@@ -248,6 +279,9 @@ class Level:
         self.npces.update((self.world_shift_x, self.world_shift_y))
         self.npces.draw(self.display_surface)
 
+        self.chests.update((self.world_shift_x, self.world_shift_y))
+        self.chests.draw(self.display_surface)
+
         self.scroll_x()
 
         self.npc_collisions()
@@ -262,6 +296,8 @@ class Level:
         self.player.draw(self.display_surface)
         self.print_current_gold()
         self.check_potions_taken()
+        self.add_keys_to_inv()
+        self.check_chest()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))
