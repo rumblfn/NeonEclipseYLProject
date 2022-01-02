@@ -90,20 +90,25 @@ class Librarian(pygame.sprite.Sprite):
         self.h = pygame.display.Info().current_h
         self.w = pygame.display.Info().current_w
         self.msg_w = round((740 * self.w) / 1536)
-        self.msg_h = round((200 * self.h) / 864)
+        self.msg_h = round((400 * self.h) / 864)
         self.msg_x = self.w // 2 - self.msg_w // 2
         self.msg_y = 10
         self.msg_space = round((40 * self.w) / 1563)
 
         self.icon_w = round((70 * self.w) / 1563)
         self.icon_h = self.icon_w
-        self.icon_y = self.msg_h // 2 - self.icon_h // 4 + self.msg_y
+        self.icon_y = self.msg_h // 3 - self.icon_h // 4 + self.msg_y
 
         self.icon_a_x = self.msg_x + self.msg_space * 3
         self.icon_h_x = self.msg_x + self.msg_space * 4 + self.icon_w
         self.icon_q_x = self.msg_x + self.msg_space * 5 + self.icon_w * 2
         self.icon_e_x = self.msg_x + self.msg_space * 6 + self.icon_w * 3
         self.icon_k_x = self.msg_x + self.msg_space * 7 + self.icon_w * 4
+
+        self.info_x = self.msg_x + round((140 * self.w) / 1536)
+        self.info_y = self.msg_y + self.msg_h // 2
+        self.info_w = self.msg_w - round((280 * self.w) / 1536)
+        self.info_h = self.msg_h // 2 - round((80 * self.w) / 1536)
 
         msgImage = pygame.transform.scale(pygame.image.load('static/Talk-cloud.png').convert_alpha(), (self.msg_w, self.msg_h))
         self.screen.blit(msgImage, (self.msg_x, self.msg_y))
@@ -156,25 +161,46 @@ class Librarian(pygame.sprite.Sprite):
                                       (self.icon_k_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(k, (self.icon_k_x, self.icon_y))
 
-        self.gem_size = round(((self.icon_w // 2) * self.w) / 1536)
+        pygame.draw.rect(self.screen, (66, 49, 137),
+                         (self.info_x, self.info_y, self.info_w, self.info_h), 4, 10)
+
+        self.gem_size = round(((self.icon_w / 2) * self.w) / 1536)
         self.gem_x = 0
 
         font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
-        col = (0, 0, 0)
 
         for i in range(5):
             self.text_x = self.msg_x + self.msg_space * (i + 3) + self.icon_w * i + round((10 * self.w) / 1536)
-            self.gem_x = self.msg_x + self.msg_space * (i + 3) + self.icon_w * i + self.gem_size - round((10 * self.w) / 1536) + round((10 * self.w) / 1536)
+            self.gem_x = self.msg_x + self.msg_space * (i + 3) + self.icon_w * i + self.gem_size
             gold_img = pygame.transform.scale(pygame.image.load('static/green_gem.png'),
                 (self.gem_size, self.gem_size))
-            self.screen.blit(gold_img, (self.gem_x, self.msg_y + round((39 * self.h) / 864)))
+            self.screen.blit(gold_img, (self.gem_x, self.msg_y + round((76 * self.h) / 864)))
 
             price = font.render('5', True, (255, 255, 255))
-            self.screen.blit(price, (self.text_x, self.msg_y + round((43 * self.h) / 864)))
+            self.screen.blit(price, (self.text_x, self.msg_y + round((80 * self.h) / 864)))
 
     def update(self, shift):
         self.rect.x += shift[0]
         self.rect.y += shift[1]
+
+    def check_show_info(self, is_on_check):
+        mx, my = pygame.mouse.get_pos()
+        if not is_on_check:
+            is_on_check = True
+            if self.btn_h.collidepoint((mx, my)):
+                self.show_info('h')
+            elif self.btn_a.collidepoint((mx, my)):
+                self.show_info('a')
+            elif self.btn_q.collidepoint((mx, my)):
+                self.show_info('q')
+            elif self.btn_e.collidepoint((mx, my)):
+                self.show_info('e')
+            elif self.btn_k.collidepoint((mx, my)):
+                self.show_info('k')
+            else:
+                self.show_info(False)
+        else:
+            is_on_check = False
 
     def check_click(self, player):
         for event in pygame.event.get():
@@ -190,6 +216,17 @@ class Librarian(pygame.sprite.Sprite):
                     self.plus_e(player)
                 elif self.btn_k.collidepoint((mx, my)):
                     self.plus_k(player)
+
+    def show_info(self, arg):
+        if not arg:
+            font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
+            info = font.render('', True, (255, 255, 255))
+            self.screen.blit(info, (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
+        else:
+            font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
+            info = font.render(arg, True, (255, 255, 255))
+            self.screen.blit(info,
+                             (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
 
     def plus_attack(self, player):
         if player['gold'] - 5 >= 0 and '1' not in self.bought_items:

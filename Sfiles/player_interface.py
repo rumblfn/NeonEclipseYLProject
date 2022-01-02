@@ -113,30 +113,31 @@ class Interface:
     def draw_inventory(self):
         if self.inventory_visible:
             for i, item in enumerate(self.inventory):
-                itemImage = pygame.transform.scale(pygame.image.load(item),
-                                                    (round(50 * self.sprite_kef) - 6, round(50 * self.sprite_kef) - 6))
-                self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)),
-                                                       pygame.SRCALPHA)
-                if i == self.current_item:
-                    self.itemImageSurface.fill((0, 255, 0, 75))
-                self.itemImageSurface.blit(itemImage, (3, 3))
-                if item == 'static/chest_key.png':
-                    text = f'{self.keys_count}'
-                    newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
-                    txt_surf = newFont.render(text, False, (255, 183, 0))
-                    self.itemImageSurface.blit(txt_surf, (10, 10))
-                if item == 'static/blacksmith_card.png':
-                    text = f'{self.cards_count}'
-                    newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
-                    txt_surf = newFont.render(text, False, (255, 183, 0))
-                    self.itemImageSurface.blit(txt_surf, (10, 10))
-                self.screen.blit(self.itemImageSurface,
-                                 ((self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
-                                                          self.screen_height - 45 * self.sprite_kef - 10)))
-                self.item_rect = self.itemImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
-                                                                         self.screen_height - 45 * self.sprite_kef - 10))
-                if i + 1 > len(self.item_rects):
-                    self.item_rects.append(self.item_rect)
+                if item == 'static/chest_key.png' and self.keys_count > 0 or item != 'static/chest_key.png':
+                    itemImage = pygame.transform.scale(pygame.image.load(item),
+                                                        (round(50 * self.sprite_kef) - 6, round(50 * self.sprite_kef) - 6))
+                    self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)),
+                                                           pygame.SRCALPHA)
+                    if i == self.current_item:
+                        self.itemImageSurface.fill((0, 255, 0, 75))
+                    self.itemImageSurface.blit(itemImage, (3, 3))
+                    if item == 'static/chest_key.png':
+                        text = f'{self.keys_count}'
+                        newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
+                        txt_surf = newFont.render(text, False, (255, 183, 0))
+                        self.itemImageSurface.blit(txt_surf, (10, 10))
+                    if item == 'static/blacksmith_card.png':
+                        text = f'{self.cards_count}'
+                        newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
+                        txt_surf = newFont.render(text, False, (255, 183, 0))
+                        self.itemImageSurface.blit(txt_surf, (10, 10))
+                    self.screen.blit(self.itemImageSurface,
+                                     ((self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
+                                                              self.screen_height - 45 * self.sprite_kef - 10)))
+                    self.item_rect = self.itemImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
+                                                                             self.screen_height - 45 * self.sprite_kef - 10))
+                    if i + 1 > len(self.item_rects):
+                        self.item_rects.append(self.item_rect)
 
     def check_item_choice(self):
         for event in pygame.event.get():

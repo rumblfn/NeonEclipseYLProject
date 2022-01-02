@@ -26,6 +26,7 @@ class Level:
         self.showed_inv_by_shop = False
         self.item_clicked = False
         self.first_start = True
+        self.is_on_check = False
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -149,6 +150,7 @@ class Level:
                 if sprite.rect.colliderect(player.rect):
                     player.interface_mode = True
                     sprite.show_msg()
+                    sprite.check_show_info(self.is_on_check)
                     sprite.check_click(self.player_settings)
                     self.interface.add_inventory_librarian(sprite.bought_items, sprite.items)
                     self.interface.show_inventory(False)
