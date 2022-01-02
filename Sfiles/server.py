@@ -50,9 +50,6 @@ def threaded_client(conn, player):
                 else:
                     reply = players[1]
 
-                print("Received: ", data)
-                print("Sending : ", reply)
-
             conn.sendall(pickle.dumps(reply))
         except:
             break

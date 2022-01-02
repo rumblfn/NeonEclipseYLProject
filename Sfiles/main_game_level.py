@@ -6,10 +6,13 @@ from hero1Enemy import Enemy_hero1
 from hero3Enemy import Enemy_hero3
 from _thread import start_new_thread
 from player import speed_to_low
+from time import sleep
 
 
 class LevelG:
     def __init__(self, level_data, surface, player_main, player_enemy, network, server_player, interface):
+        self.round = True
+
         self.display_surface = surface
         self.level_data = level_data
         self.player_sprite = player_main
@@ -38,8 +41,8 @@ class LevelG:
         self.interface.update_screen_size(self.width, self.height)
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
-        tile_size = self.height // len(map)
-        self.width = len(map[0]) * tile_size
+        tile_size = self.height // len(self.level_data)
+        self.width = len(self.level_data[0]) * tile_size
         self.player_sprite.initialize_server_player(self.server_player)
 
         for row_index, row in enumerate(layout):
@@ -55,7 +58,7 @@ class LevelG:
                     self.enemy.sprite.rect.y = y
                     self.player.add(self.player_sprite)
                 elif cell != ' ':
-                    tile = Tile((col_index, row_index), tile_size, cell, map, self.player_col)
+                    tile = Tile((col_index, row_index), tile_size, cell, self.level_data, self.player_col)
                     self.tiles.add(tile)
 
     def horizontal_movement_collisions(self, player):
@@ -86,17 +89,32 @@ class LevelG:
         self.player_sprite.update_server()
 
         player_enemy = self.network.send(self.player_sprite.server_player)
+        self.player_enemy = player_enemy
         self.server_player.E = False
         self.server_player.damage_given = 0
 
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
-        self.player_sprite.hp -= player_enemy.damage_given
-        self.server_player.hp -= player_enemy.damage_given
+
+        if self.player_sprite.name != 'Hero3':
+            self.player_sprite.hp -= player_enemy.damage_given
+            self.server_player.hp -= player_enemy.damage_given
+        else:
+            if self.player_sprite.SHIELD_ACTIVE:
+                self.player_sprite.SHIELD_HP -= player_enemy.damage_given
+                if self.player_sprite.SHIELD_HP < 0:
+                    self.player_sprite.hp += self.player_sprite.SHIELD_HP
+                    self.server_player.hp += self.player_sprite.SHIELD_HP
+            else:
+                self.player_sprite.hp -= player_enemy.damage_given
+                self.server_player.hp -= player_enemy.damage_given
+
+        self.player_sprite.rect.x += player_enemy.diff_x
         self.enemy.sprite.update_values(player_enemy)
 
+        self.enemy.sprite.get_input()
+
         if player_enemy.name == 'Hero1':
-            self.enemy.sprite.get_input()
             if player_enemy.simpleAttack:
                 self.enemy_hero1_bullets.add(self.enemy.sprite.create_bullet((player_enemy.mouse_pos_x, player_enemy.mouse_pos_y)))
 
@@ -117,11 +135,14 @@ class LevelG:
                         self.player_sprite.rect.left = sprite.rect.right
                     else:
                         self.player_sprite.rect.right = sprite.rect.left
-                    start_new_thread(speed_to_low, (self.player_sprite,))
+                    start_new_thread(speed_to_low, (self.player_sprite, self.enemy.sprite.e_time_speed_to_low))
 
             self.enemy_hero1_bullets.draw(self.display_surface)
-        elif player_enemy.name == 'Hero3':
-            self.enemy.sprite.get_input()
+
+        if player_enemy.name == 'Hero3':
+            self.player_sprite.block_moving = player_enemy.Q_STUN
+
+
 
     def bullets_settings(self):
         for sprite in self.player_sprite.bullets.sprites():
@@ -136,8 +157,11 @@ class LevelG:
             sprite.run_attackE()
 
     def run(self):
-        self.tiles.draw(self.display_surface)
+        if self.player_sprite.hp <= 0 and self.round:
+            self.server_player.ready = False
+            self.round = False
 
+        self.tiles.draw(self.display_surface)
         self.horizontal_movement_collisions(self.player.sprite)
         self.vertical_movement_collisions(self.player.sprite)
 
@@ -152,15 +176,34 @@ class LevelG:
             self.player_sprite.attacksE.draw(self.display_surface)
             for sprite in self.player_sprite.bullets.sprites():
                 if sprite.rect.colliderect(self.enemy.sprite.rect):
-                    self.enemy.sprite.hp -= self.player_sprite.power
                     self.server_player.damage_given = self.player_sprite.power
                     sprite.kill()
             self.ESettings()
             self.bullets_settings()
+            self.interface.draw_attacks_timers(self.player_sprite.shoot_bool, self.player_sprite.shoot_bool_max,
+                                               self.player_sprite.attacksEBool, self.player_sprite.attacksEBool_max,
+                                               self.player_sprite.Q_SLEEPER, self.player_sprite.Q_SLEEPER_MAX)
         elif self.player_sprite.name == 'Hero2':
             pass
         elif self.player_sprite.name == 'Hero3':
-            pass
+            self.server_player.diff_x = 0
+            if self.player_sprite.AA_ACTIVE and self.player_sprite.CURRENT_SPRITE_AA == 2:
+                if self.player_sprite.rect.colliderect(self.enemy.sprite.rect):
+                    if self.player_sprite.SIDE == 'right':
+                        self.server_player.diff_x = 130
+                    else:
+                        self.server_player.diff_x = -130
+                    self.server_player.damage_given = self.player_sprite.power
+                if self.player_sprite.Q_ACTIVE:
+                    self.player_sprite.Q_END = True
+                    self.server_player.Q_STUN = True
+                    self.player_sprite.Q_STUN_TIMER = 0
+            if self.player_sprite.Q_STUN_TIMER >= 120:
+                self.server_player.Q_STUN = False
+            self.interface.draw_attacks_timers(self.player_sprite.AA_TIMER, self.player_sprite.AA_TIMER_MAX,
+                                               self.player_sprite.E_TIMER, self.player_sprite.E_TIMER_MAX,
+                                               self.player_sprite.Q_ACTIVE_TIMER, self.player_sprite.Q_ACTIVE_TIMER_MAX)
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)
         self.interface.draw_enemy_health(self.enemy.sprite.hp, self.enemy.sprite.maxHp)
+        self.interface.draw_game_progress(str(self.server_player.wins), str(self.server_player.loses))

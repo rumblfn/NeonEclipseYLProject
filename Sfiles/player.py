@@ -8,9 +8,9 @@ except:
     print('game not started')
 
 
-def speed_to_low(player):
+def speed_to_low(player, time):
     player.speed = 4
-    sleep(4)
+    sleep(time)
     player.speed = player.control_speed
 
 
@@ -19,6 +19,9 @@ class Player:
         self.x = x
         self.y = y
         self.ready = None  # True
+        self.wins = 0
+        self.loses = 0
+        self.win = None
 
         self.name = None
         self.power = None
@@ -35,9 +38,13 @@ class Player:
         self.mouse_pos_x, self.mouse_pos_y = None, None
 
         self.E_ACTIVE_SHIELD = False
+        self.SHIELD_HP = None
+        self.Q_STUN = False
 
         self.direction_x = 1
         self.damage_given = 0
+        self.diff_x = 0
+        self.e_time_speed_to_low = 4
 
 
 class Player_map_parkour(pygame.sprite.Sprite):

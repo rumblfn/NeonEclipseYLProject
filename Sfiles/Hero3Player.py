@@ -5,6 +5,8 @@ from map_preparation_settings import level1_map
 class Player_hero3(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
+        self.wins = 0
+
         self.block_moving = False
 
         self.HEIGHT = pygame.display.Info().current_h
@@ -16,21 +18,29 @@ class Player_hero3(pygame.sprite.Sprite):
         self.started_pos = pos
 
         self.K_x = False
+        self.Q_STUN_TIMER = 120
         self.Q_ACTIVE = False
-        self.Q_ACTIVE_TIMER = 1200
-        self.Q_TIMER = 400
+        self.Q_ACTIVE_TIMER = 720
+        self.Q_ACTIVE_TIMER_MAX = 720
+        self.Q_TIMER = 480
         self.E_ACTIVE = False
         self.SHIELD_ACTIVE = False
-        self.E_TIMER = 2400
-        self.E_ACTIVE_TIMER = 600
+        self.E_TIMER = 480
+        self.E_TIMER_MAX = 480
+        self.E_ACTIVE_TIMER = 180
         self.CURRENT_SPRITE = 0
         self.CURRENT_SPRITE_Q = 0
         self.CURRENT_SPRITE_E = 0
         self.SIDE = 'left'
-        self.AA_TIMER = 120
+        self.AA_TIMER = 42
+        self.AA_TIMER_MAX = 42
         self.AA_ACTIVE = False
         self.CURRENT_SPRITE_AA = 0
         self.AA_TIMER_ACTIVE = False
+        self.Q_END = False
+
+        self.SHIELD_HP_KEF = 0.4
+        self.SHIELD_HP = self.SHIELD_HP_KEF * self.maxHp
 
         re_size = (self.HEIGHT / len(level1_map)) / 64
         self.width = round(64 * re_size * 1.5) - 1
@@ -74,6 +84,9 @@ class Player_hero3(pygame.sprite.Sprite):
 
         self.server_player = None
 
+    def update_shield_hp(self):
+        self.SHIELD_HP = self.SHIELD_HP_KEF * self.maxHp
+
     def get_input(self):
         self.CURRENT_SPRITE += 0.2
         self.CURRENT_SPRITE_Q += 0.2
@@ -81,12 +94,21 @@ class Player_hero3(pygame.sprite.Sprite):
 
         if self.Q_ACTIVE:
             self.Q_TIMER += 1
-            if self.Q_TIMER >= 400:
+            if self.Q_TIMER >= 480:
                 self.Q_ACTIVE = False
                 if self.server_player:
                     self.server_player.Q = False
-        if self.Q_ACTIVE_TIMER <= 1200:
+        if self.Q_ACTIVE_TIMER <= 720 and not self.Q_ACTIVE:
             self.Q_ACTIVE_TIMER += 1
+        if self.Q_END:
+            self.Q_ACTIVE = False
+            self.Q_TIMER = 480
+            self.Q_END = False
+            self.Q_STUN_TIMER = 0
+            if self.server_player:
+                self.server_player.Q = False
+        if self.Q_STUN_TIMER <= 120:
+            self.Q_STUN_TIMER += 1
 
         if keys[pygame.K_x]:
             self.K_x = True
@@ -151,18 +173,21 @@ class Player_hero3(pygame.sprite.Sprite):
                         self.server_player.simpleAttack = False
         if self.AA_TIMER_ACTIVE:
             self.AA_TIMER += 1
-            if self.AA_TIMER >= 120:
+            if self.AA_TIMER >= 42:
                 self.AA_TIMER_ACTIVE = False
 
         if self.SHIELD_ACTIVE:
             self.E_ACTIVE_TIMER += 1
             self.image.blit(self.images['shield'], (0, 0))
-            if self.E_ACTIVE_TIMER >= 600:
+            if self.SHIELD_HP <= 0:
+                self.update_shield_hp()
+                self.E_ACTIVE_TIMER = 180
+            if self.E_ACTIVE_TIMER >= 180:
                 self.E_ACTIVE_TIMER = 0
                 self.SHIELD_ACTIVE = False
                 if self.server_player:
                     self.server_player.E_ACTIVE_SHIELD = False
-        if not self.SHIELD_ACTIVE and self.E_TIMER <= 2400:
+        if not self.SHIELD_ACTIVE and self.E_TIMER <= 480:
             self.E_TIMER += 1
 
         if self.CURRENT_SPRITE >= 0.8:
@@ -171,7 +196,7 @@ class Player_hero3(pygame.sprite.Sprite):
             self.CURRENT_SPRITE_Q = 0
 
         if pygame.mouse.get_pressed()[0]:
-            if self.AA_TIMER >= 120:
+            if self.AA_TIMER >= 42:
                 self.AA_ACTIVE = True
                 if self.server_player:
                     self.server_player.simpleAttack = True
@@ -182,14 +207,15 @@ class Player_hero3(pygame.sprite.Sprite):
         if not self.direction.y:
             self.jump_bool = True
         if keys[pygame.K_e]:
-            if self.E_TIMER >= 2400:
+            if self.E_TIMER >= 480:
                 self.block_moving = True
                 self.E_ACTIVE = True
                 self.E_TIMER = 0
+                self.direction.x = 0
                 if self.server_player:
                     self.server_player.E = True
         if keys[pygame.K_q]:
-            if self.Q_ACTIVE_TIMER >= 1200:
+            if self.Q_ACTIVE_TIMER >= 720:
                 self.Q_ACTIVE = True
                 self.Q_ACTIVE_TIMER = 0
                 self.Q_TIMER = 0
@@ -228,6 +254,7 @@ class Player_hero3(pygame.sprite.Sprite):
         if not self.block_moving:
             self.get_input()
         elif self.block_moving and self.E_ACTIVE:
+            self.direction.x = 0
             self.start_e()
 
     def initialize_server_player(self, server_player):
