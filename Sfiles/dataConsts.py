@@ -104,3 +104,12 @@ bgMenu = BackgroundMenu(screen, background_menu)
 bgMapPreparation = Background(screen, background_map_preparation_with_opacity)
 interface = Interface(WIDTH, HEIGHT, screen)
 sleeper_status_for_loading = False
+
+images_round_ending = []
+for i in range(1, 7):
+    images_round_ending.append(pygame.transform.scale(pygame.image.load(f'static/game_round/round_bg{i}.png'),
+                                                      (WIDTH, HEIGHT)))
+images_round_starting = []
+for i in range(7, 13):
+    images_round_starting.append(pygame.transform.scale(pygame.image.load(f'static/game_round/round_bg{i}.png'),
+                                                        (WIDTH, HEIGHT)))

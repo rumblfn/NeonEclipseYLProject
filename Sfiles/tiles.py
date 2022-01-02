@@ -91,7 +91,6 @@ close_chest = pygame.transform.scale(pygame.image.load('static/close_chest.png')
 open_chest = pygame.transform.scale(pygame.image.load('static/open_chest.png'),
                                           (res, res))
 
-
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, size, cell, map, player_col):
         super().__init__()

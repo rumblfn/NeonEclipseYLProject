@@ -8,9 +8,9 @@ except:
     print('game not started')
 
 
-def speed_to_low(player):
+def speed_to_low(player, time):
     player.speed = 4
-    sleep(4)
+    sleep(time)
     player.speed = player.control_speed
 
 
@@ -18,7 +18,10 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = True  # True
+        self.ready = None  # True
+        self.wins = 0
+        self.loses = 0
+        self.win = None
 
         self.name = None
         self.power = None
@@ -35,9 +38,13 @@ class Player:
         self.mouse_pos_x, self.mouse_pos_y = None, None
 
         self.E_ACTIVE_SHIELD = False
+        self.SHIELD_HP = None
+        self.Q_STUN = False
 
         self.direction_x = 1
         self.damage_given = 0
+        self.diff_x = 0
+        self.e_time_speed_to_low = 4
 
 
 class Player_map_parkour(pygame.sprite.Sprite):
@@ -77,14 +84,8 @@ class Player_map_parkour(pygame.sprite.Sprite):
             for el in player_settings['animations'].keys():
                 self.images[el] = []
                 for i in range(1, 15):
-                    try:
-                        image = pygame.transform.scale(pygame.image.load(f'{player_settings["animations"][el]}{i}.png').convert_alpha(), (self.width, self.height))
-                        self.images[el].append(image)
-                    except:
-                        image = pygame.transform.scale(
-                            pygame.image.load(f'{player_settings["animations"][el]}.png').convert_alpha(),
-                            (self.width, self.height))
-                        self.images[el].append(image)
+                    image = pygame.transform.scale(pygame.image.load(f'{player_settings["animations"][el]}{i}.png').convert_alpha(), (self.width, self.height))
+                    self.images[el].append(image)
             self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
         self.start_img = self.image
         self.rect = self.image.get_rect(topleft=pos)
@@ -206,16 +207,10 @@ class Player_map_parkour(pygame.sprite.Sprite):
                     for el in self.settings['animations'].keys():
                         self.images[el] = []
                         for i in range(1, 15):
-                            try:
-                                image = pygame.transform.scale(
-                                    pygame.image.load(f'{self.player_settings["animations"][el]}{i}.png').convert_alpha(),
-                                    (self.width, self.height))
-                                self.images[el].append(image)
-                            except:
-                                image = pygame.transform.scale(
-                                    pygame.image.load(f'{self.player_settings["animations"][el]}.png').convert_alpha(),
-                                    (self.width, self.height))
-                                self.images[el].append(image)
+                            image = pygame.transform.scale(
+                                pygame.image.load(f'{self.settings["animations"][el]}{i}.png').convert_alpha(),
+                                (self.width, self.height))
+                            self.images[el].append(image)
                     self.image.blit(pygame.transform.scale(self.settings['imagePreview'], (self.width, self.height)),
                                     (0, 0))
                 self.rect = self.image.get_rect(topleft=(x, y))

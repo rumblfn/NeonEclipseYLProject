@@ -64,6 +64,7 @@ class Level:
                             self.player_sprite = Player_hero2((x, y), self.player_settings)
                         elif self.player_settings['name'] == 'Hero3':
                             self.player_sprite = Player_hero3((x, y), self.player_settings)
+                        self.player_sprite.block_moving = False
                         self.player.add(self.player_sprite)
                         self.all_sprites.add(self.player_sprite)
                     else:
@@ -264,6 +265,7 @@ class Level:
                 chest.opened = True
                 self.interface.add_blacksmith_card()
 
+
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
@@ -308,5 +310,8 @@ class Level:
             self.player_sprite.attacksE.draw(self.display_surface)
             self.ESettings()
             self.bullets_settings()
+            self.interface.draw_attacks_timers(self.player_sprite.shoot_bool, self.player_sprite.shoot_bool_max,
+                                               self.player_sprite.attacksEBool, self.player_sprite.attacksEBool_max,
+                                               self.player_sprite.Q_SLEEPER, self.player_sprite.Q_SLEEPER_MAX)
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)
