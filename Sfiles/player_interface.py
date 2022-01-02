@@ -77,11 +77,17 @@ class Interface:
         pos = titleSurface.get_rect(midleft=(self.screen_width - self.hpBarWidth, 28 + self.hpBarHeight // 2))
         self.screen.blit(titleSurface, pos)
 
-    def add_inventory(self, bought_items, all_items):
+    def add_inventory_librarian(self, bought_items, all_items):
         for i in bought_items:
             if i not in self.bought_items_interface:
                 self.bought_items_interface.append(i)
                 self.inventory.append(all_items[i])
+        print(self.bought_items_interface)
+        print(self.inventory)
+
+    def add_inventory_potions(self, potion, all_potions):
+        self.bought_items_interface.append(potion.cell)
+        self.inventory.append(all_potions[potion.cell])
 
     def show_inventory(self, arg=True):
         if arg:
@@ -94,7 +100,7 @@ class Interface:
 
     def draw_inventory(self):
         if self.inventory_visible:
-            for i, item in enumerate(self.inventory[-1::-1]):
+            for i, item in enumerate(self.inventory):
                 itemImage = pygame.transform.scale(pygame.image.load(item),
                                                     (round(50 * self.sprite_kef) - 6, round(50 * self.sprite_kef) - 6))
                 self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)),

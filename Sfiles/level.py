@@ -1,5 +1,5 @@
 import pygame
-from tiles import Tile, Portal
+from tiles import Tile, Portal, Potion
 from map_preparation_settings import level1_map
 from Hero1Player import Player_hero1
 from Hero2Player import Player_hero2
@@ -25,6 +25,7 @@ class Level:
         self.portalParkour = False
         self.showed_inv_by_shop = False
         self.item_clicked = False
+        self.first_start = True
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -34,6 +35,7 @@ class Level:
         self.player = pygame.sprite.GroupSingle()
         self.portals = pygame.sprite.Group()
         self.npces = pygame.sprite.Group()
+        self.potions = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level1_map)
 
@@ -84,6 +86,15 @@ class Level:
                     tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.decoration.add(tile)
                     self.all_sprites.add(tile)
+                elif cell == 'V':
+                    potion = Potion((col_index, row_index), tile_size, cell)
+                    self.potions.add(potion)
+                elif cell == 'G':
+                    potion = Potion((col_index, row_index), tile_size, cell)
+                    self.potions.add(potion)
+                elif cell == 'Y':
+                    potion = Potion((col_index, row_index), tile_size, cell)
+                    self.potions.add(potion)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.tiles.add(tile)
@@ -120,14 +131,13 @@ class Level:
     def npc_collisions(self):
         player = self.player.sprite
         for sprite in self.npces.sprites():
-
             if sprite.name == 'librarian':
                 sprite.update_npc()
                 if sprite.rect.colliderect(player.rect):
                     player.interface_mode = True
                     sprite.show_msg()
                     sprite.check_click(self.player_settings)
-                    self.interface.add_inventory(sprite.bought_items, sprite.items)
+                    self.interface.add_inventory_librarian(sprite.bought_items, sprite.items)
                     self.interface.show_inventory(False)
                     self.showed_inv_by_shop = True
                 else:
@@ -211,6 +221,16 @@ class Level:
                     if self.interface.current_item > len(self.interface.inventory) - 1:
                         self.interface.current_item = 0
 
+    def check_potions_taken(self):
+        player = self.player.sprite
+        for pot in self.potions:
+            if pot.rect.colliderect(player.rect):
+                self.take_potion(pot)
+
+    def take_potion(self, potion):
+        self.potions.remove(potion)
+        self.interface.add_inventory_potions(potion, potion.all_potions)
+
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
         self.decoration.update((self.world_shift_x, self.world_shift_y))
@@ -218,6 +238,9 @@ class Level:
 
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
+
+        self.potions.update((self.world_shift_x, self.world_shift_y))
+        self.potions.draw(self.display_surface)
 
         self.portals.update((self.world_shift_x, self.world_shift_y))
         self.portals.draw(self.display_surface)
@@ -238,6 +261,7 @@ class Level:
         self.vertical_movement_collisions()
         self.player.draw(self.display_surface)
         self.print_current_gold()
+        self.check_potions_taken()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))
