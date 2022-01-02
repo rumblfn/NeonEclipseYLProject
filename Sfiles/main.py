@@ -61,6 +61,8 @@ def redrawWindow(win, player, player2):
 
 
 def main_game(server_player, net, play_main):
+    global images_round_starting, images_round_ending
+
     def update_server_player_pos():
         server_player.x = WIDTH // 2
         server_player.y = HEIGHT // 2
@@ -99,17 +101,14 @@ def main_game(server_player, net, play_main):
         if server_player.loses >= 3:
             server_player.win = False
             break
-        starting = True
+
+        for j in range(0, 55, 5):
+            screen.blit(images_round_starting[int(j / 10)], (0, 0))
+            pygame.display.update()
+
         while run:
             screen.fill((0, 0, 0))
             level.run()
-            level.interface.draw_game_progress(str(server_player.wins), str(server_player.loses))
-
-            if starting:
-                for j in range(0, 50, 5):
-                    screen.blit(images_round_starting[int(j / 10)], (0, 0))
-                    pygame.display.update()
-                starting = False
 
             if not level.player_enemy.ready:
                 server_player.wins += 1
@@ -129,9 +128,11 @@ def main_game(server_player, net, play_main):
                     pygame.quit()
                     sys.exit()
             clock.tick(60)
-        for j in range(0, 50, 5):
+
+        for j in range(0, 55, 5):
             screen.blit(images_round_ending[int(j / 10)], (0, 0))
             pygame.display.update()
+
         if server_player.wins >= 3:
             server_player.win = True
     game_end(server_player, net)

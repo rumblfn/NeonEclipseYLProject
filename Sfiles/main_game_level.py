@@ -180,6 +180,9 @@ class LevelG:
                     sprite.kill()
             self.ESettings()
             self.bullets_settings()
+            self.interface.draw_attacks_timers(self.player_sprite.shoot_bool, self.player_sprite.shoot_bool_max,
+                                               self.player_sprite.attacksEBool, self.player_sprite.attacksEBool_max,
+                                               self.player_sprite.Q_SLEEPER, self.player_sprite.Q_SLEEPER_MAX)
         elif self.player_sprite.name == 'Hero2':
             pass
         elif self.player_sprite.name == 'Hero3':
@@ -197,6 +200,10 @@ class LevelG:
                     self.player_sprite.Q_STUN_TIMER = 0
             if self.player_sprite.Q_STUN_TIMER >= 120:
                 self.server_player.Q_STUN = False
+            self.interface.draw_attacks_timers(self.player_sprite.AA_TIMER, self.player_sprite.AA_TIMER_MAX,
+                                               self.player_sprite.E_TIMER, self.player_sprite.E_TIMER_MAX,
+                                               self.player_sprite.Q_ACTIVE_TIMER, self.player_sprite.Q_ACTIVE_TIMER_MAX)
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)
         self.interface.draw_enemy_health(self.enemy.sprite.hp, self.enemy.sprite.maxHp)
+        self.interface.draw_game_progress(str(self.server_player.wins), str(self.server_player.loses))

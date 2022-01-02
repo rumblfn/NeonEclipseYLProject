@@ -29,10 +29,12 @@ class Player_hero1(pygame.sprite.Sprite):
 
         self.K_x = False
         self.attacksEBool = 300
+        self.attacksEBool_max = 300
         self.current_sprite = 0
 
         self.Q_ACTIVE = False
         self.Q_ACTIVE_TIMER = 600
+        self.Q_SLEEPER_MAX = self.Q_ACTIVE_TIMER * 3
         self.q_side = 'q_right_animation'
         self.Q_SLEEPER = self.Q_ACTIVE_TIMER * 3
 
@@ -58,7 +60,8 @@ class Player_hero1(pygame.sprite.Sprite):
         self.gravity = 0.8 * HEIGHT / 900
         self.jump_speed = -18 * HEIGHT / 900
         self.jump_bool = True
-        self.shoot_bool = 1
+        self.shoot_bool = 20
+        self.shoot_bool_max = 20
 
         self.server_player = None
         self.WIDTH = WIDTH
@@ -120,7 +123,7 @@ class Player_hero1(pygame.sprite.Sprite):
                 self.server_player.simpleAttack = False
 
         if pygame.mouse.get_pressed()[0]:
-            if self.shoot_bool >= 1:
+            if self.shoot_bool >= 20:
                 self.bullets.add(self.create_bullet())
                 if self.server_player:
                     self.server_player.simpleAttack = True
@@ -168,7 +171,7 @@ class Player_hero1(pygame.sprite.Sprite):
         self.direction.y = self.jump_speed
 
     def update(self):
-        self.shoot_bool += 0.1
+        self.shoot_bool += 1
         self.attacksEBool += 1
         if not self.block_moving:
             self.get_input()
