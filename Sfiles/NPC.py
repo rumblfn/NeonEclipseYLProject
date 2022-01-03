@@ -71,13 +71,14 @@ class Librarian(pygame.sprite.Sprite):
         self.image.blit(pygame.transform.scale(self.images[int(self.count)], (self.width, self.height)), (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0], pos[1] - self.height // 2))
 
-        self.items = {'1': 'static/hero1_librarian/upgrade_power.png',
-                      '2': 'static/hero1_librarian/upgrade_hp.png',
-                      '3': 'static/hero1_librarian/hero1_q_hp_boost.png',
-                      '4': 'static/hero1_librarian/e_hero1_freeze_time_upgrade.png',
-                      '5': 'static/hero1_librarian/hero1_e_power_keff.png'}
+        self.items = {'1txc': 'static/hero1_librarian/upgrade_power.png',
+                      '2txc': 'static/hero1_librarian/upgrade_hp.png',
+                      '3txc': 'static/hero1_librarian/hero1_q_hp_boost.png',
+                      '4txc': 'static/hero1_librarian/e_hero1_freeze_time_upgrade.png',
+                      '5txc': 'static/hero1_librarian/hero1_e_power_keff.png'}
 
         self.bought_items = []
+        self.purchase_done = False
 
     def update_npc(self):
         if self.count >= len(self.images) - 1:
@@ -114,8 +115,8 @@ class Librarian(pygame.sprite.Sprite):
         self.screen.blit(msgImage, (self.msg_x, self.msg_y))
 
         attack = pygame.Surface((self.icon_w, self.icon_h))
-        if '1' not in self.bought_items:
-            attack_img = pygame.transform.scale(pygame.image.load(self.items['1']), (self.icon_w, self.icon_h))
+        if '1txc' not in self.bought_items:
+            attack_img = pygame.transform.scale(pygame.image.load(self.items['1txc']), (self.icon_w, self.icon_h))
             attack.blit(attack_img, (0, 0))
         else:
             attack.fill((255, 255, 255, 50))
@@ -123,8 +124,8 @@ class Librarian(pygame.sprite.Sprite):
         self.screen.blit(attack, (self.icon_a_x, self.icon_y))
 
         health = pygame.Surface((self.icon_w, self.icon_h))
-        if '2' not in self.bought_items:
-            health_img = pygame.transform.scale(pygame.image.load(self.items['2']), (self.icon_w, self.icon_h))
+        if '2txc' not in self.bought_items:
+            health_img = pygame.transform.scale(pygame.image.load(self.items['2txc']), (self.icon_w, self.icon_h))
             health.blit(health_img, (0, 0))
         else:
             health.fill((255, 255, 255, 50))
@@ -132,8 +133,8 @@ class Librarian(pygame.sprite.Sprite):
         self.screen.blit(health, (self.icon_h_x, self.icon_y))
 
         q = pygame.Surface((self.icon_w, self.icon_h))
-        if '3' not in self.bought_items:
-            q_img = pygame.transform.scale(pygame.image.load(self.items['3']), (self.icon_w, self.icon_h))
+        if '3txc' not in self.bought_items:
+            q_img = pygame.transform.scale(pygame.image.load(self.items['3txc']), (self.icon_w, self.icon_h))
             q.blit(q_img, (0, 0))
         else:
             q.fill((255, 255, 255, 50))
@@ -142,8 +143,8 @@ class Librarian(pygame.sprite.Sprite):
         self.screen.blit(q, (self.icon_q_x, self.icon_y))
 
         e = pygame.Surface((self.icon_w, self.icon_h))
-        if '4' not in self.bought_items:
-            e_img = pygame.transform.scale(pygame.image.load(self.items['4']), (self.icon_w, self.icon_h))
+        if '4txc' not in self.bought_items:
+            e_img = pygame.transform.scale(pygame.image.load(self.items['4txc']), (self.icon_w, self.icon_h))
             e.blit(e_img, (0, 0))
         else:
             e.fill((255, 255, 255, 50))
@@ -152,8 +153,8 @@ class Librarian(pygame.sprite.Sprite):
         self.screen.blit(e, (self.icon_e_x, self.icon_y))
 
         k = pygame.Surface((self.icon_w, self.icon_h))
-        if '5' not in self.bought_items:
-            k_img = pygame.transform.scale(pygame.image.load(self.items['5']), (self.icon_w, self.icon_h))
+        if '5txc' not in self.bought_items:
+            k_img = pygame.transform.scale(pygame.image.load(self.items['5txc']), (self.icon_w, self.icon_h))
             k.blit(k_img, (0, 0))
         else:
             k.fill((255, 255, 255, 50))
@@ -188,15 +189,15 @@ class Librarian(pygame.sprite.Sprite):
         if not is_on_check:
             is_on_check = True
             if self.btn_h.collidepoint((mx, my)):
-                self.show_info('h')
+                self.show_info('htxc')
             elif self.btn_a.collidepoint((mx, my)):
-                self.show_info('a')
+                self.show_info('atxc')
             elif self.btn_q.collidepoint((mx, my)):
-                self.show_info('q')
+                self.show_info('qtxc')
             elif self.btn_e.collidepoint((mx, my)):
-                self.show_info('e')
+                self.show_info('etxc')
             elif self.btn_k.collidepoint((mx, my)):
-                self.show_info('k')
+                self.show_info('ktxc')
             else:
                 self.show_info(False)
         else:
@@ -229,26 +230,48 @@ class Librarian(pygame.sprite.Sprite):
                              (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
 
     def plus_attack(self, player):
-        if player['gold'] - 5 >= 0 and '1' not in self.bought_items:
+        if player['gold'] - 5 >= 0 and '1txc' not in self.bought_items:
             player['gold'] -= 5
-            self.bought_items.append('1')
+            self.bought_items.append('1txc')
+            self.purchase_done = True
 
     def plus_health(self, player):
-        if player['gold'] - 5 >= 0 and '2' not in self.bought_items:
+        if player['gold'] - 5 >= 0 and '2txc' not in self.bought_items:
             player['gold'] -= 5
-            self.bought_items.append('2')
+            self.bought_items.append('2txc')
+            self.purchase_done = True
 
     def plus_q(self, player):
-        if player['gold'] - 5 >= 0 and '3' not in self.bought_items:
+        if player['gold'] - 5 >= 0 and '3txc' not in self.bought_items:
             player['gold'] -= 5
-            self.bought_items.append('3')
+            self.bought_items.append('3txc')
+            self.purchase_done = True
 
     def plus_e(self, player):
-        if player['gold'] - 5 >= 0 and '4' not in self.bought_items:
+        if player['gold'] - 5 >= 0 and '4txc' not in self.bought_items:
             player['gold'] -= 5
-            self.bought_items.append('4')
+            self.bought_items.append('4txc')
+            self.purchase_done = True
 
     def plus_k(self, player):
-        if player['gold'] - 5 >= 0 and '5' not in self.bought_items:
+        if player['gold'] - 5 >= 0 and '5txc' not in self.bought_items:
             player['gold'] -= 5
-            self.bought_items.append('5')
+            self.bought_items.append('5txc')
+            self.purchase_done = True
+
+    def update_player_characteristics(self, sprite):
+        if self.bought_items[-1] == '1txc':
+            sprite.power += 10
+
+        if self.bought_items[-1] == '2txc':
+            sprite.maxHp += 10
+            sprite.hp += 10
+
+        if self.bought_items[-1] == '3txc':
+            sprite.q_hp_recovery += 5
+
+        if self.bought_items[-1] == '4txc':
+            sprite.e_time_speed_to_low += 0.4
+
+        if self.bought_items[-1] == '5txc':
+            sprite.attack_power_kef += 0.1

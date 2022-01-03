@@ -265,6 +265,12 @@ class Level:
                 chest.opened = True
                 self.interface.add_blacksmith_card()
 
+    def check_sprite_updates(self):
+        for sprite in self.npces.sprites():
+            if sprite.name == 'librarian':
+                if sprite.purchase_done:
+                    sprite.update_player_characteristics(self.player_sprite)
+                    sprite.purchase_done = False
 
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
@@ -302,6 +308,7 @@ class Level:
         self.check_potions_taken()
         self.add_keys_to_inv()
         self.check_chest()
+        self.check_sprite_updates()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))

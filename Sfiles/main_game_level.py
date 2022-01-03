@@ -142,8 +142,6 @@ class LevelG:
         if player_enemy.name == 'Hero3':
             self.player_sprite.block_moving = player_enemy.Q_STUN
 
-
-
     def bullets_settings(self):
         for sprite in self.player_sprite.bullets.sprites():
             for tile in self.tiles.sprites():
