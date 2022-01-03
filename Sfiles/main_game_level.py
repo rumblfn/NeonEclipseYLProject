@@ -7,6 +7,8 @@ from hero3Enemy import Enemy_hero3
 from _thread import start_new_thread
 from player import speed_to_low
 from spring import Spring
+from ball_gun import Ball_gun
+from balls import Ball
 from time import sleep
 
 
@@ -25,6 +27,7 @@ class LevelG:
         self.pos_x = 0
         self.network = network
         self.interface = interface
+        self.tile_size = 64
 
         self.enemy = pygame.sprite.GroupSingle()
         if self.player_enemy.name == 'Hero1':
@@ -42,9 +45,13 @@ class LevelG:
         self.interface.update_screen_size(self.width, self.height)
         self.tiles = pygame.sprite.Group()
         self.springs = pygame.sprite.Group()
+        self.ball_guns = pygame.sprite.Group()
+        self.gun_balls = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
-        tile_size = self.height // len(self.level_data)
+        tile_size = self.height / len(self.level_data)
         self.width = len(self.level_data[0]) * tile_size
+        self.player_sprite.update_size(self.width, self.height)
+        self.tile_size = tile_size = int(tile_size)
         self.player_sprite.initialize_server_player(self.server_player)
 
         for row_index, row in enumerate(layout):
@@ -60,6 +67,9 @@ class LevelG:
                 elif cell == 'S':
                     spring = Spring((x + tile_size // 2, y + tile_size), tile_size)
                     self.springs.add(spring)
+                elif cell == 'G':
+                    ball_gun = Ball_gun((x, y), tile_size)
+                    self.ball_guns.add(ball_gun)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, self.level_data, self.player_col)
                     self.tiles.add(tile)
@@ -173,15 +183,37 @@ class LevelG:
                     sprite.spring_hit = True
                     sprite.rect.y -= sprite.size // 4
 
+    def balls_ball_gun(self):
+        for sprite in self.ball_guns.sprites():
+            if sprite.timer == 0:
+                ball = Ball(sprite.rect.center, self.tile_size)
+                self.gun_balls.add(ball)
+        for sprite in self.gun_balls.sprites():
+            for tile in self.tiles.sprites():
+                if sprite.rect.colliderect(tile.rect):
+                    sprite.kill()
+            if sprite.rect.colliderect(self.player_sprite.rect):
+                self.player_sprite.hp -= 7
+                self.server_player.damage_given += 7
+                sprite.kill()
+            if sprite.rect.colliderect(self.enemy.sprite.rect):
+                sprite.kill()
+
     def run(self):
         if self.player_sprite.hp <= 0 and self.round or self.player_sprite.rect.y > self.height * 2:
-            self.player_sprite.rect.x = self.width // 2
-            self.player_sprite.rect.y = self.height // 2
+            self.player_sprite.rect.x = self.width / 2
+            self.player_sprite.rect.y = self.height / 2
             self.server_player.ready = False
             self.round = False
 
         self.tiles.draw(self.display_surface)
         self.springs.draw(self.display_surface)
+        self.ball_guns.update()
+        self.ball_guns.draw(self.display_surface)
+        self.gun_balls.update()
+        self.gun_balls.draw(self.display_surface)
+        self.balls_ball_gun()
+
         self.horizontal_movement_collisions(self.player.sprite)
         self.vertical_movement_collisions(self.player.sprite)
         self.springs_collisions()
@@ -197,7 +229,7 @@ class LevelG:
             self.player_sprite.attacksE.draw(self.display_surface)
             for sprite in self.player_sprite.bullets.sprites():
                 if sprite.rect.colliderect(self.enemy.sprite.rect):
-                    self.server_player.damage_given = self.player_sprite.power
+                    self.server_player.damage_given += self.player_sprite.power
                     sprite.kill()
             self.ESettings()
             self.bullets_settings()
@@ -210,11 +242,11 @@ class LevelG:
             self.server_player.diff_x = 0
             if self.player_sprite.AA_ACTIVE and self.player_sprite.CURRENT_SPRITE_AA == 2:
                 if self.player_sprite.rect.colliderect(self.enemy.sprite.rect):
-                    if self.player_sprite.SIDE == 'right':
-                        self.server_player.diff_x = 130
-                    else:
-                        self.server_player.diff_x = -130
-                    self.server_player.damage_given = self.player_sprite.power
+                    # if self.player_sprite.SIDE == 'right':
+                    #     self.server_player.diff_x = 130
+                    # else:
+                    #     self.server_player.diff_x = -130
+                    self.server_player.damage_given += self.player_sprite.power
                 if self.player_sprite.Q_ACTIVE:
                     self.player_sprite.Q_END = True
                     self.server_player.Q_STUN = True

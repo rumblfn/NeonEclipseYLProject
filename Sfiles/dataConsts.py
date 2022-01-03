@@ -64,7 +64,7 @@ HEROES = [
     },
     {
         'name': 'Hero3',
-        'attack power': 5,
+        'attack power': 20,
         'maxHp': 200,
         'imagePreview': player2Paladin,
         'imagePreviewBig': player2PaladinBig,

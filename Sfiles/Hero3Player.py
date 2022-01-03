@@ -89,6 +89,10 @@ class Player_hero3(pygame.sprite.Sprite):
     def update_shield_hp(self):
         self.SHIELD_HP = self.SHIELD_HP_KEF * self.maxHp
 
+    def update_size(self, new_width, new_height):
+        self.HEIGHT = new_height
+        self.WIDTH = new_width
+
     def get_input(self):
         self.CURRENT_SPRITE += 0.2
         self.CURRENT_SPRITE_Q += 0.2

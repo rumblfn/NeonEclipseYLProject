@@ -69,6 +69,10 @@ class Player_hero1(pygame.sprite.Sprite):
 
         self.spring_jump_bool = False
 
+    def update_size(self, new_width, new_height):
+        self.HEIGHT = new_height
+        self.WIDTH = new_width
+
     def get_input(self):
         self.Q_SLEEPER += 1
         self.current_sprite += 0.25

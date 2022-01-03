@@ -14,8 +14,8 @@ class Enemy(pygame.sprite.Sprite):
         self.power = player_enemy.power
         self.maxHp = player_enemy.maxHp
         self.hp = player_enemy.maxHp
-        self.width = player_enemy.width
-        self.height = player_enemy.height
+        self.width = int(player_enemy.width)
+        self.height = int(player_enemy.height)
         self.pos = (player_enemy.x, player_enemy.y)
         self.direction_x = 1
 

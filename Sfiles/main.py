@@ -72,8 +72,8 @@ def main_game(server_player, net, play_main):
         server_player.power = player_main.power
         server_player.maxHp = player_main.maxHp
         server_player.hp = player_main.maxHp
-        server_player.width = player_main.width
-        server_player.height = player_main.height
+        server_player.width = player_main.width * 1920 / WIDTH
+        server_player.height = player_main.height * 1080 / HEIGHT
         server_player.ready = True
         if player_main.name == 'Hero1':
             server_player.e_time_speed_to_low = player_main.e_time_speed_to_low
