@@ -84,6 +84,8 @@ class Player_hero3(pygame.sprite.Sprite):
 
         self.server_player = None
 
+        self.spring_jump_bool = False
+
     def update_shield_hp(self):
         self.SHIELD_HP = self.SHIELD_HP_KEF * self.maxHp
 
@@ -204,6 +206,10 @@ class Player_hero3(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE]:
             if self.jump_bool:
                 self.jump()
+        if self.spring_jump_bool:
+            self.jump_bool = True
+            self.spring_jump_bool = False
+            self.direction.y = self.jump_speed * 2
         if not self.direction.y:
             self.jump_bool = True
         if keys[pygame.K_e]:

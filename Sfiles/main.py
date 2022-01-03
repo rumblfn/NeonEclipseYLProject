@@ -26,7 +26,7 @@ def draw_cursor(sc):
 
 def sleeper():
     global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 10
+    sleeper_time = 3
     sleeper_loading = 1
     sleeper_status = False
 
@@ -204,6 +204,7 @@ def map_preparation(player, network, player_settings):
                     to_print = False
             if level_p.check_fall:
                 portalParkourMap(sc, player_parkour, False)
+            player_settings['keys'] = level_p.keys_taken
             level_p.events_check()
             clock.tick(60)
 

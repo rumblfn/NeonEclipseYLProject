@@ -6,6 +6,7 @@ from hero1Enemy import Enemy_hero1
 from hero3Enemy import Enemy_hero3
 from _thread import start_new_thread
 from player import speed_to_low
+from spring import Spring
 from time import sleep
 
 
@@ -40,6 +41,7 @@ class LevelG:
     def setup_level(self, layout):
         self.interface.update_screen_size(self.width, self.height)
         self.tiles = pygame.sprite.Group()
+        self.springs = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         tile_size = self.height // len(self.level_data)
         self.width = len(self.level_data[0]) * tile_size
@@ -54,9 +56,10 @@ class LevelG:
                     self.player_sprite.server_player.y = y
                     self.player_sprite.x = x
                     self.player_sprite.y = y
-                    self.enemy.sprite.rect.x = x
-                    self.enemy.sprite.rect.y = y
                     self.player.add(self.player_sprite)
+                elif cell == 'S':
+                    spring = Spring((x + tile_size // 2, y + tile_size), tile_size)
+                    self.springs.add(spring)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, self.level_data, self.player_col)
                     self.tiles.add(tile)
@@ -142,8 +145,6 @@ class LevelG:
         if player_enemy.name == 'Hero3':
             self.player_sprite.block_moving = player_enemy.Q_STUN
 
-
-
     def bullets_settings(self):
         for sprite in self.player_sprite.bullets.sprites():
             for tile in self.tiles.sprites():
@@ -156,14 +157,34 @@ class LevelG:
             sprite.rect.midbottom = self.player_sprite.rect.midbottom
             sprite.run_attackE()
 
+    def springs_collisions(self):
+        self.player_sprite.spring_jump_bool = False
+        for sprite in self.springs.sprites():
+            if sprite.spring_hit:
+                sprite.change_spring()
+            if sprite.image == sprite.surf1:
+                if sprite.rect.colliderect(self.player_sprite.rect):
+                    sprite.image = sprite.surf2
+                    sprite.rect.y -= sprite.size // 4
+                    sprite.spring_hit = True
+                    self.player_sprite.spring_jump_bool = True
+                if sprite.rect.colliderect(self.enemy.sprite.rect):
+                    sprite.image = sprite.surf2
+                    sprite.spring_hit = True
+                    sprite.rect.y -= sprite.size // 4
+
     def run(self):
-        if self.player_sprite.hp <= 0 and self.round:
+        if self.player_sprite.hp <= 0 and self.round or self.player_sprite.rect.y > self.height * 2:
+            self.player_sprite.rect.x = self.width // 2
+            self.player_sprite.rect.y = self.height // 2
             self.server_player.ready = False
             self.round = False
 
         self.tiles.draw(self.display_surface)
+        self.springs.draw(self.display_surface)
         self.horizontal_movement_collisions(self.player.sprite)
         self.vertical_movement_collisions(self.player.sprite)
+        self.springs_collisions()
 
         self.enemy.draw(self.display_surface)
         self.update_enemy()

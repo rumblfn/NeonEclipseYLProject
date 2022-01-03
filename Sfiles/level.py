@@ -1,6 +1,6 @@
 import pygame
-from tiles import Tile, Portal
-from map_preparation_settings import tile_size, level1_map
+from tiles import Tile, Portal, Potion, Chest
+from map_preparation_settings import level1_map
 from Hero1Player import Player_hero1
 from Hero2Player import Player_hero2
 from Hero3Player import Player_hero3
@@ -23,6 +23,10 @@ class Level:
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
+        self.showed_inv_by_shop = False
+        self.item_clicked = False
+        self.first_start = True
+        self.is_on_check = False
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -32,6 +36,8 @@ class Level:
         self.player = pygame.sprite.GroupSingle()
         self.portals = pygame.sprite.Group()
         self.npces = pygame.sprite.Group()
+        self.potions = pygame.sprite.Group()
+        self.chests = pygame.sprite.Group()
         HEIGHT = pygame.display.Info().current_h
         tile_size = HEIGHT // len(level1_map)
 
@@ -83,6 +89,18 @@ class Level:
                     tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.decoration.add(tile)
                     self.all_sprites.add(tile)
+                elif cell == 'V':
+                    potion = Potion((col_index, row_index), tile_size, cell)
+                    self.potions.add(potion)
+                elif cell == 'G':
+                    potion = Potion((col_index, row_index), tile_size, cell)
+                    self.potions.add(potion)
+                elif cell == 'Y':
+                    potion = Potion((col_index, row_index), tile_size, cell)
+                    self.potions.add(potion)
+                elif cell == 'C':
+                    chest = Chest((col_index, row_index), tile_size, cell)
+                    self.chests.add(chest)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.tiles.add(tile)
@@ -115,6 +133,15 @@ class Level:
         player = self.player_sprite
         if player.rect.y > self.height + 300 or player.rect.y < - 300:
             self.setup_level(self.level_data, self.player_sprite)
+            for sprite in self.npces.sprites():
+                if sprite.name == 'librarian':
+                    sprite.bought_items = []
+            self.interface.inventory = []
+            self.interface.item_rects = []
+            self.interface.bought_items_interface = []
+            self.interface.current_item = 0
+            self.interface.inventory_visible = False
+            self.player_settings['keys'] = 0
 
     def npc_collisions(self):
         player = self.player.sprite
@@ -122,8 +149,18 @@ class Level:
             if sprite.name == 'librarian':
                 sprite.update_npc()
                 if sprite.rect.colliderect(player.rect):
+                    player.interface_mode = True
                     sprite.show_msg()
+                    sprite.check_show_info(self.is_on_check)
                     sprite.check_click(self.player_settings)
+                    self.interface.add_inventory_librarian(sprite.bought_items, sprite.items)
+                    self.interface.show_inventory(False)
+                    self.showed_inv_by_shop = True
+                else:
+                    if self.showed_inv_by_shop:
+                            player.interface_mode = False
+                            self.interface.show_inventory(True)
+                            self.showed_inv_by_shop = False
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -165,28 +202,69 @@ class Level:
             sprite.run_attackE()
 
     def print_current_gold(self):
-        text = f'{self.player_settings["gold"]}'
+        text = f'GEMS: {self.player_settings["gold"]}'
         newFont = pygame.font.SysFont('SFCompact', round((40 * self.width) / 1536))
         txt_surf = newFont.render(text, False, (255, 183, 0))
-        self.display_surface.blit(txt_surf, (self.width - round((40 * self.width) / 1536), round((20 * self.width) / 1536)))
+        self.display_surface.blit(txt_surf, (self.width - round((150 * self.width) / 1536), round((20 * self.width) / 1536)))
+
+    def add_keys_to_inv(self):
+        self.interface.update_keys_in_inventory(self.player_settings["keys"])
 
     def check_inventory(self):
-        player = self.player.sprite
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
                 if self.interface.chest_rect.collidepoint((mx, my)):
+                    self.player.sprite.interface_mode = True
                     self.interface.show_inventory()
+                else:
+                    self.player.sprite.interface_mode = False
                 for i, rect in enumerate(self.interface.item_rects):
                     if rect.collidepoint((mx, my)):
                         self.interface.current_item = i
-                        print(self.interface.current_item)
-
+                        self.item_clicked = True
+                        self.player.sprite.interface_mode = True
+                if not self.item_clicked:
+                    self.player.sprite.interface_mode = False
+                    self.item_clicked = False
             if event.type == KEYDOWN:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_TAB]:
-                    player.button_clicked = True
                     self.interface.show_inventory()
+                if keys[pygame.K_RIGHT]:
+                    self.interface.current_item -= 1
+                    if self.interface.current_item < 0:
+                        self.interface.current_item = len(self.interface.inventory) - 1
+                if keys[pygame.K_LEFT]:
+                    self.interface.current_item += 1
+                    if self.interface.current_item > len(self.interface.inventory) - 1:
+                        self.interface.current_item = 0
+
+    def check_potions_taken(self):
+        player = self.player.sprite
+        for pot in self.potions:
+            if pot.rect.colliderect(player.rect):
+                self.take_potion(pot)
+
+    def take_potion(self, potion):
+        self.potions.remove(potion)
+        self.interface.add_inventory_potions(potion, potion.all_potions)
+
+    def check_chest(self):
+        player = self.player.sprite
+        for chest in self.chests:
+            if chest.rect.colliderect(player.rect):
+                self.open_chest(chest)
+
+    def open_chest(self, chest):
+        if not chest.opened:
+            if self.interface.keys_count - 1 >= 0:
+                self.interface.keys_count -= 1
+                self.player_settings["keys"] -= 1
+                chest.redraw_block()
+                chest.opened = True
+                self.interface.add_blacksmith_card()
+
 
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
@@ -196,25 +274,34 @@ class Level:
         self.tiles.update((self.world_shift_x, self.world_shift_y))
         self.tiles.draw(self.display_surface)
 
+        self.potions.update((self.world_shift_x, self.world_shift_y))
+        self.potions.draw(self.display_surface)
+
         self.portals.update((self.world_shift_x, self.world_shift_y))
         self.portals.draw(self.display_surface)
 
         self.npces.update((self.world_shift_x, self.world_shift_y))
         self.npces.draw(self.display_surface)
 
+        self.chests.update((self.world_shift_x, self.world_shift_y))
+        self.chests.draw(self.display_surface)
+
         self.scroll_x()
 
+        self.npc_collisions()
+        self.check_inventory()
+        self.interface.check_item_choice()
+        self.interface.draw_inventory()
         self.player.update()
         self.player_pos_checker()
         self.check_portals()
         self.horizontal_movement_collisions()
         self.vertical_movement_collisions()
-        self.npc_collisions()
         self.player.draw(self.display_surface)
         self.print_current_gold()
-        self.check_inventory()
-        self.interface.draw_inventory()
-        self.interface.check_item_choice()
+        self.check_potions_taken()
+        self.add_keys_to_inv()
+        self.check_chest()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))
@@ -223,5 +310,8 @@ class Level:
             self.player_sprite.attacksE.draw(self.display_surface)
             self.ESettings()
             self.bullets_settings()
+            self.interface.draw_attacks_timers(self.player_sprite.shoot_bool, self.player_sprite.shoot_bool_max,
+                                               self.player_sprite.attacksEBool, self.player_sprite.attacksEBool_max,
+                                               self.player_sprite.Q_SLEEPER, self.player_sprite.Q_SLEEPER_MAX)
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)

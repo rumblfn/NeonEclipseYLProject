@@ -1,4 +1,5 @@
 import pygame
+import random
 import time
 
 
@@ -42,10 +43,10 @@ class Interface:
         self.inventory = []
         self.current_item = 0
         self.inventory_visible = False
-        for i in range(5):
-            self.add_inventory('')
-
         self.item_rects = []
+        self.bought_items_interface = []
+        self.keys_count = 0
+        self.cards_count = 0
 
         self.aa_image_normal = pygame.transform.scale(pygame.image.load('static/lmbIconMenu.png'), (size, size))
         self.e_image_normal = pygame.transform.scale(pygame.image.load('static/buttonE.png'), (size, size))
@@ -130,32 +131,67 @@ class Interface:
         pos = titleSurface.get_rect(midleft=(self.screen_width - self.hpBarWidth, 28 + self.hpBarHeight // 2))
         self.screen.blit(titleSurface, pos)
 
-    def add_inventory(self, item):
-        self.inventory.append(item)
+    def add_inventory_librarian(self, bought_items, all_items):
+        for i in bought_items:
+            if i not in self.bought_items_interface:
+                self.bought_items_interface.append(i)
+                self.inventory.append(all_items[i])
 
-    def show_inventory(self):
-        if self.inventory_visible:
-            self.inventory_visible = False
+    def add_inventory_potions(self, potion, all_potions):
+        self.bought_items_interface.append(potion.cell)
+        self.inventory.append(all_potions[potion.cell])
+
+    def update_keys_in_inventory(self, keys):
+        for el in self.inventory:
+            if el == 'static/chest_key.png':
+                self.inventory.remove(el)
+        self.keys_count = keys
+        self.bought_items_interface.append('K')
+        self.inventory.append('static/chest_key.png')
+
+    def show_inventory(self, arg=True):
+        if arg:
+            if self.inventory_visible:
+                self.inventory_visible = False
+            else:
+                self.inventory_visible = True
         else:
             self.inventory_visible = True
+
+    def add_blacksmith_card(self):
+        if 'static/blacksmith_card.png' not in self.inventory:
+            self.inventory.append('static/blacksmith_card.png')
+        self.cards_count += random.randint(1, 5)
+        self.bought_items_interface.append('B')
 
     def draw_inventory(self):
         if self.inventory_visible:
             for i, item in enumerate(self.inventory):
-                itemImage = pygame.transform.scale(pygame.image.load('static/green_gem.png'),
-                                                    (round(50 * self.sprite_kef), round(50 * self.sprite_kef)))
-                self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)),
-                                                       pygame.SRCALPHA)
-                if i == self.current_item:
-                    self.itemImageSurface.fill((0, 255, 0, 50))
-                self.itemImageSurface.blit(itemImage, (0, 0))
-                self.screen.blit(self.itemImageSurface,
-                                 ((self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
-                                                          self.screen_height - 45 * self.sprite_kef - 10)))
-                self.item_rect = self.itemImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
-                                                                         self.screen_height - 45 * self.sprite_kef - 10))
-                if i + 1 > len(self.item_rects):
-                    self.item_rects.append(self.item_rect)
+                if item == 'static/chest_key.png' and self.keys_count > 0 or item != 'static/chest_key.png':
+                    itemImage = pygame.transform.scale(pygame.image.load(item),
+                                                        (round(50 * self.sprite_kef) - 6, round(50 * self.sprite_kef) - 6))
+                    self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)),
+                                                           pygame.SRCALPHA)
+                    if i == self.current_item:
+                        self.itemImageSurface.fill((0, 255, 0, 75))
+                    self.itemImageSurface.blit(itemImage, (3, 3))
+                    if item == 'static/chest_key.png':
+                        text = f'{self.keys_count}'
+                        newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
+                        txt_surf = newFont.render(text, False, (255, 183, 0))
+                        self.itemImageSurface.blit(txt_surf, (10, 10))
+                    if item == 'static/blacksmith_card.png':
+                        text = f'{self.cards_count}'
+                        newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
+                        txt_surf = newFont.render(text, False, (255, 183, 0))
+                        self.itemImageSurface.blit(txt_surf, (10, 10))
+                    self.screen.blit(self.itemImageSurface,
+                                     ((self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
+                                                              self.screen_height - 45 * self.sprite_kef - 10)))
+                    self.item_rect = self.itemImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),
+                                                                             self.screen_height - 45 * self.sprite_kef - 10))
+                    if i + 1 > len(self.item_rects):
+                        self.item_rects.append(self.item_rect)
 
     def check_item_choice(self):
         for event in pygame.event.get():
@@ -164,4 +200,3 @@ class Interface:
                 for i, rect in enumerate(self.item_rects):
                     if rect.collidepoint((mx, my)):
                         self.current_item = i
-                        print(self.current_item)

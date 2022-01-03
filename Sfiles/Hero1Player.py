@@ -67,6 +67,8 @@ class Player_hero1(pygame.sprite.Sprite):
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
 
+        self.spring_jump_bool = False
+
     def get_input(self):
         self.Q_SLEEPER += 1
         self.current_sprite += 0.25
@@ -115,6 +117,10 @@ class Player_hero1(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE]:
             if self.jump_bool:
                 self.jump()
+        if self.spring_jump_bool:
+            self.jump_bool = True
+            self.spring_jump_bool = False
+            self.direction.y = self.jump_speed * 2
         if not self.direction.y:
             self.jump_bool = True
 
