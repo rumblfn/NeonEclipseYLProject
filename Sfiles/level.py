@@ -77,12 +77,12 @@ class Level:
                     portal = Portal((x, y))
                     self.portals.add(portal)
                     self.all_sprites.add(portal)
-                elif cell == 'L':
-                    npc = Librarian((x, y), len(self.npces.sprites()), self.display_surface)
-                    self.npces.add(npc)
-                    self.all_sprites.add(npc)
                 elif cell == 'B':
                     npc = BlackSmith((x, y), len(self.npces.sprites()), self.display_surface)
+                    self.npces.add(npc)
+                    self.all_sprites.add(npc)
+                elif cell == 'L':
+                    npc = Librarian((x, y), len(self.npces.sprites()), self.display_surface)
                     self.npces.add(npc)
                     self.all_sprites.add(npc)
                 elif cell == 'п' or cell == 'П':
@@ -161,6 +161,20 @@ class Level:
                             player.interface_mode = False
                             self.interface.show_inventory(True)
                             self.showed_inv_by_shop = False
+            else:
+                if sprite.rect.colliderect(player.rect):
+                    player.interface_mode = True
+                    sprite.show_msg()
+                    sprite.check_show_info(self.is_on_check)
+                    sprite.check_click(self.player_settings)
+                    self.interface.add_inventory_blacksmith(sprite.bought_items, sprite.items)
+                    self.interface.show_inventory(False)
+                    self.showed_inv_by_shop = True
+                else:
+                    if self.showed_inv_by_shop:
+                            player.interface_mode = False
+                            self.interface.show_inventory(True)
+                            self.showed_inv_by_shop = False
 
     def horizontal_movement_collisions(self):
         player = self.player.sprite
@@ -203,9 +217,12 @@ class Level:
 
     def print_current_gold(self):
         text = f'GEMS: {self.player_settings["gold"]}'
+        s = 130
+        if self.player_settings["gold"] > 9:
+            s = 150
         newFont = pygame.font.SysFont('SFCompact', round((40 * self.width) / 1536))
         txt_surf = newFont.render(text, False, (255, 183, 0))
-        self.display_surface.blit(txt_surf, (self.width - round((150 * self.width) / 1536), round((20 * self.width) / 1536)))
+        self.display_surface.blit(txt_surf, (self.width - round((s * self.width) / 1536), round((20 * self.width) / 1536)))
 
     def add_keys_to_inv(self):
         self.interface.update_keys_in_inventory(self.player_settings["keys"])
@@ -263,7 +280,7 @@ class Level:
                 self.player_settings["keys"] -= 1
                 chest.redraw_block()
                 chest.opened = True
-                self.interface.add_blacksmith_card()
+                self.interface.add_blacksmith_card(self.player_settings)
 
     def check_sprite_updates(self):
         for sprite in self.npces.sprites():

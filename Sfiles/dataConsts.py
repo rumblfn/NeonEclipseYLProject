@@ -58,7 +58,8 @@ HEROES = [
             'left_jump': 'static/hero1animations/leftjump/leftjump',
         },
         'gold': 0,
-        'keys': 0
+        'keys': 0,
+        'b_cards': 0
     },
     {
         'name': 'Hero3',
@@ -77,7 +78,8 @@ HEROES = [
             'right_walk': 'static/paladin27x78',
         },
         'gold': 0,
-        'keys': 0
+        'keys': 0,
+        'b_cards': 0
     }
 ]
 

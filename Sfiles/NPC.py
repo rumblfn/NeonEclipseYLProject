@@ -10,12 +10,12 @@ fontTitle = pygame.font.SysFont('SFCompact', 14)
 
 npcDisc = [
     {
-        'name': 'blacksmith',
+        'name': 'librarian',
         'width': 128,
         'height': 128,
     },
     {
-        'name': 'librarian',
+        'name': 'blacksmith',
         'width': 128,
         'height': 128,
     }
@@ -25,29 +25,141 @@ npcDisc = [
 class BlackSmith(pygame.sprite.Sprite):
     def __init__(self, pos, count, sc):
         super().__init__()
-        HEIGHT = pygame.display.Info().current_h
-        WIDTH = pygame.display.Info().current_w
+        self.h = pygame.display.Info().current_h
+        self.w = pygame.display.Info().current_w
         self.name = npcDisc[count]['name']
         self.screen = sc
-
-        re_size = (HEIGHT / len(level1_map)) / 64
+        re_size = (self.h / len(level1_map)) / 64
         self.width = round(npcDisc[count]['width'] * re_size)
         self.height = round(npcDisc[count]['height'] * re_size)
+
+        self.images = []
+        self.images.append(npcImage)
+
+        self.count = 0
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.image.blit(pygame.transform.scale(npcImage, (self.width, self.height)), (0, 0))
+        self.image.blit(pygame.transform.scale(self.images[int(self.count)], (self.width, self.height)), (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0], pos[1] - self.height // 2))
 
+        self.items = {'1txc': 'static/red_gem.png',
+                      '2txc': 'static/yellow_gem.png',
+                      }
+
+        self.bought_items = []
+        self.purchase_done = False
+
     def show_msg(self):
-        w = pygame.display.Info().current_w
-        h = pygame.display.Info().current_h
-        msgImage = pygame.transform.scale(pygame.image.load('static/Talk-cloud.png').convert_alpha(),
-                                          ((384 * w) // 1563,
-                                           (128 * h) // 864))
-        self.screen.blit(msgImage, (pygame.display.Info().current_w // 2 - 192, 10))
+        self.h = pygame.display.Info().current_h
+        self.w = pygame.display.Info().current_w
+        self.msg_w = round((740 * self.w) / 1536)
+        self.msg_h = round((400 * self.h) / 864)
+        self.msg_x = self.w // 2 - self.msg_w // 2
+        self.msg_y = 10
+        self.msg_space = round((40 * self.w) / 1563)
+
+        self.icon_w = round((70 * self.w) / 1563)
+        self.icon_h = self.icon_w
+        self.icon_y = self.msg_h // 3 - self.icon_h // 4 + self.msg_y
+
+        self.icon_1_x = self.msg_x + self.msg_w // 2 - self.icon_w - self.msg_space
+        self.icon_2_x = self.msg_x + self.msg_w // 2 + self.msg_space
+
+        self.info_x = self.msg_x + round((140 * self.w) / 1536)
+        self.info_y = self.msg_y + self.msg_h // 2
+        self.info_w = self.msg_w - round((280 * self.w) / 1536)
+        self.info_h = self.msg_h // 2 - round((80 * self.w) / 1536)
+
+        msgImage = pygame.transform.scale(pygame.image.load('static/Talk-cloud.png').convert_alpha(), (self.msg_w, self.msg_h))
+        self.screen.blit(msgImage, (self.msg_x, self.msg_y))
+
+        first = pygame.Surface((self.icon_w, self.icon_h))
+        if '1txc' not in self.bought_items:
+            first_img = pygame.transform.scale(pygame.image.load(self.items['1txc']), (self.icon_w, self.icon_h))
+            first.blit(first_img, (0, 0))
+        else:
+            first.fill((255, 255, 255, 50))
+        self.btn_first = pygame.draw.rect(self.screen, (255, 255, 255), (self.icon_1_x, self.icon_y, self.icon_w, self.icon_h))
+        self.screen.blit(first, (self.icon_1_x, self.icon_y))
+
+        second = pygame.Surface((self.icon_w, self.icon_h))
+        if '2txc' not in self.bought_items:
+            second_img = pygame.transform.scale(pygame.image.load(self.items['2txc']), (self.icon_w, self.icon_h))
+            second.blit(second_img, (0, 0))
+        else:
+            second.fill((255, 255, 255, 50))
+        self.btn_second = pygame.draw.rect(self.screen, (255, 255, 255), (self.icon_2_x, self.icon_y, self.icon_w, self.icon_h))
+        self.screen.blit(second, (self.icon_2_x, self.icon_y))
+
+        pygame.draw.rect(self.screen, (66, 49, 137),
+                         (self.info_x, self.info_y, self.info_w, self.info_h), round((10 * self.w) / 1536), 10)
+
+        self.card_size = round(((self.icon_w / 2) * self.w) / 1536)
+        self.card_x = 0
+
+        font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
+
+        for i in range(2):
+            if i == 0:
+                self.text_x = self.msg_x + self.msg_w / 2 - self.icon_w - self.msg_space + round((10 * self.w) / 1536)
+                self.card_x = self.msg_x + self.msg_w / 2 - self.icon_w - self.msg_space + self.card_size
+            else:
+                self.text_x = self.msg_x + self.msg_w / 2 + self.msg_space + round((10 * self.w) / 1536)
+                self.card_x = self.msg_x + self.msg_w / 2 + self.msg_space + self.card_size
+            gold_img = pygame.transform.scale(pygame.image.load('static/blacksmith_card.png'),
+                (self.card_size, self.card_size))
+            self.screen.blit(gold_img, (self.card_x, self.msg_y + round((76 * self.h) / 864)))
+
+            price = font.render('7', True, (255, 255, 255))
+            self.screen.blit(price, (self.text_x, self.msg_y + round((80 * self.h) / 864)))
 
     def update(self, shift):
         self.rect.x += shift[0]
         self.rect.y += shift[1]
+
+    def check_show_info(self, is_on_check):
+        mx, my = pygame.mouse.get_pos()
+        if not is_on_check:
+            is_on_check = True
+            if self.btn_first.collidepoint((mx, my)):
+                self.show_info('1txc')
+            elif self.btn_second.collidepoint((mx, my)):
+                self.show_info('2txc')
+            else:
+                self.show_info(False)
+        else:
+            is_on_check = False
+
+    def check_click(self, player):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = pygame.mouse.get_pos()
+                if self.btn_first.collidepoint((mx, my)):
+                    self.plus_first(player)
+                elif self.btn_second.collidepoint((mx, my)):
+                    self.plus_second(player)
+
+    def show_info(self, arg):
+        if not arg:
+            font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
+            info = font.render('', True, (255, 255, 255))
+            self.screen.blit(info, (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
+        else:
+            font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
+            info = font.render(arg, True, (255, 255, 255))
+            self.screen.blit(info,
+                             (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
+
+    def plus_first(self, player):
+        if player['b_cards'] - 5 >= 0 and '1txc' not in self.bought_items:
+            player['b_cards'] -= 5
+            self.bought_items.append('1txc')
+            self.purchase_done = True
+
+    def plus_second(self, player):
+        if player['b_cards'] - 5 >= 0 and '2txc' not in self.bought_items:
+            player['b_cards'] -= 5
+            self.bought_items.append('2txc')
+            self.purchase_done = True
 
 
 class Librarian(pygame.sprite.Sprite):
@@ -163,7 +275,7 @@ class Librarian(pygame.sprite.Sprite):
         self.screen.blit(k, (self.icon_k_x, self.icon_y))
 
         pygame.draw.rect(self.screen, (66, 49, 137),
-                         (self.info_x, self.info_y, self.info_w, self.info_h), 4, 10)
+                         (self.info_x, self.info_y, self.info_w, self.info_h), round((10 * self.w) / 1536), 10)
 
         self.gem_size = round(((self.icon_w / 2) * self.w) / 1536)
         self.gem_x = 0
@@ -222,12 +334,12 @@ class Librarian(pygame.sprite.Sprite):
         if not arg:
             font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
             info = font.render('', True, (255, 255, 255))
-            self.screen.blit(info, (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
+            self.screen.blit(info, (self.info_x + round((15 * self.w) / 1536), self.info_y + round((15 * self.h) / 864)))
         else:
             font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
             info = font.render(arg, True, (255, 255, 255))
             self.screen.blit(info,
-                             (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
+                             (self.info_x + round((15 * self.w) / 1536), self.info_y + round((15 * self.h) / 864)))
 
     def plus_attack(self, player):
         if player['gold'] - 5 >= 0 and '1txc' not in self.bought_items:

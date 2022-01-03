@@ -47,6 +47,7 @@ class Interface:
         self.bought_items_interface = []
         self.keys_count = 0
         self.cards_count = 0
+        self.sprite = None
 
         self.aa_image_normal = pygame.transform.scale(pygame.image.load('static/lmbIconMenu.png'), (size, size))
         self.e_image_normal = pygame.transform.scale(pygame.image.load('static/buttonE.png'), (size, size))
@@ -137,6 +138,12 @@ class Interface:
                 self.bought_items_interface.append(i)
                 self.inventory.append(all_items[i])
 
+    def add_inventory_blacksmith(self, bought_items, all_items):
+        for i in bought_items:
+            if i not in self.bought_items_interface:
+                self.bought_items_interface.append(i)
+                self.inventory.append(all_items[i])
+
     def add_inventory_potions(self, potion, all_potions):
         self.bought_items_interface.append(potion.cell)
         self.inventory.append(all_potions[potion.cell])
@@ -158,13 +165,20 @@ class Interface:
         else:
             self.inventory_visible = True
 
-    def add_blacksmith_card(self):
+    def add_blacksmith_card(self, sprite):
+        self.sprite = sprite
         if 'static/blacksmith_card.png' not in self.inventory:
             self.inventory.append('static/blacksmith_card.png')
-        self.cards_count += random.randint(1, 5)
+        cards = random.randint(1, 5)
+        sprite['b_cards'] += cards
         self.bought_items_interface.append('B')
 
+    def update_blacksmith_cards(self):
+        if self.sprite:
+            self.cards_count = self.sprite['b_cards']
+
     def draw_inventory(self):
+        self.update_blacksmith_cards()
         if self.inventory_visible:
             for i, item in enumerate(self.inventory):
                 if item == 'static/chest_key.png' and self.keys_count > 0 or item != 'static/chest_key.png':
