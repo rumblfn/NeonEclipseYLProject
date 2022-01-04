@@ -26,7 +26,7 @@ def draw_cursor(sc):
 
 def sleeper():
     global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 720
+    sleeper_time = 3
     sleeper_loading = 1
     sleeper_status = False
 
