@@ -111,6 +111,7 @@ class Level:
         if player.K_x:
             for portal in self.portals:
                 if portal.rect.colliderect(player.rect):
+                    self.player_settings['b_cards'] = 0
                     self.portalParkour = True
                     return True
 
@@ -142,6 +143,7 @@ class Level:
             self.interface.current_item = 0
             self.interface.inventory_visible = False
             self.player_settings['keys'] = 0
+            self.player_settings['b_cards'] = 0
 
     def npc_collisions(self):
         player = self.player.sprite
@@ -269,9 +271,10 @@ class Level:
 
     def check_chest(self):
         player = self.player.sprite
-        for chest in self.chests:
-            if chest.rect.colliderect(player.rect):
-                self.open_chest(chest)
+        if player.K_x:
+            for chest in self.chests:
+                if chest.rect.colliderect(player.rect):
+                        self.open_chest(chest)
 
     def open_chest(self, chest):
         if not chest.opened:
@@ -280,7 +283,7 @@ class Level:
                 self.player_settings["keys"] -= 1
                 chest.redraw_block()
                 chest.opened = True
-                self.interface.add_blacksmith_card(self.player_settings)
+                self.interface.add_blacksmith_card(self.player_settings, chest)
 
     def check_sprite_updates(self):
         for sprite in self.npces.sprites():

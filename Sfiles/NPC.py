@@ -41,8 +41,8 @@ class BlackSmith(pygame.sprite.Sprite):
         self.image.blit(pygame.transform.scale(self.images[int(self.count)], (self.width, self.height)), (0, 0))
         self.rect = self.image.get_rect(topleft=(pos[0], pos[1] - self.height // 2))
 
-        self.items = {'1txc': 'static/red_gem.png',
-                      '2txc': 'static/yellow_gem.png',
+        self.items = {'1txc_bs': 'static/red_gem.png',
+                      '2txc_bs': 'static/yellow_gem.png',
                       }
 
         self.bought_items = []
@@ -74,7 +74,7 @@ class BlackSmith(pygame.sprite.Sprite):
 
         first = pygame.Surface((self.icon_w, self.icon_h))
         if '1txc' not in self.bought_items:
-            first_img = pygame.transform.scale(pygame.image.load(self.items['1txc']), (self.icon_w, self.icon_h))
+            first_img = pygame.transform.scale(pygame.image.load(self.items['1txc_bs']), (self.icon_w, self.icon_h))
             first.blit(first_img, (0, 0))
         else:
             first.fill((255, 255, 255, 50))
@@ -83,7 +83,7 @@ class BlackSmith(pygame.sprite.Sprite):
 
         second = pygame.Surface((self.icon_w, self.icon_h))
         if '2txc' not in self.bought_items:
-            second_img = pygame.transform.scale(pygame.image.load(self.items['2txc']), (self.icon_w, self.icon_h))
+            second_img = pygame.transform.scale(pygame.image.load(self.items['2txc_bs']), (self.icon_w, self.icon_h))
             second.blit(second_img, (0, 0))
         else:
             second.fill((255, 255, 255, 50))
@@ -121,9 +121,9 @@ class BlackSmith(pygame.sprite.Sprite):
         if not is_on_check:
             is_on_check = True
             if self.btn_first.collidepoint((mx, my)):
-                self.show_info('1txc')
+                self.show_info('1txc_bs')
             elif self.btn_second.collidepoint((mx, my)):
-                self.show_info('2txc')
+                self.show_info('2txc_bs')
             else:
                 self.show_info(False)
         else:
@@ -150,15 +150,15 @@ class BlackSmith(pygame.sprite.Sprite):
                              (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
 
     def plus_first(self, player):
-        if player['b_cards'] - 5 >= 0 and '1txc' not in self.bought_items:
-            player['b_cards'] -= 5
-            self.bought_items.append('1txc')
+        if player['b_cards'] - 7 >= 0 and '1txc_bs' not in self.bought_items:
+            player['b_cards'] -= 7
+            self.bought_items.append('1txc_bs')
             self.purchase_done = True
 
     def plus_second(self, player):
-        if player['b_cards'] - 5 >= 0 and '2txc' not in self.bought_items:
-            player['b_cards'] -= 5
-            self.bought_items.append('2txc')
+        if player['b_cards'] - 7 >= 0 and '2txc_bs' not in self.bought_items:
+            player['b_cards'] -= 7
+            self.bought_items.append('2txc_bs')
             self.purchase_done = True
 
 
