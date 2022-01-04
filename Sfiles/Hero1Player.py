@@ -8,7 +8,7 @@ class Player_hero1(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
         self.wins = 0
-
+        self.player_settings = player_settings
         self.block_moving = False
 
         HEIGHT = pygame.display.Info().current_h
@@ -67,11 +67,27 @@ class Player_hero1(pygame.sprite.Sprite):
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
 
+        self.spring_jump_bool = False
+
+    def update_size(self, new_width, new_height):
+        self.HEIGHT = new_height
+        self.WIDTH = new_width
+
+    def set_first_params(self):
+        self.attack_power_kef = 1.3
+        self.speed_kef = 1.4
+        self.q_hp_recovery = 10
+        self.e_time_speed_to_low = 4
+        self.power = self.player_settings['attack power']
+        self.maxHp = self.player_settings['maxHp']
+        self.hp = self.player_settings['maxHp']
+
     def get_input(self):
         self.Q_SLEEPER += 1
         self.current_sprite += 0.25
         keys = pygame.key.get_pressed()
 
+        self.K_x = False
         if keys[pygame.K_x]:
             self.K_x = True
         else:
@@ -115,6 +131,10 @@ class Player_hero1(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE]:
             if self.jump_bool:
                 self.jump()
+        if self.spring_jump_bool:
+            self.jump_bool = True
+            self.spring_jump_bool = False
+            self.direction.y = self.jump_speed * 2
         if not self.direction.y:
             self.jump_bool = True
 

@@ -12,12 +12,15 @@ class Enemy_hero3(pygame.sprite.Sprite):
         super().__init__()
         self.block_moving = False
 
+        HEIGHT = pygame.display.Info().current_h
+        WIDTH = pygame.display.Info().current_w
+
         self.name = player_enemy.name
         self.power = player_enemy.power
         self.maxHp = player_enemy.maxHp
         self.hp = player_enemy.maxHp
-        self.width = player_enemy.width
-        self.height = player_enemy.height
+        self.width = int(player_enemy.width * WIDTH / 1920)
+        self.height = int(player_enemy.height * HEIGHT / 1080)
         self.pos = (player_enemy.x, player_enemy.y)
         self.direction_x = 1
         self.current_sprite = 0

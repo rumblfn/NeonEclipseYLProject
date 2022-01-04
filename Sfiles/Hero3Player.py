@@ -6,7 +6,7 @@ class Player_hero3(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
         self.wins = 0
-
+        self.player_settings = player_settings
         self.block_moving = False
 
         self.HEIGHT = pygame.display.Info().current_h
@@ -84,8 +84,19 @@ class Player_hero3(pygame.sprite.Sprite):
 
         self.server_player = None
 
+        self.spring_jump_bool = False
+
+    def set_first_params(self):
+        self.power = self.player_settings['attack power']
+        self.maxHp = self.player_settings['maxHp']
+        self.hp = self.player_settings['maxHp']
+
     def update_shield_hp(self):
         self.SHIELD_HP = self.SHIELD_HP_KEF * self.maxHp
+
+    def update_size(self, new_width, new_height):
+        self.HEIGHT = new_height
+        self.WIDTH = new_width
 
     def get_input(self):
         self.CURRENT_SPRITE += 0.2
@@ -110,6 +121,7 @@ class Player_hero3(pygame.sprite.Sprite):
         if self.Q_STUN_TIMER <= 120:
             self.Q_STUN_TIMER += 1
 
+        self.K_x = False
         if keys[pygame.K_x]:
             self.K_x = True
         else:
@@ -204,6 +216,10 @@ class Player_hero3(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE]:
             if self.jump_bool:
                 self.jump()
+        if self.spring_jump_bool:
+            self.jump_bool = True
+            self.spring_jump_bool = False
+            self.direction.y = self.jump_speed * 2
         if not self.direction.y:
             self.jump_bool = True
         if keys[pygame.K_e]:

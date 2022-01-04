@@ -31,7 +31,7 @@ class Interface:
 
         chestImage = pygame.transform.scale(pygame.image.load('static/chest.png'),
                                             (size, size))
-        self.chestImageSurface = pygame.Surface((size, round(45 * sprite_kef)), pygame.SRCALPHA)
+        self.chestImageSurface = pygame.Surface((size, round(50 * sprite_kef)), pygame.SRCALPHA)
         self.chestImageSurface.blit(chestImage, (0, 0))
         self.chest_rect = self.chestImageSurface.get_rect(topleft=(self.screen_width - 50 * self.sprite_kef - 10,
                                                                    self.screen_height - 45 * self.sprite_kef - 10))
@@ -47,6 +47,11 @@ class Interface:
         self.bought_items_interface = []
         self.keys_count = 0
         self.cards_count = 0
+        self.sprite = None
+        self.draw_bs = False
+        self.draw_bs_count = 0
+        self.last_cards = 0
+        self.chest = None
 
         self.aa_image_normal = pygame.transform.scale(pygame.image.load('static/lmbIconMenu.png'), (size, size))
         self.e_image_normal = pygame.transform.scale(pygame.image.load('static/buttonE.png'), (size, size))
@@ -137,6 +142,12 @@ class Interface:
                 self.bought_items_interface.append(i)
                 self.inventory.append(all_items[i])
 
+    def add_inventory_blacksmith(self, bought_items, all_items):
+        for i in bought_items:
+            if i not in self.bought_items_interface:
+                self.bought_items_interface.append(i)
+                self.inventory.append(all_items[i])
+
     def add_inventory_potions(self, potion, all_potions):
         self.bought_items_interface.append(potion.cell)
         self.inventory.append(all_potions[potion.cell])
@@ -158,13 +169,54 @@ class Interface:
         else:
             self.inventory_visible = True
 
-    def add_blacksmith_card(self):
+    def add_blacksmith_card(self, sprite, chest):
+        self.sprite = sprite
+        self.chest = chest
         if 'static/blacksmith_card.png' not in self.inventory:
             self.inventory.append('static/blacksmith_card.png')
-        self.cards_count += random.randint(1, 5)
+        cards = random.randint(1, 5)
+        self.last_cards = cards
+        sprite['b_cards'] += cards
+        self.cards_count += cards
+        self.update_blacksmith_cards()
         self.bought_items_interface.append('B')
+        self.draw_bs = True
+        self.draw_bs_cards_got()
+
+    def draw_bs_cards_got(self):
+        if self.draw_bs:
+            text = f'+{self.last_cards}'
+            bs_cards_count_size = round((50 * self.screen_width) / 1536)
+            newFont = pygame.font.SysFont('SFCompact', bs_cards_count_size)
+            txt_surf = newFont.render(text, False, (255, 183, 0))
+            self.screen.blit(txt_surf, (self.chest.rect.x - self.chest.rect.w // 3, self.chest.rect.y - round((self.chest.rect.h * self.screen_height) / 864)))
+
+            itemImage = pygame.transform.scale(pygame.image.load('static/blacksmith_card.png'),
+                                               (round(25 * self.sprite_kef) - 6, round(25 * self.sprite_kef) - 6))
+            self.itemImageSurface = pygame.Surface((round(25 * self.sprite_kef), round(25 * self.sprite_kef)),
+                                                   pygame.SRCALPHA)
+            self.itemImageSurface.blit(itemImage, (0, 0))
+            self.screen.blit(self.itemImageSurface,
+                             ((self.chest.rect.x + self.chest.rect.w // 2,
+                               self.chest.rect.y - round((self.chest.rect.h * self.screen_height) / 864))))
+
+    def check_draw_bs(self):
+        if self.draw_bs:
+            self.draw_bs_count += 1
+            if self.draw_bs_count > 100:
+                self.draw_bs = False
+                self.draw_bs_count = 0
+            else:
+                self.draw_bs = True
+
+    def update_blacksmith_cards(self):
+        if self.sprite:
+            self.cards_count = self.sprite['b_cards']
 
     def draw_inventory(self):
+        self.update_blacksmith_cards()
+        self.check_draw_bs()
+        self.draw_bs_cards_got()
         if self.inventory_visible:
             for i, item in enumerate(self.inventory):
                 if item == 'static/chest_key.png' and self.keys_count > 0 or item != 'static/chest_key.png':

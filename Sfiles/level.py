@@ -2,7 +2,6 @@ import pygame
 from tiles import Tile, Portal, Potion, Chest
 from map_preparation_settings import level1_map
 from Hero1Player import Player_hero1
-from Hero2Player import Player_hero2
 from Hero3Player import Player_hero3
 from NPC import Librarian, BlackSmith
 from dataConsts import bgMapPreparation
@@ -60,8 +59,6 @@ class Level:
                     if not default_player:
                         if self.player_settings['name'] == 'Hero1':
                             self.player_sprite = Player_hero1((x, y), self.player_settings)
-                        elif self.player_settings['name'] == 'Hero2':
-                            self.player_sprite = Player_hero2((x, y), self.player_settings)
                         elif self.player_settings['name'] == 'Hero3':
                             self.player_sprite = Player_hero3((x, y), self.player_settings)
                         self.player_sprite.block_moving = False
@@ -77,12 +74,12 @@ class Level:
                     portal = Portal((x, y))
                     self.portals.add(portal)
                     self.all_sprites.add(portal)
-                elif cell == 'L':
-                    npc = Librarian((x, y), len(self.npces.sprites()), self.display_surface)
+                elif cell == 'B':
+                    npc = BlackSmith((x, y), len(self.npces.sprites()), self.display_surface, self.player_settings['name'])
                     self.npces.add(npc)
                     self.all_sprites.add(npc)
-                elif cell == 'B':
-                    npc = BlackSmith((x, y), len(self.npces.sprites()), self.display_surface)
+                elif cell == 'L':
+                    npc = Librarian((x, y), len(self.npces.sprites()), self.display_surface, self.player_settings['name'])
                     self.npces.add(npc)
                     self.all_sprites.add(npc)
                 elif cell == 'п' or cell == 'П':
@@ -111,6 +108,7 @@ class Level:
         if player.K_x:
             for portal in self.portals:
                 if portal.rect.colliderect(player.rect):
+                    self.player_settings['b_cards'] = 0
                     self.portalParkour = True
                     return True
 
@@ -136,12 +134,16 @@ class Level:
             for sprite in self.npces.sprites():
                 if sprite.name == 'librarian':
                     sprite.bought_items = []
+                if sprite.name == 'blacksmith':
+                    sprite.bought_items = []
             self.interface.inventory = []
             self.interface.item_rects = []
             self.interface.bought_items_interface = []
             self.interface.current_item = 0
             self.interface.inventory_visible = False
             self.player_settings['keys'] = 0
+            self.player_settings['b_cards'] = 0
+            self.player_sprite.set_first_params()
 
     def npc_collisions(self):
         player = self.player.sprite
@@ -154,6 +156,20 @@ class Level:
                     sprite.check_show_info(self.is_on_check)
                     sprite.check_click(self.player_settings)
                     self.interface.add_inventory_librarian(sprite.bought_items, sprite.items)
+                    self.interface.show_inventory(False)
+                    self.showed_inv_by_shop = True
+                else:
+                    if self.showed_inv_by_shop:
+                            player.interface_mode = False
+                            self.interface.show_inventory(True)
+                            self.showed_inv_by_shop = False
+            else:
+                if sprite.rect.colliderect(player.rect):
+                    player.interface_mode = True
+                    sprite.show_msg()
+                    sprite.check_show_info(self.is_on_check)
+                    sprite.check_click(self.player_settings)
+                    self.interface.add_inventory_blacksmith(sprite.bought_items, sprite.items)
                     self.interface.show_inventory(False)
                     self.showed_inv_by_shop = True
                 else:
@@ -203,9 +219,12 @@ class Level:
 
     def print_current_gold(self):
         text = f'GEMS: {self.player_settings["gold"]}'
+        s = 130
+        if self.player_settings["gold"] > 9:
+            s = 150
         newFont = pygame.font.SysFont('SFCompact', round((40 * self.width) / 1536))
         txt_surf = newFont.render(text, False, (255, 183, 0))
-        self.display_surface.blit(txt_surf, (self.width - round((150 * self.width) / 1536), round((20 * self.width) / 1536)))
+        self.display_surface.blit(txt_surf, (self.width - round((s * self.width) / 1536), round((20 * self.width) / 1536)))
 
     def add_keys_to_inv(self):
         self.interface.update_keys_in_inventory(self.player_settings["keys"])
@@ -252,9 +271,10 @@ class Level:
 
     def check_chest(self):
         player = self.player.sprite
-        for chest in self.chests:
-            if chest.rect.colliderect(player.rect):
-                self.open_chest(chest)
+        if player.K_x:
+            for chest in self.chests:
+                if chest.rect.colliderect(player.rect):
+                        self.open_chest(chest)
 
     def open_chest(self, chest):
         if not chest.opened:
@@ -263,8 +283,14 @@ class Level:
                 self.player_settings["keys"] -= 1
                 chest.redraw_block()
                 chest.opened = True
-                self.interface.add_blacksmith_card()
+                self.interface.add_blacksmith_card(self.player_settings, chest)
 
+    def check_sprite_updates(self):
+        for sprite in self.npces.sprites():
+            if sprite.name == 'librarian':
+                if sprite.purchase_done:
+                    sprite.update_player_characteristics(self.player_sprite)
+                    sprite.purchase_done = False
 
     def run(self):
         bgMapPreparation.update((self.world_shift_x, self.world_shift_y))
@@ -302,6 +328,7 @@ class Level:
         self.check_potions_taken()
         self.add_keys_to_inv()
         self.check_chest()
+        self.check_sprite_updates()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))
@@ -313,5 +340,9 @@ class Level:
             self.interface.draw_attacks_timers(self.player_sprite.shoot_bool, self.player_sprite.shoot_bool_max,
                                                self.player_sprite.attacksEBool, self.player_sprite.attacksEBool_max,
                                                self.player_sprite.Q_SLEEPER, self.player_sprite.Q_SLEEPER_MAX)
+        elif self.player_sprite.name == 'Hero3':
+            self.interface.draw_attacks_timers(self.player_sprite.AA_TIMER, self.player_sprite.AA_TIMER_MAX,
+                                               self.player_sprite.E_TIMER, self.player_sprite.E_TIMER_MAX,
+                                               self.player_sprite.Q_ACTIVE_TIMER, self.player_sprite.Q_ACTIVE_TIMER_MAX)
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)

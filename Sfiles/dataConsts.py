@@ -1,5 +1,4 @@
 import pygame
-from PIL import ImageOps, Image
 from menuWidgetAllHeroes import AllHeroesWindow
 from menuWidgetAboutGame import AboutGameWindow
 from menuWidgetElector import ElectorWindow
@@ -60,11 +59,12 @@ HEROES = [
             'q_left_animation': 'static/hero1animations/atackQ/leftQ/Q'
         },
         'gold': 0,
-        'keys': 0
+        'keys': 0,
+        'b_cards': 0
     },
     {
         'name': 'Hero3',
-        'attack power': 5,
+        'attack power': 20,
         'maxHp': 200,
         'imagePreview': player2Paladin,
         'imagePreviewBig': player2PaladinBig,
@@ -79,7 +79,8 @@ HEROES = [
             'right_walk': 'static/paladin27x78',
         },
         'gold': 0,
-        'keys': 0
+        'keys': 0,
+        'b_cards': 0
     }
 ]
 
