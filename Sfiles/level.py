@@ -2,7 +2,6 @@ import pygame
 from tiles import Tile, Portal, Potion, Chest
 from map_preparation_settings import level1_map
 from Hero1Player import Player_hero1
-from Hero2Player import Player_hero2
 from Hero3Player import Player_hero3
 from NPC import Librarian, BlackSmith
 from dataConsts import bgMapPreparation
@@ -60,8 +59,6 @@ class Level:
                     if not default_player:
                         if self.player_settings['name'] == 'Hero1':
                             self.player_sprite = Player_hero1((x, y), self.player_settings)
-                        elif self.player_settings['name'] == 'Hero2':
-                            self.player_sprite = Player_hero2((x, y), self.player_settings)
                         elif self.player_settings['name'] == 'Hero3':
                             self.player_sprite = Player_hero3((x, y), self.player_settings)
                         self.player_sprite.block_moving = False
@@ -343,5 +340,9 @@ class Level:
             self.interface.draw_attacks_timers(self.player_sprite.shoot_bool, self.player_sprite.shoot_bool_max,
                                                self.player_sprite.attacksEBool, self.player_sprite.attacksEBool_max,
                                                self.player_sprite.Q_SLEEPER, self.player_sprite.Q_SLEEPER_MAX)
+        elif self.player_sprite.name == 'Hero3':
+            self.interface.draw_attacks_timers(self.player_sprite.AA_TIMER, self.player_sprite.AA_TIMER_MAX,
+                                               self.player_sprite.E_TIMER, self.player_sprite.E_TIMER_MAX,
+                                               self.player_sprite.Q_ACTIVE_TIMER, self.player_sprite.Q_ACTIVE_TIMER_MAX)
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)

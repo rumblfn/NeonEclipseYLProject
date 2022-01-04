@@ -26,7 +26,7 @@ def draw_cursor(sc):
 
 def sleeper():
     global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 1000
+    sleeper_time = 300
     sleeper_loading = 1
     sleeper_status = False
 
@@ -72,8 +72,8 @@ def main_game(server_player, net, play_main):
         server_player.power = player_main.power
         server_player.maxHp = player_main.maxHp
         server_player.hp = player_main.maxHp
-        server_player.width = player_main.width
-        server_player.height = player_main.height
+        server_player.width = player_main.width * 1920 / WIDTH
+        server_player.height = player_main.height * 1080 / HEIGHT
         server_player.ready = True
         if player_main.name == 'Hero1':
             server_player.e_time_speed_to_low = player_main.e_time_speed_to_low
@@ -124,6 +124,8 @@ def main_game(server_player, net, play_main):
                 if event.type == pygame.QUIT:
                     run = False
                     server_player.ready = False
+                    server_player.wins = 0
+                    server_player.loses = 0
                     network.send(server_player)
                     pygame.quit()
                     sys.exit()
@@ -144,7 +146,7 @@ def default_settings():
 
 def game_end(server_player, network):
     f2 = pygame.font.SysFont('serif', 48)
-    if server_player.win:
+    if server_player.wins > 2:
         text = f2.render("Congratulations, You win", False, (0, 180, 0))
     else:
         text = f2.render("Loooooooser", False, (0, 180, 0))
@@ -157,6 +159,10 @@ def game_end(server_player, network):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                server_player.ready = False
+                server_player.wins = 0
+                server_player.loses = 0
+                network.send(server_player)
                 pygame.quit()
                 sys.exit()
         sleep(5)
@@ -223,6 +229,8 @@ def map_preparation(player, network, player_settings):
             if event.type == pygame.QUIT:
                 run = False
                 player.ready = False
+                player.wins = 0
+                player.loses = 0
                 network.send(player)
                 pygame.quit()
                 sys.exit()
@@ -315,12 +323,20 @@ def main_menu(server_player=False, net=False):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                player.ready = False
+                player.wins = 0
+                player.loses = 0
+                network.send(player)
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
                 menuWidgetElector.change_image(('key', event))
                 if event.key == K_ESCAPE:
                     run = False
+                    player.ready = False
+                    player.wins = 0
+                    player.loses = 0
+                    network.send(player)
                     pygame.quit()
                     sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -359,6 +375,8 @@ def waitingForConnection(player, network, player_settings):
             if event.type == pygame.QUIT:
                 run = False
                 player.ready = False
+                player.wins = 0
+                player.loses = 0
                 network.send(player)
                 pygame.quit()
                 sys.exit()
@@ -370,7 +388,3 @@ def waitingForConnection(player, network, player_settings):
         if player2.ready:
             map_preparation(player, network, player_settings)
         clock.tick(60)
-
-
-if __name__ == '__main__':
-    main_menu()

@@ -2,7 +2,6 @@ import pygame
 
 playerImages = {
     'Hero1': pygame.image.load('static/charackter64x64Preview.png').convert_alpha(),
-    'Hero2': pygame.image.load('static/paladin27x78.png').convert_alpha(),
     'Hero3': pygame.image.load('static/sniper37x75.png').convert_alpha(),
 }
 
@@ -14,8 +13,8 @@ class Enemy(pygame.sprite.Sprite):
         self.power = player_enemy.power
         self.maxHp = player_enemy.maxHp
         self.hp = player_enemy.maxHp
-        self.width = player_enemy.width
-        self.height = player_enemy.height
+        self.width = int(player_enemy.width)
+        self.height = int(player_enemy.height)
         self.pos = (player_enemy.x, player_enemy.y)
         self.direction_x = 1
 
