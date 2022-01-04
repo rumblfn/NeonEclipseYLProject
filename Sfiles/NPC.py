@@ -113,9 +113,9 @@ class BlackSmith(pygame.sprite.Sprite):
             else:
                 self.text_x = self.msg_x + self.msg_w / 2 + self.msg_space + round((10 * self.w) / 1536)
                 self.card_x = self.msg_x + self.msg_w / 2 + self.msg_space + self.card_size
-            gold_img = pygame.transform.scale(pygame.image.load('static/blacksmith_card.png'),
-                (self.card_size, self.card_size))
-            self.screen.blit(gold_img, (self.card_x, self.msg_y + round((76 * self.h) / 864)))
+            card_img = pygame.transform.scale(pygame.image.load('static/blacksmith_card.png'),
+                                              (self.card_size, self.card_size))
+            self.screen.blit(card_img, (self.card_x, self.msg_y + round((76 * self.h) / 864)))
 
             price = font.render('7', True, (255, 255, 255))
             self.screen.blit(price, (self.text_x, self.msg_y + round((80 * self.h) / 864)))

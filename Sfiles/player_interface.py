@@ -190,7 +190,7 @@ class Interface:
             txt_surf = newFont.render(text, False, (255, 183, 0))
             self.screen.blit(txt_surf, (self.chest.rect.x - self.chest.rect.w // 3, self.chest.rect.y - round((self.chest.rect.h * self.screen_height) / 864)))
 
-            itemImage = pygame.transform.scale(pygame.image.load('static/chest_key.png'),
+            itemImage = pygame.transform.scale(pygame.image.load('static/blacksmith_card.png'),
                                                (round(25 * self.sprite_kef) - 6, round(25 * self.sprite_kef) - 6))
             self.itemImageSurface = pygame.Surface((round(25 * self.sprite_kef), round(25 * self.sprite_kef)),
                                                    pygame.SRCALPHA)
