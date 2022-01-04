@@ -238,3 +238,4 @@ class Player_map_parkour(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect(topleft=(x, y))
 
 
+

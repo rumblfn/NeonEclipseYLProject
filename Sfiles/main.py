@@ -26,7 +26,7 @@ def draw_cursor(sc):
 
 def sleeper():
     global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 300
+    sleeper_time = 1000
     sleeper_loading = 1
     sleeper_status = False
 
@@ -177,6 +177,7 @@ def map_preparation(player, network, player_settings):
         runParkourMap = True
         level_p = LevelParkour(level_parkour_map, screen, player_settings)
         count = 0
+        finished = False
         while runParkourMap:
             sc.fill((255, 255, 255))
             bgMapPreparation.draw()
@@ -188,7 +189,7 @@ def map_preparation(player, network, player_settings):
                         portalParkourMap(sc, player_parkour)
                     level_p.check_fall = False
                 if level_p.portalParkour:
-                    level_p.setup_level(level_parkour_map)
+                    finished = True
             if sleeper_status:
                 runParkourMap = False
             count += 1
@@ -196,6 +197,9 @@ def map_preparation(player, network, player_settings):
                 portalParkourMap(sc, player_parkour)
             player_settings['keys'] = level_p.keys_taken
             level_p.events_check()
+            if finished:
+                level.portalParkour = False
+                break
             clock.tick(60)
 
     while run:

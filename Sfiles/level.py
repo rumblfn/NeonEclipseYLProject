@@ -137,6 +137,8 @@ class Level:
             for sprite in self.npces.sprites():
                 if sprite.name == 'librarian':
                     sprite.bought_items = []
+                if sprite.name == 'blacksmith':
+                    sprite.bought_items = []
             self.interface.inventory = []
             self.interface.item_rects = []
             self.interface.bought_items_interface = []
@@ -144,6 +146,7 @@ class Level:
             self.interface.inventory_visible = False
             self.player_settings['keys'] = 0
             self.player_settings['b_cards'] = 0
+            self.player_sprite.set_first_params()
 
     def npc_collisions(self):
         player = self.player.sprite

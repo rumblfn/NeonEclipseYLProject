@@ -8,7 +8,7 @@ class Player_hero1(pygame.sprite.Sprite):
     def __init__(self, pos, player_settings):
         super().__init__()
         self.wins = 0
-
+        self.player_settings = player_settings
         self.block_moving = False
 
         HEIGHT = pygame.display.Info().current_h
@@ -66,6 +66,15 @@ class Player_hero1(pygame.sprite.Sprite):
         self.server_player = None
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
+
+    def set_first_params(self):
+        self.attack_power_kef = 1.3
+        self.speed_kef = 1.4
+        self.q_hp_recovery = 10
+        self.e_time_speed_to_low = 4
+        self.power = self.player_settings['attack power']
+        self.maxHp = self.player_settings['maxHp']
+        self.hp = self.player_settings['maxHp']
 
     def get_input(self):
         self.Q_SLEEPER += 1

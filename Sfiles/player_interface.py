@@ -177,6 +177,7 @@ class Interface:
         cards = random.randint(1, 5)
         self.last_cards = cards
         sprite['b_cards'] += cards
+        self.cards_count += cards
         self.update_blacksmith_cards()
         self.bought_items_interface.append('B')
         self.draw_bs = True
@@ -198,7 +199,6 @@ class Interface:
             self.screen.blit(self.itemImageSurface,
                              ((self.chest.rect.x + self.chest.rect.w // 2,
                                self.chest.rect.y - round((self.chest.rect.h * self.screen_height) / 864))))
-
 
     def check_draw_bs(self):
         if self.draw_bs:
