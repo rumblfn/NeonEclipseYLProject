@@ -1,3 +1,5 @@
+from copy import copy
+
 import pygame
 from tiles import Tile
 from main_map_settings import *
@@ -9,6 +11,7 @@ from player import speed_to_low
 from spring import Spring
 from ball_gun import Ball_gun
 from balls import Ball
+from trap import Trap
 from time import sleep
 
 
@@ -45,6 +48,7 @@ class LevelG:
         self.interface.update_screen_size(self.width, self.height)
         self.tiles = pygame.sprite.Group()
         self.springs = pygame.sprite.Group()
+        self.traps = pygame.sprite.Group()
         self.ball_guns = pygame.sprite.Group()
         self.gun_balls = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
@@ -70,6 +74,9 @@ class LevelG:
                 elif cell == 'G':
                     ball_gun = Ball_gun((x, y), tile_size)
                     self.ball_guns.add(ball_gun)
+                elif cell == 'T':
+                    trap = Trap((x + tile_size // 2, y), tile_size)  #midtop
+                    self.traps.add(trap)
                 elif cell != ' ':
                     tile = Tile((col_index, row_index), tile_size, cell, self.level_data, self.player_col)
                     self.tiles.add(tile)
@@ -194,10 +201,30 @@ class LevelG:
                     sprite.kill()
             if sprite.rect.colliderect(self.player_sprite.rect):
                 self.player_sprite.hp -= 7
-                self.server_player.damage_given += 7
+                self.server_player.hp -= 7
                 sprite.kill()
             if sprite.rect.colliderect(self.enemy.sprite.rect):
+                self.server_player.damage_given += 7
                 sprite.kill()
+
+    def traps_collides(self):
+        for sprite in self.traps.sprites():
+            if not sprite.ACTIVE:
+                if sprite.rect.colliderect(self.player_sprite.rect):
+                    sprite.ACTIVE = True
+                    if sprite.timer >= 30:
+                        self.player_sprite.hp -= 5
+                        self.server_player.hp -= 5
+                if sprite.rect.colliderect(self.enemy.sprite):
+                    sprite.ACTIVE = True
+                    if sprite.timer >= 30:
+                        self.server_player.damage_given += 5
+            if sprite.timer >= 60:
+                self.tiles.add(sprite)
+            if sprite.READY:
+                trap_copy = copy(sprite)
+                sprite.kill()
+                self.traps.add(trap_copy)
 
     def run(self):
         if self.player_sprite.hp <= 0 and self.round or self.player_sprite.rect.y > self.height * 2:
@@ -212,6 +239,9 @@ class LevelG:
         self.ball_guns.draw(self.display_surface)
         self.gun_balls.update()
         self.gun_balls.draw(self.display_surface)
+        self.traps.draw(self.display_surface)
+        self.traps.update()
+        self.traps_collides()
         self.balls_ball_gun()
 
         self.horizontal_movement_collisions(self.player.sprite)
