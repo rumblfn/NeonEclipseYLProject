@@ -228,6 +228,7 @@ class LevelG:
 
     def run(self):
         if self.player_sprite.hp <= 0 and self.round or self.player_sprite.rect.y > self.height * 2:
+            self.player_sprite.hp = 0
             self.player_sprite.rect.x = self.width / 2
             self.player_sprite.rect.y = self.height / 2
             self.server_player.ready = False
