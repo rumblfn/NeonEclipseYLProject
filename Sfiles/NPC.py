@@ -376,7 +376,7 @@ class Librarian(pygame.sprite.Sprite):
     def plus_q(self, player):
         if player['gold'] - 5 >= 0 and '3_lib' not in self.bought_items:
             player['gold'] -= 5
-            self.bought_items.append('3txc')
+            self.bought_items.append('3_lib')
             self.purchase_done = True
 
     def plus_e(self, player):
