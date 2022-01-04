@@ -26,7 +26,7 @@ def draw_cursor(sc):
 
 def sleeper():
     global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 100
+    sleeper_time = 300
     sleeper_loading = 1
     sleeper_status = False
 
@@ -191,13 +191,10 @@ def map_preparation(player, network, player_settings):
             for e in pygame.event.get():
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
-                        level.portalParkour = False
-                        runParkourMap = False
                         portalParkourMap(sc, player_parkour, False)
                     level_p.check_fall = False
                 if level_p.portalParkour:
-                    level.portalParkour = False
-                    runParkourMap = False
+                    map_preparation(player, network, player_settings)
             if sleeper_status:
                 runParkourMap = False
             count += 1
@@ -206,8 +203,6 @@ def map_preparation(player, network, player_settings):
                 if count == 150:
                     to_print = False
             if level_p.check_fall:
-                level.portalParkour = False
-                runParkourMap = False
                 portalParkourMap(sc, player_parkour, False)
             player_settings['keys'] = level_p.keys_taken
             level_p.events_check()

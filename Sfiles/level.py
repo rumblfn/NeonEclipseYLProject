@@ -78,11 +78,11 @@ class Level:
                     self.portals.add(portal)
                     self.all_sprites.add(portal)
                 elif cell == 'B':
-                    npc = BlackSmith((x, y), len(self.npces.sprites()), self.display_surface)
+                    npc = BlackSmith((x, y), len(self.npces.sprites()), self.display_surface, self.player_settings['name'])
                     self.npces.add(npc)
                     self.all_sprites.add(npc)
                 elif cell == 'L':
-                    npc = Librarian((x, y), len(self.npces.sprites()), self.display_surface)
+                    npc = Librarian((x, y), len(self.npces.sprites()), self.display_surface, self.player_settings['name'])
                     self.npces.add(npc)
                     self.all_sprites.add(npc)
                 elif cell == 'п' or cell == 'П':

@@ -56,6 +56,8 @@ HEROES = [
             'left_walk': 'static/hero1animations/leftWalkImages/leftwalk',
             'right_jump': 'static/hero1animations/rightjump/rightjump',
             'left_jump': 'static/hero1animations/leftjump/leftjump',
+            'q_right_animation': 'static/hero1animations/atackQ/rightQ/Q',
+            'q_left_animation': 'static/hero1animations/atackQ/leftQ/Q'
         },
         'gold': 0,
         'keys': 0,
