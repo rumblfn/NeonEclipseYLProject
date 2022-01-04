@@ -224,7 +224,6 @@ class Potion(pygame.sprite.Sprite):
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
         self.cell = cell
         self.new_tile_size = size
-        print(cell)
         if cell == 'V':
             self.draw_block(potion1)
         elif cell == 'G':
