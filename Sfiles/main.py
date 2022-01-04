@@ -173,13 +173,7 @@ def map_preparation(player, network, player_settings):
     level = Level(level1_map, screen, player_settings, interface)
     start_new_thread(sleeper, ())
 
-    def portalParkourMap(sc, player_parkour, to_print):
-        def info_text_parkour():
-            text = 'Press Esc to return to the spawn point'
-            newFont = pygame.font.SysFont('SFCompact', 75)
-            txt_surf = newFont.render(text, False, (255, 183, 0))
-            sc.blit(txt_surf, (WIDTH // 5, HEIGHT // 2 - 35))
-
+    def portalParkourMap(sc, player_parkour):
         runParkourMap = True
         level_p = LevelParkour(level_parkour_map, screen, player_settings)
         count = 0
@@ -191,19 +185,15 @@ def map_preparation(player, network, player_settings):
             for e in pygame.event.get():
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
-                        portalParkourMap(sc, player_parkour, False)
+                        portalParkourMap(sc, player_parkour)
                     level_p.check_fall = False
                 if level_p.portalParkour:
-                    map_preparation(player, network, player_settings)
+                    level_p.setup_level(level_parkour_map)
             if sleeper_status:
                 runParkourMap = False
             count += 1
-            if to_print:
-                info_text_parkour()
-                if count == 150:
-                    to_print = False
             if level_p.check_fall:
-                portalParkourMap(sc, player_parkour, False)
+                portalParkourMap(sc, player_parkour)
             player_settings['keys'] = level_p.keys_taken
             level_p.events_check()
             clock.tick(60)
@@ -234,7 +224,7 @@ def map_preparation(player, network, player_settings):
                 sys.exit()
         if level.portalParkour:
             pygame.mixer.music.stop()
-            portalParkourMap(screen, level.player, True)
+            portalParkourMap(screen, level.player)
         clock.tick(60)
 
 

@@ -246,7 +246,8 @@ class Librarian(pygame.sprite.Sprite):
             attack_img = pygame.transform.scale(pygame.image.load(self.items['1_lib']), (self.icon_w, self.icon_h))
             attack.blit(attack_img, (0, 0))
         else:
-            attack.fill((255, 255, 255, 50))
+            attack_img = pygame.transform.scale(pygame.image.load('static/bs-ItemNone.png'), (self.icon_w, self.icon_h))
+            attack.blit(attack_img, (0, 0))
         self.btn_a = pygame.draw.rect(self.screen, (255, 255, 255), (self.icon_a_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(attack, (self.icon_a_x, self.icon_y))
 
@@ -255,7 +256,8 @@ class Librarian(pygame.sprite.Sprite):
             health_img = pygame.transform.scale(pygame.image.load(self.items['2_lib']), (self.icon_w, self.icon_h))
             health.blit(health_img, (0, 0))
         else:
-            health.fill((255, 255, 255, 50))
+            health_img = pygame.transform.scale(pygame.image.load('static/bs-ItemNone.png'), (self.icon_w, self.icon_h))
+            health.blit(health_img, (0, 0))
         self.btn_h = pygame.draw.rect(self.screen, (255, 255, 255), (self.icon_h_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(health, (self.icon_h_x, self.icon_y))
 
@@ -264,7 +266,8 @@ class Librarian(pygame.sprite.Sprite):
             q_img = pygame.transform.scale(pygame.image.load(self.items['3_lib']), (self.icon_w, self.icon_h))
             q.blit(q_img, (0, 0))
         else:
-            q.fill((255, 255, 255, 50))
+            q_img = pygame.transform.scale(pygame.image.load('static/bs-ItemNone.png'), (self.icon_w, self.icon_h))
+            q.blit(q_img, (0, 0))
         self.btn_q = pygame.draw.rect(self.screen, (255, 255, 255),
                                       (self.icon_q_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(q, (self.icon_q_x, self.icon_y))
@@ -274,7 +277,8 @@ class Librarian(pygame.sprite.Sprite):
             e_img = pygame.transform.scale(pygame.image.load(self.items['4_lib']), (self.icon_w, self.icon_h))
             e.blit(e_img, (0, 0))
         else:
-            e.fill((255, 255, 255, 50))
+            e_img = pygame.transform.scale(pygame.image.load('static/bs-ItemNone.png'), (self.icon_w, self.icon_h))
+            e.blit(e_img, (0, 0))
         self.btn_e = pygame.draw.rect(self.screen, (255, 255, 255),
                                       (self.icon_e_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(e, (self.icon_e_x, self.icon_y))
@@ -284,7 +288,8 @@ class Librarian(pygame.sprite.Sprite):
             k_img = pygame.transform.scale(pygame.image.load(self.items['5_lib']), (self.icon_w, self.icon_h))
             k.blit(k_img, (0, 0))
         else:
-            k.fill((255, 255, 255, 50))
+            k_img = pygame.transform.scale(pygame.image.load('static/bs-ItemNone.png'), (self.icon_w, self.icon_h))
+            k.blit(k_img, (0, 0))
         self.btn_k = pygame.draw.rect(self.screen, (255, 255, 255),
                                       (self.icon_k_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(k, (self.icon_k_x, self.icon_y))
