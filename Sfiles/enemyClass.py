@@ -2,7 +2,6 @@ import pygame
 
 playerImages = {
     'Hero1': pygame.image.load('static/charackter64x64Preview.png').convert_alpha(),
-    'Hero2': pygame.image.load('static/paladin27x78.png').convert_alpha(),
     'Hero3': pygame.image.load('static/sniper37x75.png').convert_alpha(),
 }
 

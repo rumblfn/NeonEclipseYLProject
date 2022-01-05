@@ -1,5 +1,5 @@
 import random
-from copy import copy
+
 from dataConsts import *
 import pygame.mixer_music
 from main_game_level import *
@@ -25,12 +25,17 @@ def draw_cursor(sc):
 
 
 def sleeper():
-    global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 3
+    global sleeper_status, sleeper_status_for_loading, sleeper_time
     sleeper_loading = 1
     sleeper_status = False
 
-    sleep(sleeper_time - sleeper_loading)
+    new_time = sleeper_time
+    while True:
+        sleeper_time -= 60
+        if sleeper_time <= 0:
+            break
+        clock.tick(1)
+
     sleeper_status_for_loading = True
 
     sleep(sleeper_loading)
@@ -129,7 +134,7 @@ def main_game(server_player, net, play_main):
                     network.send(server_player)
                     pygame.quit()
                     sys.exit()
-            clock.tick(60)
+            clock.tick(FPS)
 
         for j in range(0, 55, 5):
             screen.blit(images_round_ending[int(j / 10)], (0, 0))
@@ -140,21 +145,19 @@ def main_game(server_player, net, play_main):
     game_end(server_player, net)
 
 
-def default_settings():
-    pass
-
-
 def game_end(server_player, network):
     f2 = pygame.font.SysFont('serif', 48)
     if server_player.wins > 2:
-        text = f2.render("Congratulations, You win", False, (0, 180, 0))
+        text = f2.render(victory_texts[random.randint(0, 2)], True, (0, 255, 0))
     else:
-        text = f2.render("Loooooooser", False, (0, 180, 0))
+        text = f2.render(defeat_texts[random.randint(0, 2)], True, (0, 255, 0))
     run = True
     server_player.ready = False
+    waiting_time = waiting_after_ending_game
     while run:
+        waiting_time -= 1
         screen.fill((0, 0, 0))
-        screen.blit(text, (10, 10))
+        screen.blit(text, (30, 10))
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -165,31 +168,36 @@ def game_end(server_player, network):
                 network.send(server_player)
                 pygame.quit()
                 sys.exit()
-        sleep(5)
-        break
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    run = False
+                    server_player.ready = False
+                    server_player.wins = 0
+                    server_player.loses = 0
+                    network.send(server_player)
+        if waiting_time <= 0:
+            run = False
+        clock.tick(FPS)
 
     main_menu(server_player, network)
 
 
 def map_preparation(player, network, player_settings):
-    global sleeper_status_for_loading
+    global sleeper_status_for_loading, sleeper_time
     run = True
     player.x = WIDTH // 4
     player.y = round(HEIGHT * (2 / 3))
-    level = Level(level1_map, screen, player_settings, interface)
+    level = Level(level1_map, screen, player_settings, interface, sleeper_time)
     start_new_thread(sleeper, ())
 
-    def portalParkourMap(sc, player_parkour, to_print):
-        def info_text_parkour():
-            text = 'Press Esc to return to the spawn point'
-            newFont = pygame.font.SysFont('SFCompact', 75)
-            txt_surf = newFont.render(text, False, (255, 183, 0))
-            sc.blit(txt_surf, (WIDTH // 5, HEIGHT // 2 - 35))
-
+    def portalParkourMap(sc, player_parkour):
         runParkourMap = True
         level_p = LevelParkour(level_parkour_map, screen, player_settings)
         count = 0
+        finished = False
         while runParkourMap:
+            level.sleeper_time = sleeper_time
+
             sc.fill((255, 255, 255))
             bgMapPreparation.draw()
             level_p.run()
@@ -197,30 +205,32 @@ def map_preparation(player, network, player_settings):
             for e in pygame.event.get():
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
-                        portalParkourMap(sc, player_parkour, False)
+                        portalParkourMap(sc, player_parkour)
                     level_p.check_fall = False
                 if level_p.portalParkour:
-                    map_preparation(player, network, player_settings)
+                    finished = True
             if sleeper_status:
                 runParkourMap = False
             count += 1
-            if to_print:
-                info_text_parkour()
-                if count == 150:
-                    to_print = False
             if level_p.check_fall:
-                portalParkourMap(sc, player_parkour, False)
+                portalParkourMap(sc, player_parkour)
             player_settings['keys'] = level_p.keys_taken
             level_p.events_check()
-            clock.tick(60)
+            if finished:
+                level.portalParkour = False
+                break
+            clock.tick(FPS)
 
     while run:
+        level.sleeper_time = sleeper_time
+
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/preparation_map.mp3')
             pygame.mixer.music.play()
         if sleeper_status:
             pygame.mixer.music.stop()
             main_game(player, network, level.player_sprite)
+
         bgMapPreparation.draw()
         level.run()
 
@@ -242,8 +252,8 @@ def map_preparation(player, network, player_settings):
                 sys.exit()
         if level.portalParkour:
             pygame.mixer.music.stop()
-            portalParkourMap(screen, level.player, True)
-        clock.tick(60)
+            portalParkourMap(screen, level.player)
+        clock.tick(FPS)
 
 
 def change_objects(w, h):
@@ -293,6 +303,8 @@ def change_objects(w, h):
 
 
 def main_menu(server_player=False, net=False):
+    global sleeper_time, new_time
+    sleeper_time = new_time
     run = True
     if not server_player:
         pygame.init()
@@ -329,12 +341,20 @@ def main_menu(server_player=False, net=False):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                player.ready = False
+                player.wins = 0
+                player.loses = 0
+                network.send(player)
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
                 menuWidgetElector.change_image(('key', event))
                 if event.key == K_ESCAPE:
                     run = False
+                    player.ready = False
+                    player.wins = 0
+                    player.loses = 0
+                    network.send(player)
                     pygame.quit()
                     sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -355,7 +375,7 @@ def main_menu(server_player=False, net=False):
             else:
                 pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
             menuWidgetSlider.vol_changed = None
-        clock.tick(60)
+        clock.tick(FPS)
 
 
 def waitingForConnection(player, network, player_settings):
@@ -385,4 +405,4 @@ def waitingForConnection(player, network, player_settings):
                     run = False
         if player2.ready:
             map_preparation(player, network, player_settings)
-        clock.tick(60)
+        clock.tick(FPS)

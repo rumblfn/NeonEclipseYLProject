@@ -17,6 +17,14 @@ class Enemy_hero1(pygame.sprite.Sprite):
         HEIGHT = pygame.display.Info().current_h
         WIDTH = pygame.display.Info().current_w
 
+        self.bullet_size = 24 * HEIGHT // 1080
+
+        self.bullet = pygame.transform.scale(pygame.image.load('static/Harchok.png').convert_alpha(),
+                                                   (self.bullet_size, self.bullet_size))
+        self.slime_bullet = pygame.transform.scale(pygame.image.load('static/slimeBallHero1.png').convert_alpha(),
+                                                   (self.bullet_size, self.bullet_size))
+        self.bullet_image = self.bullet
+
         self.name = player_enemy.name
         self.power = player_enemy.power
         self.maxHp = player_enemy.maxHp
@@ -33,6 +41,7 @@ class Enemy_hero1(pygame.sprite.Sprite):
         self.QImage = pygame.transform.scale(player1QImage, (self.width, self.height))
 
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        self.image.fill((0, 0, 0, 0))
         self.image.blit(self.normalImage, (0, 0))
         self.rect = self.image.get_rect(topleft=self.pos)
 
@@ -60,6 +69,12 @@ class Enemy_hero1(pygame.sprite.Sprite):
                     (self.width, self.height))
                 self.images[el].append(image)
 
+    def change_bullet_image(self):
+        self.bullet_image = self.slime_bullet
+
+    def change_bullet_image_simple(self):
+        self.bullet_image = self.bullet
+
     def get_input(self):
         self.current_sprite += 0.25
         if self.Q_ACTIVE:
@@ -82,7 +97,7 @@ class Enemy_hero1(pygame.sprite.Sprite):
             self.current_sprite = 0
 
     def create_bullet(self, mouse_pos):
-        return Bullet((self.rect.centerx + 10, self.rect.centery - self.height / 4), mouse_pos)
+        return Bullet((self.rect.centerx + 10, self.rect.centery - self.height / 4), self.bullet_size, self.bullet_image, mouse_pos)
 
     def update_values(self, enemy):
         self.Q_ACTIVE = enemy.Q

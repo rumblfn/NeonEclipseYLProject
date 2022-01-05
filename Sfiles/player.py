@@ -18,6 +18,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.type_of_attack = 0
         self.ready = None  # True
         self.wins = 0
         self.loses = 0
@@ -79,7 +80,13 @@ class Player_map_parkour(pygame.sprite.Sprite):
         self.player_settings = player_settings
         if player_settings['animations'] is None:
             self.image.blit(pygame.transform.scale(player_settings['imagePreview'], (self.width, self.height)), (0, 0))
-        else:
+        if player_settings['name'] == 'Hero3':
+            self.images = {}
+            self.images['right_walk'] = pygame.transform.scale(pygame.image.load(f'static/paladin27x78.png').convert_alpha(), (self.width, self.height))
+            self.images['left_walk'] = pygame.transform.scale(pygame.image.load(f'static/paladin27x78_REVERSE.png').convert_alpha(), (self.width, self.height))
+            self.image.blit(pygame.transform.scale(self.player_settings['imagePreview'], (self.width, self.height)),
+                        (0, 0))
+        if player_settings['name'] == 'Hero1':
             self.images = {}
             for el in player_settings['animations'].keys():
                 self.images[el] = []
@@ -121,7 +128,10 @@ class Player_map_parkour(pygame.sprite.Sprite):
                 if self.invis_mode:
                     self.image.fill((255, 255, 255, 0))
                 else:
-                    self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
+                    if self.player_settings['name'] == 'Hero3':
+                        self.image.blit(self.images['right_walk'], (0, 0))
+                    if self.player_settings['name'] == 'Hero1':
+                        self.image.blit(self.images['right_walk'][int(self.current_sprite)], (0, 0))
         elif keys[pygame.K_a]:
             if self.bird_mode:
                 self.direction.x = -0.4
@@ -132,7 +142,10 @@ class Player_map_parkour(pygame.sprite.Sprite):
                 if self.invis_mode:
                     self.image.fill((255, 255, 255, 0))
                 else:
-                    self.image.blit(self.images['left_walk'][int(self.current_sprite)], (0, 0))
+                    if self.player_settings['name'] == 'Hero3':
+                        self.image.blit(self.images['left_walk'], (0, 0))
+                    if self.player_settings['name'] == 'Hero1':
+                        self.image.blit(self.images['left_walk'][int(self.current_sprite)], (0, 0))
         else:
             self.direction.x = 0
 
@@ -199,20 +212,31 @@ class Player_map_parkour(pygame.sprite.Sprite):
                 self.height = h
                 self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
                 self.images = False
-                if self.settings['animations'] is None:
-                    self.image.blit(pygame.transform.scale(self.settings['imagePreview'], (self.width, self.height)),
+                if self.player_settings['animations'] is None:
+                    self.image.blit(pygame.transform.scale(self.player_settings['imagePreview'], (self.width, self.height)),
                                     (0, 0))
-                else:
+                if self.player_settings['name'] == 'Hero3':
                     self.images = {}
-                    for el in self.settings['animations'].keys():
+                    self.images['right_walk'] = pygame.transform.scale(
+                        pygame.image.load(f'static/paladin27x78.png').convert_alpha(), (self.width, self.height))
+                    self.images['left_walk'] = pygame.transform.scale(
+                        pygame.image.load(f'static/paladin27x78_REVERSE.png').convert_alpha(),
+                        (self.width, self.height))
+                    self.image.blit(
+                        pygame.transform.scale(self.player_settings['imagePreview'], (self.width, self.height)),
+                        (0, 0))
+                if self.player_settings['name'] == 'Hero1':
+                    self.images = {}
+                    for el in self.player_settings['animations'].keys():
                         self.images[el] = []
                         for i in range(1, 15):
                             image = pygame.transform.scale(
-                                pygame.image.load(f'{self.settings["animations"][el]}{i}.png').convert_alpha(),
+                                pygame.image.load(f'{self.player_settings["animations"][el]}{i}.png').convert_alpha(),
                                 (self.width, self.height))
                             self.images[el].append(image)
-                    self.image.blit(pygame.transform.scale(self.settings['imagePreview'], (self.width, self.height)),
+                    self.image.blit(pygame.transform.scale(self.player_settings['imagePreview'], (self.width, self.height)),
                                     (0, 0))
                 self.rect = self.image.get_rect(topleft=(x, y))
+
 
 
