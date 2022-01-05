@@ -18,7 +18,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = None  # True None
+        self.ready = True  # True None
         self.wins = 0
         self.loses = 0
         self.win = None

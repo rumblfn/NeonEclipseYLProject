@@ -52,6 +52,8 @@ class Interface:
         self.sprite = None
         self.chest = None
         self.draw_bs = False
+        self.cards_mov_x = 0
+        self.cards_mov_y = 0
 
         self.aa_image_normal = pygame.transform.scale(pygame.image.load('static/lmbIconMenu.png'), (size, size))
         self.e_image_normal = pygame.transform.scale(pygame.image.load('static/buttonE.png'), (size, size))
@@ -186,12 +188,13 @@ class Interface:
             pass
         self.draw_bs = True
 
-    def draw_bs_cards_got(self, param):
+    def draw_bs_cards_got(self):
         text = f'+{self.last_cards}'
         bs_cards_count_size = round((50 * self.screen_width) / 1536)
         newFont = pygame.font.SysFont('SFCompact', bs_cards_count_size)
         txt_surf = newFont.render(text, False, (255, 183, 0))
-        self.screen.blit(txt_surf, (self.chest.rect.x - self.chest.rect.w // 3, self.chest.rect.y - round((self.chest.rect.h * self.screen_height) / 864) - param * 2))
+        self.screen.blit(txt_surf, (self.chest.rect.x - self.chest.rect.w // 3 + self.cards_mov_x * self.draw_bs_count,
+                                    self.chest.rect.y + self.cards_mov_y * self.draw_bs_count))
 
         itemImage = pygame.transform.scale(pygame.image.load('static/blacksmith_card.png'),
                                            (round(25 * self.sprite_kef) - 6, round(25 * self.sprite_kef) - 6))
@@ -199,17 +202,23 @@ class Interface:
                                                pygame.SRCALPHA)
         self.itemImageSurface.blit(itemImage, (0, 0))
         self.screen.blit(self.itemImageSurface,
-                         ((self.chest.rect.x + self.chest.rect.w // 2,
-                           self.chest.rect.y - round((self.chest.rect.h * self.screen_height) / 864) - param * 2)))
+                         ((self.chest.rect.x + self.chest.rect.w // 2 + self.cards_mov_x * self.draw_bs_count,
+                           self.chest.rect.y + self.cards_mov_y * self.draw_bs_count)))
+        if self.screen_width - self.chest.rect.x < self.cards_mov_x * self.draw_bs_count + self.chest_rect.w or \
+                self.screen_height - self.chest.rect.y < self.cards_mov_y * self.draw_bs_count + self.chest_rect.h:
+            self.draw_bs_count = 0
+            self.draw_bs = False
+            self.cards_mov_x = 0
+            self.cards_mov_y = 0
 
     def check_draw_bs(self):
         if self.draw_bs:
             self.draw_bs_count += 1
-            if self.draw_bs_count > 100:
-                self.draw_bs_count = 0
-                self.draw_bs = False
+            if self.draw_bs_count == 1:
+                self.cards_mov_x = round((self.screen_width - self.chest.rect.x) / 100)
+                self.cards_mov_y = round((self.screen_height - self.chest.rect.y) / 100)
             else:
-                self.draw_bs_cards_got(self.draw_bs_count)
+                self.draw_bs_cards_got()
 
     def update_blacksmith_cards(self):
         if self.sprite:
