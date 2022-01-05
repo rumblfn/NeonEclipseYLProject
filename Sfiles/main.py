@@ -26,7 +26,7 @@ def draw_cursor(sc):
 
 def sleeper():
     global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 1000
+    sleeper_time = 60
     sleeper_loading = 1
     sleeper_status = False
 
@@ -60,6 +60,16 @@ def redrawWindow(win, player, player2):
     pygame.display.update()
 
 
+def prepare_inv_for_game():
+    for item in interface.bought_items_interface:
+        if item == 'B':
+            interface.bought_items_interface.remove('B')
+            interface.inventory.remove('static/blacksmith_card.png')
+        if item == 'K':
+            interface.bought_items_interface.remove('K')
+            interface.inventory.remove('static/chest_key.png')
+
+
 def main_game(server_player, net, play_main):
     global images_round_starting, images_round_ending
 
@@ -83,6 +93,8 @@ def main_game(server_player, net, play_main):
     maps = [map1, map2, map3, map4, map5]
     # random.shuffle(maps)
     i = -1
+    prepare_inv_for_game()
+
     while server_player.wins < 3 and server_player.loses < 3:
         i += 1
         network = copy(net)

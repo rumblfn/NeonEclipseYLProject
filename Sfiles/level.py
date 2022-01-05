@@ -26,6 +26,7 @@ class Level:
         self.item_clicked = False
         self.first_start = True
         self.is_on_check = False
+        self.keys_count = 0
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -217,9 +218,6 @@ class Level:
         txt_surf = newFont.render(text, False, (255, 183, 0))
         self.display_surface.blit(txt_surf, (self.width - round((s * self.width) / 1536), round((20 * self.width) / 1536)))
 
-    def add_keys_to_inv(self):
-        self.interface.update_keys_in_inventory(self.player_settings["keys"])
-
     def check_inventory(self):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -271,10 +269,16 @@ class Level:
         if not chest.opened:
             if self.interface.keys_count - 1 >= 0:
                 self.interface.keys_count -= 1
+                self.keys_count -= 1
                 self.player_settings["keys"] -= 1
                 chest.redraw_block()
                 chest.opened = True
                 self.interface.add_blacksmith_card(self.player_settings, chest)
+
+    def add_keys(self):
+        if self.keys_count != self.player_settings['keys']:
+            self.keys_count = self.player_settings['keys']
+            self.interface.add_keys(self.player_settings['keys'], self.player_settings)
 
     def check_sprite_updates(self):
         for sprite in self.npces.sprites():
@@ -317,9 +321,9 @@ class Level:
         self.player.draw(self.display_surface)
         self.print_current_gold()
         self.check_potions_taken()
-        self.add_keys_to_inv()
         self.check_chest()
         self.check_sprite_updates()
+        self.add_keys()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))

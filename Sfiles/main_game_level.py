@@ -32,6 +32,8 @@ class LevelG:
         self.interface = interface
         self.tile_size = 64
 
+        self.item_clicked = False
+
         self.enemy = pygame.sprite.GroupSingle()
         if self.player_enemy.name == 'Hero1':
             self.enemy_hero1_bullets = pygame.sprite.Group()
@@ -226,6 +228,36 @@ class LevelG:
                 sprite.kill()
                 self.traps.add(trap_copy)
 
+    def check_inventory(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = pygame.mouse.get_pos()
+                if self.interface.chest_rect.collidepoint((mx, my)):
+                    self.player.sprite.interface_mode = True
+                    self.interface.show_inventory()
+                else:
+                    self.player.sprite.interface_mode = False
+                for i, rect in enumerate(self.interface.item_rects):
+                    if rect.collidepoint((mx, my)):
+                        self.interface.current_item = i
+                        self.item_clicked = True
+                        self.player.sprite.interface_mode = True
+                if not self.item_clicked:
+                    self.player.sprite.interface_mode = False
+                    self.item_clicked = False
+            if event.type == pygame.KEYDOWN:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_TAB]:
+                    self.interface.show_inventory()
+                if keys[pygame.K_RIGHT]:
+                    self.interface.current_item -= 1
+                    if self.interface.current_item < 0:
+                        self.interface.current_item = len(self.interface.inventory) - 1
+                if keys[pygame.K_LEFT]:
+                    self.interface.current_item += 1
+                    if self.interface.current_item > len(self.interface.inventory) - 1:
+                        self.interface.current_item = 0
+
     def run(self):
         if self.player_sprite.hp <= 0 and self.round or self.player_sprite.rect.y > self.height * 2:
             self.player_sprite.hp = 0
@@ -251,6 +283,10 @@ class LevelG:
 
         self.enemy.draw(self.display_surface)
         self.update_enemy()
+
+        self.check_inventory()
+        self.interface.check_item_choice()
+        self.interface.draw_inventory()
 
         self.player.update()
         self.player.draw(self.display_surface)

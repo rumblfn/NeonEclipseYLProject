@@ -148,19 +148,26 @@ class Interface:
                 self.bought_items_interface.append(i)
                 self.inventory.append(all_items[i])
 
+    def add_inventory_keys(self, bought_items, all_items):
+        for i in bought_items:
+            if i not in self.bought_items_interface:
+                self.bought_items_interface.append(i)
+                self.inventory.append(all_items[i])
+
     def add_inventory_potions(self, potion, all_potions):
         self.bought_items_interface.append(potion.cell)
         self.inventory.append(all_potions[potion.cell])
 
-    def update_keys_in_inventory(self, keys):
-        if 'static/chest_key.png' not in self.inventory:
-            self.inventory.append('static/chest_key.png')
+    def add_keys(self, keys, sprite):
+        self.sprite = sprite
         self.keys_count = keys
         try:
-            self.bought_items_interface.remove('B')
-            self.bought_items_interface.append('B')
+            self.bought_items_interface.remove('K')
+            self.bought_items_interface.append('K')
         except:
             pass
+        if 'static/chest_key.png' not in self.inventory:
+            self.inventory.append('static/chest_key.png')
 
     def add_blacksmith_card(self, sprite, chest):
         self.sprite = sprite
@@ -223,19 +230,19 @@ class Interface:
                     pass
 
     def draw_inventory(self):
-        self.update_blacksmith_cards()
         self.update_chest_keys()
+        self.update_blacksmith_cards()
         self.check_draw_bs()
         if self.inventory_visible:
             for i, item in enumerate(self.inventory):
                 itemImage = pygame.transform.scale(pygame.image.load(item),
-                                                   (round(50 * self.sprite_kef) - 6,
-                                                    round(50 * self.sprite_kef) - 6))
+                                                   (round(50 * self.sprite_kef) - 12,
+                                                    round(50 * self.sprite_kef) - 12))
                 self.itemImageSurface = pygame.Surface((round(50 * self.sprite_kef), round(50 * self.sprite_kef)),
                                                        pygame.SRCALPHA)
                 if i == self.current_item:
-                    self.itemImageSurface.fill((0, 255, 0, 75))
-                self.itemImageSurface.blit(itemImage, (3, 3))
+                    pygame.draw.rect(self.itemImageSurface, (0, 255, 0), (0, 0, round(50 * self.sprite_kef), round(50 * self.sprite_kef)), 6, 4)
+                self.itemImageSurface.blit(itemImage, (6, 6))
                 if item == 'static/chest_key.png':
                     text = f'{self.keys_count}'
                     newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
