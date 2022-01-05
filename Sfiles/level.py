@@ -109,6 +109,7 @@ class Level:
             for portal in self.portals:
                 if portal.rect.colliderect(player.rect):
                     self.player_settings['b_cards'] = 0
+                    self.player_settings['keys'] = 0
                     self.portalParkour = True
                     return True
 
@@ -131,19 +132,9 @@ class Level:
         player = self.player_sprite
         if player.rect.y > self.height + 300 or player.rect.y < - 300:
             self.setup_level(self.level_data, self.player_sprite)
-            for sprite in self.npces.sprites():
-                if sprite.name == 'librarian':
-                    sprite.bought_items = []
-                if sprite.name == 'blacksmith':
-                    sprite.bought_items = []
-            self.interface.inventory = []
-            self.interface.item_rects = []
-            self.interface.bought_items_interface = []
-            self.interface.current_item = 0
-            self.interface.inventory_visible = False
             self.player_settings['keys'] = 0
             self.player_settings['b_cards'] = 0
-            self.player_sprite.set_first_params()
+            self.player_settings['gold'] = 0
 
     def npc_collisions(self):
         player = self.player.sprite
