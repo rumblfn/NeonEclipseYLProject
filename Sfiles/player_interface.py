@@ -1,6 +1,5 @@
 import pygame
 import random
-import time
 
 
 class Interface:
@@ -107,11 +106,11 @@ class Interface:
         self.screen.blit(self.hpImageSurface, (10, 10))
         pygame.draw.rect(self.screen, (255, 0, 0),
                          (23 + 50 * self.sprite_kef, 28, (hp / max_hp) * self.hpBarWidth - 6, self.hpBarHeight - 6))
-        titleSurface = self.font.render(f'{hp}/{max_hp}', False, (0, 255, 0))
+        titleSurface = self.font.render(f'{round(hp, 2)}/{round(max_hp, 2)}', False, (0, 255, 0))
         self.screen.blit(titleSurface, (40 + 50 * self.sprite_kef, 30))
         self.screen.blit(self.hpBarSurface, (20 + 50 * self.sprite_kef, 25))
         self.screen.blit(self.powerImageSurface, (10, 20 + 50 * self.sprite_kef))
-        titleSurface = self.font.render(str(power), False, (0, 255, 0))
+        titleSurface = self.font.render(str(round(power, 2)), False, (0, 255, 0))
         self.screen.blit(titleSurface, (20 + 50 * self.sprite_kef, 30 + 50 * self.sprite_kef))
         self.screen.blit(self.chestImageSurface, (self.screen_width - 50 * self.sprite_kef - 10,
                                                   self.screen_height - 45 * self.sprite_kef - 10))
@@ -125,6 +124,11 @@ class Interface:
         self.screen.blit(wins_text, (pos_midtop[0] - 50, pos_midtop[1]))
         self.screen.blit(loses_text, (pos_midtop[0] + 100, pos_midtop[1]))
 
+    def draw_lvl_progress_time(self, time):
+        time_to = self.fontTitle.render(f'time to prepare: {round(time / 60)}', False, (12, 255, 17))
+        pos_midtop = time_to.get_rect(topleft=(self.screen_width // 3, 10))
+        self.screen.blit(time_to, pos_midtop)
+
     def draw_enemy_health(self, hp, max_hp):
         pygame.draw.rect(self.screen, (255, 0, 0),
                          (self.screen_width - self.hpBarWidth - 7, 28, (hp / max_hp) * self.hpBarWidth - 6,
@@ -132,7 +136,7 @@ class Interface:
         pygame.draw.rect(self.screen, (64, 128, 255),
                          (self.screen_width - self.hpBarWidth - 7, 28, self.hpBarWidth - 6,
                           self.hpBarHeight - 6), 4)
-        titleSurface = self.font.render(f'{hp}/{max_hp}', False, (0, 255, 0))
+        titleSurface = self.font.render(f'{round(hp, 2)}/{round(max_hp, 2)}', False, (0, 255, 0))
         pos = titleSurface.get_rect(midleft=(self.screen_width - self.hpBarWidth, 28 + self.hpBarHeight // 2))
         self.screen.blit(titleSurface, pos)
 

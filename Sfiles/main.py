@@ -1,5 +1,3 @@
-import random
-from copy import copy
 from dataConsts import *
 import pygame.mixer_music
 from main_game_level import *
@@ -25,12 +23,17 @@ def draw_cursor(sc):
 
 
 def sleeper():
-    global sleeper_status, sleeper_status_for_loading
-    sleeper_time = 300
+    global sleeper_status, sleeper_status_for_loading, sleeper_time
     sleeper_loading = 1
     sleeper_status = False
+    new_time = sleeper_time / FPS
 
-    sleep(sleeper_time - sleeper_loading)
+    while True:
+        new_time -= 1
+        sleeper_time -= 60
+        if new_time <= 0:
+            break
+        clock.tick(1)
     sleeper_status_for_loading = True
 
     sleep(sleeper_loading)
@@ -129,7 +132,7 @@ def main_game(server_player, net, play_main):
                     network.send(server_player)
                     pygame.quit()
                     sys.exit()
-            clock.tick(60)
+            clock.tick(FPS)
 
         for j in range(0, 55, 5):
             screen.blit(images_round_ending[int(j / 10)], (0, 0))
@@ -172,11 +175,11 @@ def game_end(server_player, network):
 
 
 def map_preparation(player, network, player_settings):
-    global sleeper_status_for_loading
+    global sleeper_status_for_loading, sleeper_time
     run = True
     player.x = WIDTH // 4
     player.y = round(HEIGHT * (2 / 3))
-    level = Level(level1_map, screen, player_settings, interface)
+    level = Level(level1_map, screen, player_settings, interface, sleeper_time)
     start_new_thread(sleeper, ())
 
     def portalParkourMap(sc, player_parkour):
@@ -185,6 +188,8 @@ def map_preparation(player, network, player_settings):
         count = 0
         finished = False
         while runParkourMap:
+            level.sleeper_time = sleeper_time
+
             sc.fill((255, 255, 255))
             bgMapPreparation.draw()
             level_p.run()
@@ -206,15 +211,18 @@ def map_preparation(player, network, player_settings):
             if finished:
                 level.portalParkour = False
                 break
-            clock.tick(60)
+            clock.tick(FPS)
 
     while run:
+        level.sleeper_time = sleeper_time
+
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load('music/preparation_map.mp3')
             pygame.mixer.music.play()
         if sleeper_status:
             pygame.mixer.music.stop()
             main_game(player, network, level.player_sprite)
+
         bgMapPreparation.draw()
         level.run()
 
@@ -237,7 +245,7 @@ def map_preparation(player, network, player_settings):
         if level.portalParkour:
             pygame.mixer.music.stop()
             portalParkourMap(screen, level.player)
-        clock.tick(60)
+        clock.tick(FPS)
 
 
 def change_objects(w, h):
@@ -357,7 +365,7 @@ def main_menu(server_player=False, net=False):
             else:
                 pygame.mixer.music.set_volume(menuWidgetSlider.vol_changed / 100)
             menuWidgetSlider.vol_changed = None
-        clock.tick(60)
+        clock.tick(FPS)
 
 
 def waitingForConnection(player, network, player_settings):
@@ -387,4 +395,4 @@ def waitingForConnection(player, network, player_settings):
                     run = False
         if player2.ready:
             map_preparation(player, network, player_settings)
-        clock.tick(60)
+        clock.tick(FPS)

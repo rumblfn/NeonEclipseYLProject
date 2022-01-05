@@ -3,7 +3,6 @@ from _thread import start_new_thread
 from player import Player
 import pythonFB
 import pickle
-import sys
 
 
 def getIpv4():

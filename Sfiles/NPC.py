@@ -1,5 +1,3 @@
-import random
-
 import pygame
 from map_preparation_settings import level1_map
 

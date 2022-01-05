@@ -1,6 +1,4 @@
 from copy import copy
-
-import pygame
 from tiles import Tile
 from main_map_settings import *
 from enemyClass import Enemy
@@ -12,7 +10,6 @@ from spring import Spring
 from ball_gun import Ball_gun
 from balls import Ball
 from trap import Trap
-from time import sleep
 
 
 class LevelG:

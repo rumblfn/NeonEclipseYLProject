@@ -9,7 +9,8 @@ from pygame.locals import *
 
 
 class Level:
-    def __init__(self, level_data, surface, player_settings, interface):
+    def __init__(self, level_data, surface, player_settings, interface, sleeper_time):
+        self.sleeper_time = sleeper_time
         self.display_surface = surface
         self.level_data = level_data
         self.player_settings = player_settings
@@ -346,3 +347,4 @@ class Level:
                                                self.player_sprite.Q_ACTIVE_TIMER, self.player_sprite.Q_ACTIVE_TIMER_MAX)
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)
+        self.interface.draw_lvl_progress_time(self.sleeper_time)
