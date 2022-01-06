@@ -159,6 +159,11 @@ class Player_hero3(pygame.sprite.Sprite):
         else:
             self.K_x = False
 
+        if keys[pygame.K_z]:
+            self.speed_potion = False
+            self.resistance_potion = False
+            self.recharge_potion = False
+
         if self.speed_potion_timer_ACTIVE:
             self.speed_potion_timer += 1
             if self.speed_potion_timer >= self.speed_potion_timer_max:
