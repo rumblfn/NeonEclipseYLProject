@@ -29,6 +29,8 @@ class LevelG:
         self.interface = interface
         self.tile_size = 64
 
+        self.myself_dmg = 0
+
         self.enemy = pygame.sprite.GroupSingle()
         if self.player_enemy.name == 'Hero1':
             self.enemy_hero1_bullets = pygame.sprite.Group()
@@ -104,32 +106,30 @@ class LevelG:
 
     def update_enemy(self):
         self.player_sprite.update_server()
-
-        player_enemy = self.network.send(self.player_sprite.server_player)
-        if player_enemy.type_of_attack == 1:
-            self.enemy.sprite.change_bullet_image()
+        if self.player_sprite.resistance_potion_timer_ACTIVE:
+            self.server_player.damage_given *= self.player_sprite.resistance_potion_no_save
+            self.player_sprite.hp += self.myself_dmg * self.player_sprite.resistance_potion_no_save
         else:
-            self.enemy.sprite.change_bullet_image_simple()
+            self.player_sprite.hp += self.myself_dmg
+        player_enemy = self.network.send(self.player_sprite.server_player)
 
         self.player_enemy = player_enemy
         self.server_player.E = False
         self.server_player.damage_given = 0
+        self.myself_dmg = 0
 
         self.enemy.sprite.rect.x = (player_enemy.x / 1920) * self.width
         self.enemy.sprite.rect.y = (player_enemy.y / 1080) * self.height
 
         if self.player_sprite.name != 'Hero3':
-            self.player_sprite.hp -= player_enemy.damage_given
-            self.server_player.hp -= player_enemy.damage_given
+            self.myself_dmg -= player_enemy.damage_given
         else:
             if self.player_sprite.SHIELD_ACTIVE:
                 self.player_sprite.SHIELD_HP -= player_enemy.damage_given
                 if self.player_sprite.SHIELD_HP < 0:
                     self.player_sprite.hp += self.player_sprite.SHIELD_HP
-                    self.server_player.hp += self.player_sprite.SHIELD_HP
             else:
-                self.player_sprite.hp -= player_enemy.damage_given
-                self.server_player.hp -= player_enemy.damage_given
+                self.myself_dmg -= player_enemy.damage_given
 
         self.player_sprite.rect.x += player_enemy.diff_x
         self.enemy.sprite.update_values(player_enemy)
@@ -137,6 +137,10 @@ class LevelG:
         self.enemy.sprite.get_input()
 
         if player_enemy.name == 'Hero1':
+            if player_enemy.type_of_attack == 1:
+                self.enemy.sprite.change_bullet_image()
+            else:
+                self.enemy.sprite.change_bullet_image_simple()
             if player_enemy.simpleAttack:
                 self.enemy_hero1_bullets.add(self.enemy.sprite.create_bullet((
                     player_enemy.mouse_pos_x * self.width / 1920,
@@ -219,7 +223,6 @@ class LevelG:
                     sprite.kill()
             if sprite.rect.colliderect(self.player_sprite.rect):
                 self.player_sprite.hp -= 7
-                self.server_player.hp -= 7
                 sprite.kill()
             if sprite.rect.colliderect(self.enemy.sprite.rect):
                 self.server_player.damage_given += 7
@@ -232,7 +235,6 @@ class LevelG:
                     sprite.ACTIVE = True
                     if sprite.timer >= 30:
                         self.player_sprite.hp -= 5
-                        self.server_player.hp -= 5
                 if sprite.rect.colliderect(self.enemy.sprite):
                     sprite.ACTIVE = True
                     if sprite.timer >= 30:
@@ -251,14 +253,6 @@ class LevelG:
             self.player_sprite.rect.y = self.height / 2
             self.server_player.ready = False
             self.round = False
-
-        if self.player_sprite.poisoning:
-            self.player_sprite.poisoning_time += 1
-            if self.player_sprite.poisoning_time % 60 == 0:
-                self.server_player.damage_given += self.player_sprite.power * 0.1
-            if self.player_sprite.poisoning_time >= self.player_sprite.poisoning_time_max:
-                self.player_sprite.poisoning = False
-                self.player_sprite.poisoning_time = 0
 
         self.tiles.draw(self.display_surface)
         self.springs.draw(self.display_surface)
@@ -286,6 +280,13 @@ class LevelG:
             self.player_sprite.attacksE.draw(self.display_surface)
             self.ESettings()
             self.bullets_settings()
+            if self.player_sprite.poisoning:
+                self.player_sprite.poisoning_time += 1
+                if self.player_sprite.poisoning_time % 60 == 0:
+                    self.server_player.damage_given += self.player_sprite.power * 0.1
+                if self.player_sprite.poisoning_time >= self.player_sprite.poisoning_time_max:
+                    self.player_sprite.poisoning = False
+                    self.player_sprite.poisoning_time = 0
             self.interface.draw_attacks_timers(self.player_sprite.shoot_bool, self.player_sprite.shoot_bool_max,
                                                self.player_sprite.attacksEBool, self.player_sprite.attacksEBool_max,
                                                self.player_sprite.Q_SLEEPER, self.player_sprite.Q_SLEEPER_MAX)
