@@ -163,11 +163,6 @@ class Interface:
     def add_keys(self, keys, sprite):
         self.sprite = sprite
         self.keys_count = keys
-        try:
-            self.bought_items_interface.remove('K')
-            self.bought_items_interface.append('K')
-        except:
-            pass
         if 'static/chest_key.png' not in self.inventory:
             self.inventory.append('static/chest_key.png')
 
@@ -181,11 +176,6 @@ class Interface:
         sprite['b_cards'] += cards
         self.cards_count += cards
         self.update_blacksmith_cards()
-        try:
-            self.bought_items_interface.remove('B')
-            self.bought_items_interface.append('B')
-        except:
-            pass
         self.draw_bs = True
 
     def draw_bs_cards_got(self):
@@ -281,10 +271,27 @@ class Interface:
         else:
             self.inventory_visible = True
 
-    def check_item_choice(self):
+    def check_inv_change_key(self):
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = pygame.mouse.get_pos()
-                for i, rect in enumerate(self.item_rects):
-                    if rect.collidepoint((mx, my)):
-                        self.current_item = i
+            if event.type == pygame.KEYDOWN:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_TAB]:
+                    self.show_inventory()
+                if keys[pygame.K_RIGHT]:
+                    self.current_item -= 1
+                    if self.current_item < 0:
+                        self.current_item = len(self.inventory) - 1
+                if keys[pygame.K_LEFT]:
+                    self.current_item += 1
+                    if self.current_item > len(self.inventory) - 1:
+                        self.current_item = 0
+
+    def prepare_for_main(self):
+        try:
+            self.inventory.remove('static/blacksmith_card.png')
+        except:
+            pass
+        try:
+            self.inventory.remove('static/chest_key.png')
+        except:
+            pass
