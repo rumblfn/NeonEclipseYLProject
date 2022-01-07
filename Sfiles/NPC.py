@@ -43,7 +43,7 @@ class BlackSmith(pygame.sprite.Sprite):
 
         self.items = dict()
         if hero_name == 'Hero1':
-            self.items = {'1_bs': 'static/red_gem.png',
+            self.items = {'1_bs': 'static/Nak_r.png',
                           '2_bs': 'static/yellow_gem.png'
                           }
         if hero_name == 'Hero3':
@@ -51,6 +51,7 @@ class BlackSmith(pygame.sprite.Sprite):
                           '2_bs': 'static/yellow_gem.png'
                           }
 
+        self.hero_name = hero_name
         self.bought_items = []
         self.purchase_done = False
 
@@ -144,7 +145,8 @@ class BlackSmith(pygame.sprite.Sprite):
                 if self.btn_first.collidepoint((mx, my)):
                     self.plus_first(player)
                 elif self.btn_second.collidepoint((mx, my)):
-                    self.plus_second(player)
+                    pass
+                    # self.plus_second(player)
 
     def show_info(self, arg):
         if not arg:
@@ -168,6 +170,9 @@ class BlackSmith(pygame.sprite.Sprite):
             player['b_cards'] -= 7
             self.bought_items.append('2_bs')
             self.purchase_done = True
+
+    def update_player_characteristics(self, sprite):
+        pass
 
 
 class Librarian(pygame.sprite.Sprite):
