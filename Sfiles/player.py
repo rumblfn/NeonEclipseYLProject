@@ -18,6 +18,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.type_of_attack = 0
         self.ready = None  # True
         self.wins = 0
         self.loses = 0

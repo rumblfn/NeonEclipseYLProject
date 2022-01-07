@@ -27,6 +27,7 @@ class Level:
         self.item_clicked = False
         self.first_start = True
         self.is_on_check = False
+        self.keys_count = 0
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -110,6 +111,7 @@ class Level:
             for portal in self.portals:
                 if portal.rect.colliderect(player.rect):
                     self.player_settings['b_cards'] = 0
+                    self.player_settings['keys'] = 0
                     self.portalParkour = True
                     return True
 
@@ -132,19 +134,9 @@ class Level:
         player = self.player_sprite
         if player.rect.y > self.height + 300 or player.rect.y < - 300:
             self.setup_level(self.level_data, self.player_sprite)
-            for sprite in self.npces.sprites():
-                if sprite.name == 'librarian':
-                    sprite.bought_items = []
-                if sprite.name == 'blacksmith':
-                    sprite.bought_items = []
-            self.interface.inventory = []
-            self.interface.item_rects = []
-            self.interface.bought_items_interface = []
-            self.interface.current_item = 0
-            self.interface.inventory_visible = False
             self.player_settings['keys'] = 0
             self.player_settings['b_cards'] = 0
-            self.player_sprite.set_first_params()
+            self.player_settings['gold'] = 0
 
     def npc_collisions(self):
         player = self.player.sprite
@@ -152,7 +144,6 @@ class Level:
             if sprite.name == 'librarian':
                 sprite.update_npc()
                 if sprite.rect.colliderect(player.rect):
-                    player.interface_mode = True
                     sprite.show_msg()
                     sprite.check_show_info(self.is_on_check)
                     sprite.check_click(self.player_settings)
@@ -161,12 +152,10 @@ class Level:
                     self.showed_inv_by_shop = True
                 else:
                     if self.showed_inv_by_shop:
-                            player.interface_mode = False
-                            self.interface.show_inventory(True)
                             self.showed_inv_by_shop = False
-            else:
+
+            if sprite.name == 'blacksmith':
                 if sprite.rect.colliderect(player.rect):
-                    player.interface_mode = True
                     sprite.show_msg()
                     sprite.check_show_info(self.is_on_check)
                     sprite.check_click(self.player_settings)
@@ -175,8 +164,6 @@ class Level:
                     self.showed_inv_by_shop = True
                 else:
                     if self.showed_inv_by_shop:
-                            player.interface_mode = False
-                            self.interface.show_inventory(True)
                             self.showed_inv_by_shop = False
 
     def horizontal_movement_collisions(self):
@@ -227,38 +214,10 @@ class Level:
         txt_surf = newFont.render(text, False, (255, 183, 0))
         self.display_surface.blit(txt_surf, (self.width - round((s * self.width) / 1536), round((20 * self.width) / 1536)))
 
-    def add_keys_to_inv(self):
-        self.interface.update_keys_in_inventory(self.player_settings["keys"])
-
-    def check_inventory(self):
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = pygame.mouse.get_pos()
-                if self.interface.chest_rect.collidepoint((mx, my)):
-                    self.player.sprite.interface_mode = True
-                    self.interface.show_inventory()
-                else:
-                    self.player.sprite.interface_mode = False
-                for i, rect in enumerate(self.interface.item_rects):
-                    if rect.collidepoint((mx, my)):
-                        self.interface.current_item = i
-                        self.item_clicked = True
-                        self.player.sprite.interface_mode = True
-                if not self.item_clicked:
-                    self.player.sprite.interface_mode = False
-                    self.item_clicked = False
-            if event.type == KEYDOWN:
-                keys = pygame.key.get_pressed()
-                if keys[pygame.K_TAB]:
-                    self.interface.show_inventory()
-                if keys[pygame.K_RIGHT]:
-                    self.interface.current_item -= 1
-                    if self.interface.current_item < 0:
-                        self.interface.current_item = len(self.interface.inventory) - 1
-                if keys[pygame.K_LEFT]:
-                    self.interface.current_item += 1
-                    if self.interface.current_item > len(self.interface.inventory) - 1:
-                        self.interface.current_item = 0
+    def add_keys(self):
+        if self.keys_count != self.player_settings['keys']:
+            self.keys_count = self.player_settings['keys']
+            self.interface.add_keys(self.player_settings['keys'], self.player_settings)
 
     def check_potions_taken(self):
         player = self.player.sprite
@@ -281,6 +240,7 @@ class Level:
         if not chest.opened:
             if self.interface.keys_count - 1 >= 0:
                 self.interface.keys_count -= 1
+                self.keys_count -= 1
                 self.player_settings["keys"] -= 1
                 chest.redraw_block()
                 chest.opened = True
@@ -316,8 +276,7 @@ class Level:
         self.scroll_x()
 
         self.npc_collisions()
-        self.check_inventory()
-        self.interface.check_item_choice()
+        self.interface.check_inv_change_key()
         self.interface.draw_inventory()
         self.player.update()
         self.player_pos_checker()
@@ -327,9 +286,9 @@ class Level:
         self.player.draw(self.display_surface)
         self.print_current_gold()
         self.check_potions_taken()
-        self.add_keys_to_inv()
         self.check_chest()
         self.check_sprite_updates()
+        self.add_keys()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))

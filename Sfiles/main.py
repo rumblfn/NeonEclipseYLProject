@@ -1,3 +1,5 @@
+import random
+
 from dataConsts import *
 import pygame.mixer_music
 from main_game_level import *
@@ -26,14 +28,14 @@ def sleeper():
     global sleeper_status, sleeper_status_for_loading, sleeper_time
     sleeper_loading = 1
     sleeper_status = False
-    new_time = sleeper_time / FPS
 
+    new_time = sleeper_time
     while True:
-        new_time -= 1
         sleeper_time -= 60
-        if new_time <= 0:
+        if sleeper_time <= 0:
             break
         clock.tick(1)
+
     sleeper_status_for_loading = True
 
     sleep(sleeper_loading)
@@ -86,6 +88,8 @@ def main_game(server_player, net, play_main):
     maps = [map1, map2, map3, map4, map5]
     # random.shuffle(maps)
     i = -1
+    interface.prepare_for_main()
+
     while server_player.wins < 3 and server_player.loses < 3:
         i += 1
         network = copy(net)
@@ -143,21 +147,19 @@ def main_game(server_player, net, play_main):
     game_end(server_player, net)
 
 
-def default_settings():
-    pass
-
-
 def game_end(server_player, network):
     f2 = pygame.font.SysFont('serif', 48)
     if server_player.wins > 2:
-        text = f2.render("Congratulations, You win", False, (0, 180, 0))
+        text = f2.render(victory_texts[random.randint(0, 2)], True, (0, 255, 0))
     else:
-        text = f2.render("Loooooooser", False, (0, 180, 0))
+        text = f2.render(defeat_texts[random.randint(0, 2)], True, (0, 255, 0))
     run = True
     server_player.ready = False
+    waiting_time = waiting_after_ending_game
     while run:
+        waiting_time -= 1
         screen.fill((0, 0, 0))
-        screen.blit(text, (10, 10))
+        screen.blit(text, (30, 10))
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -168,8 +170,16 @@ def game_end(server_player, network):
                 network.send(server_player)
                 pygame.quit()
                 sys.exit()
-        sleep(5)
-        break
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    run = False
+                    server_player.ready = False
+                    server_player.wins = 0
+                    server_player.loses = 0
+                    network.send(server_player)
+        if waiting_time <= 0:
+            run = False
+        clock.tick(FPS)
 
     main_menu(server_player, network)
 
@@ -295,6 +305,8 @@ def change_objects(w, h):
 
 
 def main_menu(server_player=False, net=False):
+    global sleeper_time, new_time
+    sleeper_time = new_time
     run = True
     if not server_player:
         pygame.init()

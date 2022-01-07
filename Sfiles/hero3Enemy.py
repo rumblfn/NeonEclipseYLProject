@@ -62,6 +62,7 @@ class Enemy_hero3(pygame.sprite.Sprite):
 
         self.normal_image_left = self.images['attack_e_left'][0]
         self.normal_image_right = self.images['attack_e_right'][0]
+        self.image.fill((0, 0, 0, 0))
         self.image.blit(self.normal_image_left, (0, 0))
 
     def start_e(self):

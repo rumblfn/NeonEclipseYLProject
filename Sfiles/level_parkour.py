@@ -266,6 +266,7 @@ class LevelParkour:
         if player.K_x:
             for portal in self.portals:
                 if portal.rect.colliderect(player.rect):
+                    player.K_x = True
                     self.player_settings['gold'] = gold_max - len(list(self.golds))
                     self.portalParkour = True
                     return True
@@ -557,6 +558,7 @@ class LevelParkour:
 
         if self.player.sprite.rect.y > self.height:
             self.check_fall = True
+            self.player_sprite.K_x = True
 
     def events_check(self):
         if self.gold_taken:

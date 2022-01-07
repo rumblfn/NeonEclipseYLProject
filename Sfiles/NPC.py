@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from map_preparation_settings import level1_map
 
@@ -41,7 +43,7 @@ class BlackSmith(pygame.sprite.Sprite):
 
         self.items = dict()
         if hero_name == 'Hero1':
-            self.items = {'1_bs': 'static/red_gem.png',
+            self.items = {'1_bs': 'static/Nak_r.png',
                           '2_bs': 'static/yellow_gem.png'
                           }
         if hero_name == 'Hero3':
@@ -49,6 +51,7 @@ class BlackSmith(pygame.sprite.Sprite):
                           '2_bs': 'static/yellow_gem.png'
                           }
 
+        self.hero_name = hero_name
         self.bought_items = []
         self.purchase_done = False
 
@@ -142,7 +145,8 @@ class BlackSmith(pygame.sprite.Sprite):
                 if self.btn_first.collidepoint((mx, my)):
                     self.plus_first(player)
                 elif self.btn_second.collidepoint((mx, my)):
-                    self.plus_second(player)
+                    pass
+                    # self.plus_second(player)
 
     def show_info(self, arg):
         if not arg:
@@ -166,6 +170,9 @@ class BlackSmith(pygame.sprite.Sprite):
             player['b_cards'] -= 7
             self.bought_items.append('2_bs')
             self.purchase_done = True
+
+    def update_player_characteristics(self, sprite):
+        pass
 
 
 class Librarian(pygame.sprite.Sprite):
@@ -201,6 +208,8 @@ class Librarian(pygame.sprite.Sprite):
                           '3_lib': 'static/blue_gem.png',
                           '4_lib': 'static/red_gem.png',
                           '5_lib': 'static/yellow_gem.png'}
+
+        self.hero_name = hero_name
 
         self.bought_items = []
         self.purchase_done = False
@@ -319,17 +328,23 @@ class Librarian(pygame.sprite.Sprite):
         if not is_on_check:
             is_on_check = True
             if self.btn_h.collidepoint((mx, my)):
-                self.show_info('h_lib')
+                info = 'increase the maximum health reserve by 10%' if self.hero_name == 'Hero1' else '1'
+                self.show_info(info, 1)
             elif self.btn_a.collidepoint((mx, my)):
-                self.show_info('a_lib')
+                info = 'increase attack power by 4' if self.hero_name == 'Hero1' else '2'
+                self.show_info(info, 1)
             elif self.btn_q.collidepoint((mx, my)):
-                self.show_info('q_lib')
+                info = '30% increase in recoverable health after using the super (buttonQ)' if self.hero_name == 'Hero1' else '3'
+                self.show_info(info, 2)
             elif self.btn_e.collidepoint((mx, my)):
-                self.show_info('e_lib')
+                info = "increase the enemy's deceleration time by 10% after hitting the enemy with the " \
+                       "second attack (E button)" if self.hero_name == 'Hero1' else '4'
+                self.show_info(info, 2)
             elif self.btn_k.collidepoint((mx, my)):
-                self.show_info('k_lib')
+                info = 'increase the force coefficient of a normal attack during the action of super by 23% (Q button)' if self.hero_name == 'Hero1' else '5'
+                self.show_info(info, 2)
             else:
-                self.show_info(False)
+                self.show_info(False, 0)
         else:
             is_on_check = False
 
@@ -348,16 +363,24 @@ class Librarian(pygame.sprite.Sprite):
                 elif self.btn_k.collidepoint((mx, my)):
                     self.plus_k(player)
 
-    def show_info(self, arg):
+    def show_info(self, arg, strings):
         if not arg:
-            font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
+            font = pygame.font.SysFont('Avenir Next', round((25 * self.w) / 1536))
             info = font.render('', True, (255, 255, 255))
             self.screen.blit(info, (self.info_x + round((15 * self.w) / 1536), self.info_y + round((15 * self.h) / 864)))
         else:
-            font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
-            info = font.render(arg, True, (255, 255, 255))
-            self.screen.blit(info,
+            font = pygame.font.SysFont('Avenir Next', round((25 * self.w) / 1536))
+            if strings > 1:
+                arg = arg.split(' ')
+                info1 = font.render(' '.join(arg[:len(arg) // 2]), True, (255, 255, 255))
+                info2 = font.render(' '.join(arg[len(arg) // 2:]), True, (255, 255, 255))
+            else:
+                info1 = font.render(arg, True, (255, 255, 255))
+                info2 = font.render('', True, (255, 255, 255))
+            self.screen.blit(info1,
                              (self.info_x + round((15 * self.w) / 1536), self.info_y + round((15 * self.h) / 864)))
+            self.screen.blit(info2,
+                             (self.info_x + round((15 * self.w) / 1536), self.info_y + round((45 * self.h) / 864)))
 
     def plus_attack(self, player):
         if player['gold'] - 5 >= 0 and '1_lib' not in self.bought_items:
