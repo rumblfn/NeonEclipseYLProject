@@ -152,7 +152,7 @@ class Player_hero1(pygame.sprite.Sprite):
             self.resistance_potion = False
             self.recharge_potion = True
 
-        if mouse[1]:
+        if keys[pygame.K_x]:
             if self.speed_potion:
                 self.speed_potion = False
                 if self.speed_potion_count > 0:

@@ -104,7 +104,6 @@ def main_game(server_player, net, play_main):
         player_enemy = network.send(server_player)
         level = LevelG(maps[i], screen, player_main, player_enemy, network, server_player, interface)
         level.player_sprite.block_moving = False
-        print(server_player.wins, server_player.loses)
         if server_player.loses >= 3:
             server_player.win = False
             break
@@ -255,6 +254,10 @@ def map_preparation(player, network, player_settings):
         if level.portalParkour:
             pygame.mixer.music.stop()
             portalParkourMap(screen, level.player)
+        if level.rerun_level:
+            level.rerun_player()
+            level.rerun_level = False
+            continue
         clock.tick(FPS)
 
 
