@@ -103,6 +103,12 @@ class Player_hero3(pygame.sprite.Sprite):
         self.resistance_potion_timer_max = 300
         self.resistance_potion_timer_ACTIVE = False
 
+        self.repulsion_weapon = False  # value to change
+        self.aa_repulsion = False
+        self.button_s = True
+        self.timer_button_s = 0
+        self.timer_button_s_max = 60
+
     def set_first_params(self):
         self.power = self.player_settings['attack power']
         self.maxHp = self.player_settings['maxHp']
@@ -194,6 +200,18 @@ class Player_hero3(pygame.sprite.Sprite):
                 self.server_player.Q = False
         if self.Q_STUN_TIMER <= 120:
             self.Q_STUN_TIMER += 1
+
+        if self.repulsion_weapon:
+            if self.button_s:
+                if keys[pygame.K_s]:
+                    self.aa_repulsion = not self.aa_repulsion
+                    self.button_s = False
+
+        if not self.button_s:
+            self.timer_button_s += 1
+            if self.timer_button_s >= self.timer_button_s_max:
+                self.timer_button_s = 0
+                self.button_s = True
 
         if keys[pygame.K_d]:
             self.direction.x = 1

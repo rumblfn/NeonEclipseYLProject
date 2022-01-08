@@ -81,7 +81,7 @@ class Player_hero1(pygame.sprite.Sprite):
         self.HEIGHT = HEIGHT
         self.spring_jump_bool = False
 
-        self.slime_ball = False
+        self.slime_ball = False  # value to change
         self.button_s = True
         self.timer_button_s = 0
         self.timer_button_s_max = 60

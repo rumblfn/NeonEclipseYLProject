@@ -297,10 +297,11 @@ class LevelG:
             self.server_player.diff_x = 0
             if self.player_sprite.AA_ACTIVE and self.player_sprite.CURRENT_SPRITE_AA == 2:
                 if self.player_sprite.rect.colliderect(self.enemy.sprite.rect):
-                    # if self.player_sprite.SIDE == 'right':
-                    #     self.server_player.diff_x = 130
-                    # else:
-                    #     self.server_player.diff_x = -130
+                    if self.player_sprite.aa_repulsion:
+                        if self.player_sprite.SIDE == 'right':
+                            self.server_player.diff_x = 130
+                        else:
+                            self.server_player.diff_x = -130
                     self.server_player.damage_given += self.player_sprite.power
                 if self.player_sprite.Q_ACTIVE:
                     self.player_sprite.Q_END = True
