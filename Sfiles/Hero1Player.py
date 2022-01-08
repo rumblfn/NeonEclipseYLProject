@@ -13,6 +13,14 @@ class Player_hero1(pygame.sprite.Sprite):
 
         HEIGHT = pygame.display.Info().current_h
         WIDTH = pygame.display.Info().current_w
+
+        self.bullet_size = 32 * HEIGHT // 1080
+        self.bullet_normal = pygame.transform.scale(pygame.image.load('static/Harchok.png').convert_alpha(),
+                                              (self.bullet_size, self.bullet_size))
+        self.bullet_slime = pygame.transform.scale(pygame.image.load('static/slimeBallHero1.png').convert_alpha(),
+                                              (self.bullet_size, self.bullet_size))
+        self.bullet_image = self.bullet_normal
+
         self.name = player_settings['name']
         self.power = player_settings['attack power']
         self.maxHp = player_settings['maxHp']
@@ -23,6 +31,11 @@ class Player_hero1(pygame.sprite.Sprite):
         self.speed_kef = 1.4
         self.q_hp_recovery = 10
         self.e_time_speed_to_low = 4
+
+        self.type_of_attack = 0
+        self.poisoning = False
+        self.poisoning_time = 0
+        self.poisoning_time_max = 181
 
         self.bullets = pygame.sprite.Group()
         self.attacksE = pygame.sprite.Group()
@@ -66,8 +79,46 @@ class Player_hero1(pygame.sprite.Sprite):
         self.server_player = None
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
-
         self.spring_jump_bool = False
+
+        self.slime_ball = False  # value to change
+        self.button_s = True
+        self.timer_button_s = 0
+        self.timer_button_s_max = 60
+
+        self.speed_potion_count = 0  # Увеличивает мс на 20%
+        self.resistance_potion_count = 0  # Уменьшает весь входящий урон на  15%
+        self.recharge_potion_count = 0  # Уменьшает время перезарядки обычной атака на 10%
+
+        self.speed_potion = False
+        self.resistance_potion = False
+        self.recharge_potion = False
+
+        self.speed_potion_boost = 0.2
+        self.speed_potion_timer = 0
+        self.speed_potion_timer_max = 300
+        self.speed_potion_timer_ACTIVE = False
+
+        self.resistance_potion_no_save = 0.85
+        self.resistance_potion_timer = 0
+        self.resistance_potion_timer_max = 300
+        self.resistance_potion_timer_ACTIVE = False
+
+    def change_attack(self):
+        if self.type_of_attack == 0:
+            self.type_of_attack = 1
+            self.shoot_bool = 30
+            self.shoot_bool_max = 30
+            self.bullet_image = self.bullet_slime
+            if self.server_player:
+                self.server_player.type_of_attack = 1
+        else:
+            self.type_of_attack = 0
+            self.shoot_bool = 20
+            self.shoot_bool_max = 20
+            self.bullet_image = self.bullet_normal
+            if self.server_player:
+                self.server_player.type_of_attack = 0
 
     def update_size(self, new_width, new_height):
         self.HEIGHT = new_height
@@ -86,12 +137,65 @@ class Player_hero1(pygame.sprite.Sprite):
         self.Q_SLEEPER += 1
         self.current_sprite += 0.25
         keys = pygame.key.get_pressed()
+        mouse = pygame.mouse.get_pressed()
 
-        self.K_x = False
-        if keys[pygame.K_x]:
-            self.K_x = True
+        if keys[pygame.K_1]:
+            self.speed_potion = True
+            self.resistance_potion = False
+            self.recharge_potion = False
+        if keys[pygame.K_2]:
+            self.speed_potion = False
+            self.resistance_potion = True
+            self.recharge_potion = False
+        if keys[pygame.K_3]:
+            self.speed_potion = False
+            self.resistance_potion = False
+            self.recharge_potion = True
+
+        if mouse[1]:
+            if self.speed_potion:
+                self.speed_potion = False
+                if self.speed_potion_count > 0:
+                    self.speed_potion -= 1
+
+                    self.speed_potion_timer_ACTIVE = True
+                    self.speed += self.speed_potion_boost
+            elif self.resistance_potion:
+                self.resistance_potion = False
+                if self.resistance_potion_count > 0:
+                    self.resistance_potion_count -= 1
+
+                    self.resistance_potion_timer_ACTIVE = True
+            elif self.recharge_potion:
+                self.recharge_potion = False
+                if self.recharge_potion_count > 0:
+                    self.recharge_potion_count -= 1
+
+                    self.shoot_bool = self.shoot_bool_max
+                    self.attacksEBool = 300
+                    self.Q_SLEEPER = 1800
+            else:
+                self.K_x = True
         else:
             self.K_x = False
+
+        if mouse[0]:
+            self.speed_potion = False
+            self.resistance_potion = False
+            self.recharge_potion = False
+
+        if self.speed_potion_timer_ACTIVE:
+            self.speed_potion_timer += 1
+            if self.speed_potion_timer >= self.speed_potion_timer_max:
+                self.speed_potion_timer = 0
+                self.speed_potion_timer_ACTIVE = False
+                self.speed -= self.speed_potion_boost
+
+        if self.resistance_potion_timer_ACTIVE:
+            self.resistance_potion_timer += 1
+            if self.resistance_potion_timer >= self.resistance_potion_timer_max:
+                self.resistance_potion_timer = 0
+                self.resistance_potion_timer_ACTIVE = False
 
         if self.Q_ACTIVE:
             self.Q_ACTIVE_TIMER += 1
@@ -106,6 +210,18 @@ class Player_hero1(pygame.sprite.Sprite):
                 if self.server_player:
                     self.server_player.Q = False
                     self.server_player.power /= self.speed_kef
+
+        if self.slime_ball:
+            if self.button_s:
+                if keys[pygame.K_s]:
+                    self.change_attack()
+                    self.button_s = False
+
+        if not self.button_s:
+            self.timer_button_s += 1
+            if self.timer_button_s >= self.timer_button_s_max:
+                self.timer_button_s = 0
+                self.button_s = True
 
         if keys[pygame.K_d]:
             self.direction.x = 1
@@ -142,12 +258,13 @@ class Player_hero1(pygame.sprite.Sprite):
             if self.server_player.simpleAttack:
                 self.server_player.simpleAttack = False
 
-        if pygame.mouse.get_pressed()[0]:
-            if self.shoot_bool >= 20:
+        if mouse[0]:
+            if self.shoot_bool >= self.shoot_bool_max:
                 self.bullets.add(self.create_bullet())
                 if self.server_player:
                     self.server_player.simpleAttack = True
-                    self.server_player.mouse_pos_x, self.server_player.mouse_pos_y = pygame.mouse.get_pos()
+                    mx, my = pygame.mouse.get_pos()
+                    self.server_player.mouse_pos_x, self.server_player.mouse_pos_y = mx * 1920 / self.WIDTH, my * 1080 / self.HEIGHT
 
         if keys[pygame.K_e]:
             if self.attacksEBool >= 300:
@@ -180,7 +297,8 @@ class Player_hero1(pygame.sprite.Sprite):
 
     def create_bullet(self):
         self.shoot_bool = 0
-        return Bullet((self.rect.centerx + 10, self.rect.centery - self.height / 4))
+        return Bullet((self.rect.centerx + 10, self.rect.centery - self.height / 4),
+                      self.bullet_size, self.bullet_image, False)
 
     def apply_gravity(self):
         self.direction.y += self.gravity
@@ -205,5 +323,6 @@ class Player_hero1(pygame.sprite.Sprite):
         self.server_player.power = self.power
 
     def update_server(self):
+        self.server_player.hp = self.hp
         self.server_player.x = (self.rect.x / self.WIDTH) * 1920
         self.server_player.y = (self.rect.y / self.HEIGHT) * 1080

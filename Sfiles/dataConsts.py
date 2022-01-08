@@ -16,6 +16,7 @@ fontTitle = pygame.font.SysFont('SFCompactItalic', 36)
 pygame.mouse.set_visible(False)
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 WI, HE = WIDTH, HEIGHT
+FPS = 60
 clock = pygame.time.Clock()
 
 imageButtonStartGame = pygame.image.load('static/StartGame.png')
@@ -116,3 +117,9 @@ images_round_starting = []
 for i in range(7, 13):
     images_round_starting.append(pygame.transform.scale(pygame.image.load(f'static/game_round/round_bg{i}.png'),
                                                         (WIDTH, HEIGHT)))
+
+sleeper_time = 3 * FPS
+new_time = sleeper_time
+victory_texts = ['the game ended with a victory', 'victory!', 'Congratulations, You win!']
+defeat_texts = ['Defeat, good luck in the next game', 'Loooooooser', "You've lost"]
+waiting_after_ending_game = 10 * FPS

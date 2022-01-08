@@ -81,10 +81,33 @@ class Player_hero3(pygame.sprite.Sprite):
         self.gravity = 0.8 * self.HEIGHT / 900
         self.jump_speed = -18 * self.HEIGHT / 900
         self.jump_bool = True
+        self.spring_jump_bool = False
 
         self.server_player = None
 
-        self.spring_jump_bool = False
+        self.speed_potion_count = 0  # Увеличивает мс на 20%
+        self.resistance_potion_count = 0  # Уменьшает весь входящий урон на  15%
+        self.recharge_potion_count = 0  # Уменьшает время перезарядки обычной атака на 10%
+
+        self.speed_potion = False
+        self.resistance_potion = False
+        self.recharge_potion = False
+
+        self.speed_potion_boost = 0.2
+        self.speed_potion_timer = 0
+        self.speed_potion_timer_max = 300
+        self.speed_potion_timer_ACTIVE = False
+
+        self.resistance_potion_no_save = 0.85
+        self.resistance_potion_timer = 0
+        self.resistance_potion_timer_max = 300
+        self.resistance_potion_timer_ACTIVE = False
+
+        self.repulsion_weapon = False  # value to change
+        self.aa_repulsion = False
+        self.button_s = True
+        self.timer_button_s = 0
+        self.timer_button_s_max = 60
 
     def set_first_params(self):
         self.power = self.player_settings['attack power']
@@ -102,6 +125,63 @@ class Player_hero3(pygame.sprite.Sprite):
         self.CURRENT_SPRITE += 0.2
         self.CURRENT_SPRITE_Q += 0.2
         keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_1]:
+            self.speed_potion = True
+            self.resistance_potion = False
+            self.recharge_potion = False
+        if keys[pygame.K_2]:
+            self.speed_potion = False
+            self.resistance_potion = True
+            self.recharge_potion = False
+        if keys[pygame.K_3]:
+            self.speed_potion = False
+            self.resistance_potion = False
+            self.recharge_potion = True
+
+        if keys[pygame.K_x]:
+            if self.speed_potion:
+                self.speed_potion = False
+                if self.speed_potion_count > 0:
+                    self.speed_potion -= 1
+                    self.speed_potion_timer_ACTIVE = True
+                    self.speed += self.speed_potion_boost
+
+            elif self.resistance_potion:
+                self.resistance_potion = False
+                if self.resistance_potion_count > 0:
+                    self.resistance_potion_count -= 1
+                    self.resistance_potion_timer_ACTIVE = True
+
+            elif self.recharge_potion:
+                self.recharge_potion = False
+                if self.recharge_potion_count > 0:
+                    self.recharge_potion_count -= 1
+                    self.AA_TIMER = 42
+                    self.E_TIMER = 480
+                    self.Q_ACTIVE_TIMER = 720
+            else:
+                self.K_x = True
+        else:
+            self.K_x = False
+
+        if keys[pygame.K_z]:
+            self.speed_potion = False
+            self.resistance_potion = False
+            self.recharge_potion = False
+
+        if self.speed_potion_timer_ACTIVE:
+            self.speed_potion_timer += 1
+            if self.speed_potion_timer >= self.speed_potion_timer_max:
+                self.speed_potion_timer = 0
+                self.speed_potion_timer_ACTIVE = False
+                self.speed -= self.speed_potion_boost
+
+        if self.resistance_potion_timer_ACTIVE:
+            self.resistance_potion_timer += 1
+            if self.resistance_potion_timer >= self.resistance_potion_timer_max:
+                self.resistance_potion_timer = 0
+                self.resistance_potion_timer_ACTIVE = False
 
         if self.Q_ACTIVE:
             self.Q_TIMER += 1
@@ -121,11 +201,18 @@ class Player_hero3(pygame.sprite.Sprite):
         if self.Q_STUN_TIMER <= 120:
             self.Q_STUN_TIMER += 1
 
-        self.K_x = False
-        if keys[pygame.K_x]:
-            self.K_x = True
-        else:
-            self.K_x = False
+        if self.repulsion_weapon:
+            if self.button_s:
+                if keys[pygame.K_s]:
+                    self.aa_repulsion = not self.aa_repulsion
+                    self.button_s = False
+
+        if not self.button_s:
+            self.timer_button_s += 1
+            if self.timer_button_s >= self.timer_button_s_max:
+                self.timer_button_s = 0
+                self.button_s = True
+
         if keys[pygame.K_d]:
             self.direction.x = 1
             self.image.fill((0, 0, 0, 0))
@@ -280,5 +367,6 @@ class Player_hero3(pygame.sprite.Sprite):
         self.server_player.power = self.power
 
     def update_server(self):
+        self.server_player.hp = self.hp
         self.server_player.x = (self.rect.x / self.WIDTH) * 1920
         self.server_player.y = (self.rect.y / self.HEIGHT) * 1080

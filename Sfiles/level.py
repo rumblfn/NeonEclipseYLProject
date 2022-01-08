@@ -9,7 +9,8 @@ from pygame.locals import *
 
 
 class Level:
-    def __init__(self, level_data, surface, player_settings, interface):
+    def __init__(self, level_data, surface, player_settings, interface, sleeper_time):
+        self.sleeper_time = sleeper_time
         self.display_surface = surface
         self.level_data = level_data
         self.player_settings = player_settings
@@ -213,6 +214,11 @@ class Level:
         txt_surf = newFont.render(text, False, (255, 183, 0))
         self.display_surface.blit(txt_surf, (self.width - round((s * self.width) / 1536), round((20 * self.width) / 1536)))
 
+    def add_keys(self):
+        if self.keys_count != self.player_settings['keys']:
+            self.keys_count = self.player_settings['keys']
+            self.interface.add_keys(self.player_settings['keys'], self.player_settings)
+
     def check_potions_taken(self):
         player = self.player.sprite
         for pot in self.potions:
@@ -239,11 +245,6 @@ class Level:
                 chest.redraw_block()
                 chest.opened = True
                 self.interface.add_blacksmith_card(self.player_settings, chest)
-
-    def add_keys(self):
-        if self.keys_count != self.player_settings['keys']:
-            self.keys_count = self.player_settings['keys']
-            self.interface.add_keys(self.player_settings['keys'], self.player_settings)
 
     def check_sprite_updates(self):
         for sprite in self.npces.sprites():
@@ -305,3 +306,4 @@ class Level:
                                                self.player_sprite.Q_ACTIVE_TIMER, self.player_sprite.Q_ACTIVE_TIMER_MAX)
 
         self.interface.draw(self.player_sprite.hp, self.player_sprite.maxHp, self.player_sprite.power)
+        self.interface.draw_lvl_progress_time(self.sleeper_time)

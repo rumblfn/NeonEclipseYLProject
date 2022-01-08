@@ -17,7 +17,7 @@ class ElectorWindow:
         self.IMAGE_BLOCK_HEIGHT = round((140 / 864) * h)
         self.IMAGE_BLOCK_WIDTH1 = round((140 / 1536) * w)
         self.IMAGE_BLOCK_WIDTH2 = round((50 / 1536) * w)
-        self.BORDER_WIDTH = 4
+        self.BORDER_WIDTH = 3
 
         self.ARROW_LEFT_X1 = round((self.WIDGET_WIDTH / 10) + self.X_LEFT_TOP)
         self.ARROW_LEFT_Y1 = round((self.WIDGET_HEIGHT / 2 - self.ARROW_HEIGHT / 2) + self.Y_LEFT_TOP)
@@ -76,6 +76,8 @@ class ElectorWindow:
         self.screen.blit(arr_right, (self.ARROW_RIGHT_X1, self.ARROW_RIGHT_Y1))
 
     def draw_image_block(self, src):
+        width = 0
+        width_help = 0
         if self.heroes[-1]['name'] == 'Hero1':
             width = self.IMAGE_BLOCK_WIDTH1
             width_help = 0
@@ -83,12 +85,12 @@ class ElectorWindow:
             width = self.IMAGE_BLOCK_WIDTH2
             width_help = self.IMAGE_BLOCK_WIDTH1 // 2 - width // 2
         img = pygame.transform.scale(src,
-                                       (width - self.BORDER_WIDTH, self.IMAGE_BLOCK_HEIGHT - self.BORDER_WIDTH))
+                                       (width - self.BORDER_WIDTH, self.IMAGE_BLOCK_HEIGHT - self.BORDER_WIDTH - 1))
         pygame.draw.rect(self.screen, self.borderColor,
                          (self.IMAGE_BLOCK_X1, self.IMAGE_BLOCK_Y1, self.IMAGE_BLOCK_WIDTH1, self.IMAGE_BLOCK_HEIGHT),
                          self.BORDER_WIDTH)
         self.screen.blit(img,
-                         (self.IMAGE_BLOCK_X1 + self.BORDER_WIDTH / 2 + width_help, self.IMAGE_BLOCK_Y1 + self.BORDER_WIDTH / 2))
+                         (self.IMAGE_BLOCK_X1 + self.BORDER_WIDTH / 2 + width_help, self.IMAGE_BLOCK_Y1 + self.BORDER_WIDTH / 2 + 1))
 
     def change_image(self, arg):
         if arg[0] == 'mouse':

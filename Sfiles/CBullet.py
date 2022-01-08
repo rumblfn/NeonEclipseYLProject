@@ -1,23 +1,22 @@
 import pygame
 import math
 
-WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
-size = 24 * WIDTH // 1440
-bullet_image = pygame.transform.scale(pygame.image.load('static/Harchok.png').convert_alpha(), (size, size))
-
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, pos, mouse_pos=False):
+    def __init__(self, pos, bullet_size, img, mouse_pos=False):
         super().__init__()
-        self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-        self.image.blit(bullet_image, (0, 0))
+        self.image = pygame.Surface((bullet_size, bullet_size), pygame.SRCALPHA)
+        self.image.blit(img, (0, 0))
         self.rect = self.image.get_rect(center=pos)
         self.speed = 10
+
+        self.collide_count = 0
 
         if not mouse_pos:
             m_x, m_y = pygame.mouse.get_pos()
         else:
             m_x, m_y = mouse_pos
+
         bullet_x, bullet_y = pos
         distance_x = m_x - bullet_x
         distance_y = m_y - bullet_y
@@ -28,7 +27,7 @@ class Bullet(pygame.sprite.Sprite):
     def move(self):
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
-        if self.rect.x > WIDTH or self.rect.x < 0 or self.rect.y > HEIGHT or self.rect.y < 0:
+        if self.rect.x > 2000 or self.rect.x < 0 or self.rect.y > 1100 or self.rect.y < 0:
             self.kill()
 
     def update(self, shift):

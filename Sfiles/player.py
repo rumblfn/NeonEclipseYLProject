@@ -18,7 +18,8 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.ready = True  # True None
+        self.type_of_attack = 0
+        self.ready = True  # True
         self.wins = 0
         self.loses = 0
         self.win = None
@@ -112,7 +113,6 @@ class Player_map_parkour(pygame.sprite.Sprite):
         self.current_sprite += 0.25
         keys = pygame.key.get_pressed()
 
-        self.K_x = False
         if keys[pygame.K_x]:
             self.K_x = True
         else:
