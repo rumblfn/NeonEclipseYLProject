@@ -19,7 +19,7 @@ class Player:
         self.x = x
         self.y = y
         self.type_of_attack = 0
-        self.ready = True  # True
+        self.ready = False  # True
         self.wins = 0
         self.loses = 0
         self.win = None

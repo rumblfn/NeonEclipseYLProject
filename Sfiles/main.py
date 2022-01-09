@@ -106,6 +106,7 @@ def main_game(server_player, net, play_main):
         level.player_sprite.block_moving = False
         if server_player.loses >= 3:
             server_player.win = False
+            menuWidgetStatistics.update_info(False)
             break
 
         for j in range(0, 55, 5):
@@ -143,6 +144,7 @@ def main_game(server_player, net, play_main):
 
         if server_player.wins >= 3:
             server_player.win = True
+            menuWidgetStatistics.update_info(True)
     game_end(server_player, net)
 
 
@@ -270,6 +272,7 @@ def change_objects(w, h):
         menuWidgetAboutHero, \
         menuWidgetScreenSize, \
         menuWidgetSlider, \
+        menuWidgetStatistics, \
         WIDTH, HEIGHT, \
         HEROES, interface, images_round_starting, images_round_ending
     objAllHeroesWidget = {'x1': round(0.545 * w), 'y1': round((87 / 750) * h),
@@ -288,6 +291,7 @@ def change_objects(w, h):
     menuWidgetAboutHero = AboutHeroWindow(screen, font, menuWidgetAllHeroes, w, h)
     menuWidgetScreenSize = ScreenSizeWindow(screen, font, w, h)
     menuWidgetSlider = SliderWindow(screen, w, h)
+    menuWidgetStatistics = StatisticsWindow(screen, w, h)
     interface = Interface(w, h, screen)
     WIDTH, HEIGHT = w, h
     if bool(menuWidgetSlider.vol_changed):
@@ -340,6 +344,7 @@ def main_menu(server_player=False, net=False):
         menuWidgetAboutHero.draw_widget()
         menuWidgetScreenSize.draw_widget()
         menuWidgetSlider.draw_widget()
+        menuWidgetStatistics.draw_widget()
         draw_cursor(screen)
         pygame.display.flip()
 

@@ -5,6 +5,7 @@ from menuWidgetElector import ElectorWindow
 from menuWidgetAboutHero import AboutHeroWindow
 from menuWidgetSetScreen import ScreenSizeWindow
 from menuWidgetSlider import SliderWindow
+from menuWidgetStatistics import StatisticsWindow
 from backgtoundClasses import *
 from player_interface import Interface
 
@@ -104,6 +105,7 @@ menuWidgetElector = ElectorWindow(screen, font, menuWidgetAllHeroes, WIDTH, HEIG
 menuWidgetAboutHero = AboutHeroWindow(screen, font, menuWidgetAllHeroes, WIDTH, HEIGHT)
 menuWidgetScreenSize = ScreenSizeWindow(screen, font, WIDTH, HEIGHT)
 menuWidgetSlider = SliderWindow(screen, WIDTH, HEIGHT)
+menuWidgetStatistics = StatisticsWindow(screen, WIDTH, HEIGHT)
 bgMenu = BackgroundMenu(screen, background_menu)
 bgMapPreparation = Background(screen, background_map_preparation_with_opacity)
 interface = Interface(WIDTH, HEIGHT, screen)
