@@ -78,6 +78,11 @@ class Interface:
         self.pos2_center = self.pos2.center
         self.pos3_center = self.pos3.center
 
+    def add_dicts(self, lib, bs):
+        self.item_dict = {**lib, **bs, **{'V': 'static/potion1.png',
+                             'G': 'static/potion2.png',
+                             'Y': 'static/potion3.png'}}
+
     def draw_attacks_timers(self, time_aa, time_aa_max, time_e, time_e_max, time_q, time_q_max):
         t_a = round((time_aa_max - time_aa) / 60, 1)
         t_e = round((time_e_max - time_e) / 60, 1)
@@ -171,8 +176,9 @@ class Interface:
                 self.inventory.append(all_items[i])
 
     def add_inventory_potions(self, potion, all_potions):
+        if potion.cell not in self.bought_items_interface:
+            self.inventory.append(all_potions[potion.cell])
         self.bought_items_interface.append(potion.cell)
-        self.inventory.append(all_potions[potion.cell])
 
     def add_keys(self, keys, sprite):
         self.sprite = sprite
@@ -256,16 +262,17 @@ class Interface:
                 if i == self.current_item:
                     pygame.draw.rect(self.itemImageSurface, (0, 255, 0), (0, 0, round(50 * self.sprite_kef), round(50 * self.sprite_kef)), 6, 4)
                 self.itemImageSurface.blit(itemImage, (6, 6))
+
                 if item == 'static/chest_key.png':
                     text = f'{self.keys_count}'
-                    newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
-                    txt_surf = newFont.render(text, False, (255, 183, 0))
-                    self.itemImageSurface.blit(txt_surf, (10, 10))
-                if item == 'static/blacksmith_card.png':
+                elif item == 'static/blacksmith_card.png':
                     text = f'{self.cards_count}'
-                    newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
-                    txt_surf = newFont.render(text, False, (255, 183, 0))
-                    self.itemImageSurface.blit(txt_surf, (10, 10))
+                else:
+                    key = list(self.item_dict.keys())[list(self.item_dict.values()).index(item)]
+                    text = str(self.bought_items_interface.count(key))
+                newFont = pygame.font.SysFont('SFCompact', round((20 * self.screen_width) / 1536))
+                txt_surf = newFont.render(text, False, (0, 255, 0))
+                self.itemImageSurface.blit(txt_surf, (10, 10))
 
                 self.screen.blit(self.itemImageSurface,
                                      ((self.screen_width - 50 * self.sprite_kef * (i + 2) - 10 * (i + 2),

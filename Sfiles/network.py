@@ -1,7 +1,6 @@
 import socket
 import pythonFB
 import pickle
-from time import sleep
 
 
 class Network:

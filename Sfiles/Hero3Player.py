@@ -125,6 +125,7 @@ class Player_hero3(pygame.sprite.Sprite):
         self.CURRENT_SPRITE += 0.2
         self.CURRENT_SPRITE_Q += 0.2
         keys = pygame.key.get_pressed()
+        mouse = pygame.mouse.get_pressed()
 
         if keys[pygame.K_1]:
             self.speed_potion = True
@@ -139,7 +140,7 @@ class Player_hero3(pygame.sprite.Sprite):
             self.resistance_potion = False
             self.recharge_potion = True
 
-        if keys[pygame.K_x]:
+        if mouse[1]:
             if self.speed_potion:
                 self.speed_potion = False
                 if self.speed_potion_count > 0:
@@ -160,12 +161,13 @@ class Player_hero3(pygame.sprite.Sprite):
                     self.AA_TIMER = 42
                     self.E_TIMER = 480
                     self.Q_ACTIVE_TIMER = 720
-            else:
-                self.K_x = True
+
+        if keys[pygame.K_x]:
+            self.K_x = True
         else:
             self.K_x = False
 
-        if keys[pygame.K_z]:
+        if mouse[0]:
             self.speed_potion = False
             self.resistance_potion = False
             self.recharge_potion = False
@@ -294,7 +296,7 @@ class Player_hero3(pygame.sprite.Sprite):
         if self.CURRENT_SPRITE_Q >= 5.8:
             self.CURRENT_SPRITE_Q = 0
 
-        if pygame.mouse.get_pressed()[0]:
+        if mouse[0]:
             if self.AA_TIMER >= 42:
                 self.AA_ACTIVE = True
                 if self.server_player:

@@ -1,5 +1,4 @@
 import pygame
-from random import randint
 
 
 class Ball_gun(pygame.sprite.Sprite):

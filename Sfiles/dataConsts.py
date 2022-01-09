@@ -1,4 +1,3 @@
-import pygame
 from menuWidgetAllHeroes import AllHeroesWindow
 from menuWidgetAboutGame import AboutGameWindow
 from menuWidgetElector import ElectorWindow
@@ -118,7 +117,7 @@ for i in range(7, 13):
     images_round_starting.append(pygame.transform.scale(pygame.image.load(f'static/game_round/round_bg{i}.png'),
                                                         (WIDTH, HEIGHT)))
 
-sleeper_time = 3 * FPS
+sleeper_time = 300 * FPS
 new_time = sleeper_time
 victory_texts = ['the game ended with a victory', 'victory!', 'Congratulations, You win!']
 defeat_texts = ['Defeat, good luck in the next game', 'Loooooooser', "You've lost"]

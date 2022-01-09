@@ -1,5 +1,3 @@
-import random
-
 import pygame
 from map_preparation_settings import level1_map
 
@@ -44,11 +42,9 @@ class BlackSmith(pygame.sprite.Sprite):
         self.items = dict()
         if hero_name == 'Hero1':
             self.items = {'1_bs': 'static/Nak_r.png',
-                          '2_bs': 'static/yellow_gem.png'
                           }
         if hero_name == 'Hero3':
             self.items = {'1_bs': 'static/hero3-bs-item1.png',
-                          '2_bs': 'static/yellow_gem.png'
                           }
 
         self.hero_name = hero_name
@@ -68,8 +64,7 @@ class BlackSmith(pygame.sprite.Sprite):
         self.icon_h = self.icon_w
         self.icon_y = self.msg_h // 3 - self.icon_h // 4 + self.msg_y
 
-        self.icon_1_x = self.msg_x + self.msg_w // 2 - self.icon_w - self.msg_space
-        self.icon_2_x = self.msg_x + self.msg_w // 2 + self.msg_space
+        self.icon_1_x = self.msg_x + self.msg_w // 2 - self.icon_w // 2
 
         self.info_x = self.msg_x + round((140 * self.w) / 1536)
         self.info_y = self.msg_y + self.msg_h // 2
@@ -89,16 +84,6 @@ class BlackSmith(pygame.sprite.Sprite):
         self.btn_first = pygame.draw.rect(self.screen, (255, 255, 255), (self.icon_1_x, self.icon_y, self.icon_w, self.icon_h))
         self.screen.blit(first, (self.icon_1_x, self.icon_y))
 
-        second = pygame.Surface((self.icon_w, self.icon_h))
-        if '2_bs' not in self.bought_items:
-            second_img = pygame.transform.scale(pygame.image.load(self.items['2_bs']), (self.icon_w, self.icon_h))
-            second.blit(second_img, (0, 0))
-        else:
-            second_img = pygame.transform.scale(pygame.image.load('static/bs-ItemNone.png'), (self.icon_w, self.icon_h))
-            second.blit(second_img, (0, 0))
-        self.btn_second = pygame.draw.rect(self.screen, (255, 255, 255), (self.icon_2_x, self.icon_y, self.icon_w, self.icon_h))
-        self.screen.blit(second, (self.icon_2_x, self.icon_y))
-
         pygame.draw.rect(self.screen, (66, 49, 137),
                          (self.info_x, self.info_y, self.info_w, self.info_h), round((10 * self.w) / 1536), 10)
 
@@ -107,19 +92,14 @@ class BlackSmith(pygame.sprite.Sprite):
 
         font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
 
-        for i in range(2):
-            if i == 0:
-                self.text_x = self.msg_x + self.msg_w / 2 - self.icon_w - self.msg_space + round((10 * self.w) / 1536)
-                self.card_x = self.msg_x + self.msg_w / 2 - self.icon_w - self.msg_space + self.card_size
-            else:
-                self.text_x = self.msg_x + self.msg_w / 2 + self.msg_space + round((10 * self.w) / 1536)
-                self.card_x = self.msg_x + self.msg_w / 2 + self.msg_space + self.card_size
-            card_img = pygame.transform.scale(pygame.image.load('static/blacksmith_card.png'),
-                                              (self.card_size, self.card_size))
-            self.screen.blit(card_img, (self.card_x, self.msg_y + round((76 * self.h) / 864)))
+        self.text_x = self.msg_x + self.msg_w // 2 - self.icon_w // 2 + round((10 * self.w) / 1536)
+        self.card_x = self.msg_x + self.msg_w // 2 - self.icon_w // 2 + self.card_size
+        card_img = pygame.transform.scale(pygame.image.load('static/blacksmith_card.png'),
+                                          (self.card_size, self.card_size))
+        self.screen.blit(card_img, (self.card_x, self.msg_y + round((76 * self.h) / 864)))
 
-            price = font.render('7', True, (255, 255, 255))
-            self.screen.blit(price, (self.text_x, self.msg_y + round((80 * self.h) / 864)))
+        price = font.render('7', True, (255, 255, 255))
+        self.screen.blit(price, (self.text_x, self.msg_y + round((80 * self.h) / 864)))
 
     def update(self, shift):
         self.rect.x += shift[0]
@@ -130,11 +110,12 @@ class BlackSmith(pygame.sprite.Sprite):
         if not is_on_check:
             is_on_check = True
             if self.btn_first.collidepoint((mx, my)):
-                self.show_info('1_bs')
-            elif self.btn_second.collidepoint((mx, my)):
-                self.show_info('2_bs')
+                if self.hero_name == 'Hero1':
+                    self.show_info('potions enemy, causing additional damage', 1)
+                if self.hero_name == 'Hero3':
+                    self.show_info('slows down enemy attacks', 1)
             else:
-                self.show_info(False)
+                self.show_info(False, 0)
         else:
             is_on_check = False
 
@@ -144,20 +125,26 @@ class BlackSmith(pygame.sprite.Sprite):
                 mx, my = pygame.mouse.get_pos()
                 if self.btn_first.collidepoint((mx, my)):
                     self.plus_first(player)
-                elif self.btn_second.collidepoint((mx, my)):
-                    pass
-                    # self.plus_second(player)
 
-    def show_info(self, arg):
+    def show_info(self, arg, strings):
         if not arg:
-            font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
+            font = pygame.font.SysFont('Avenir Next', round((25 * self.w) / 1536))
             info = font.render('', True, (255, 255, 255))
-            self.screen.blit(info, (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
-        else:
-            font = pygame.font.SysFont('Avenir Next', round((50 * self.w) / 1536))
-            info = font.render(arg, True, (255, 255, 255))
             self.screen.blit(info,
-                             (self.info_x + round((10 * self.w) / 1536), self.info_y + round((10 * self.h) / 864)))
+                             (self.info_x + round((15 * self.w) / 1536), self.info_y + round((15 * self.h) / 864)))
+        else:
+            font = pygame.font.SysFont('Avenir Next', round((25 * self.w) / 1536))
+            if strings > 1:
+                arg = arg.split(' ')
+                info1 = font.render(' '.join(arg[:len(arg) // 2]), True, (255, 255, 255))
+                info2 = font.render(' '.join(arg[len(arg) // 2:]), True, (255, 255, 255))
+            else:
+                info1 = font.render(arg, True, (255, 255, 255))
+                info2 = font.render('', True, (255, 255, 255))
+            self.screen.blit(info1,
+                             (self.info_x + round((15 * self.w) / 1536), self.info_y + round((15 * self.h) / 864)))
+            self.screen.blit(info2,
+                             (self.info_x + round((15 * self.w) / 1536), self.info_y + round((45 * self.h) / 864)))
 
     def plus_first(self, player):
         if player['b_cards'] - 7 >= 0 and '1_bs' not in self.bought_items:
@@ -165,14 +152,12 @@ class BlackSmith(pygame.sprite.Sprite):
             self.bought_items.append('1_bs')
             self.purchase_done = True
 
-    def plus_second(self, player):
-        if player['b_cards'] - 7 >= 0 and '2_bs' not in self.bought_items:
-            player['b_cards'] -= 7
-            self.bought_items.append('2_bs')
-            self.purchase_done = True
-
     def update_player_characteristics(self, sprite):
-        pass
+        if self.bought_items[-1] == '1_bs':
+            if sprite.name == 'Hero1':
+                sprite.slime_ball = True
+            if sprite.name == 'Hero3':
+                sprite.repulsion_weapon = True
 
 
 class Librarian(pygame.sprite.Sprite):
@@ -203,11 +188,11 @@ class Librarian(pygame.sprite.Sprite):
                           '4_lib': 'static/hero1_librarian/e_hero1_freeze_time_upgrade.png',
                           '5_lib': 'static/hero1_librarian/hero1_e_power_keff.png'}
         if hero_name == 'Hero3':
-            self.items = {'1_lib': 'static/yellow_gem.png',
-                          '2_lib': 'static/green_gem.png',
-                          '3_lib': 'static/blue_gem.png',
-                          '4_lib': 'static/red_gem.png',
-                          '5_lib': 'static/yellow_gem.png'}
+            self.items = {'1_lib': 'static/hero1_librarian/upgrade_power.png',
+                          '2_lib': 'static/hero1_librarian/upgrade_hp.png',
+                          '3_lib': 'static/pal_lib3.png',
+                          '4_lib': 'static/pal_lib4.png',
+                          '5_lib': 'static/pal_lib5.png'}
 
         self.hero_name = hero_name
 
@@ -328,23 +313,26 @@ class Librarian(pygame.sprite.Sprite):
         if not is_on_check:
             is_on_check = True
             if self.btn_h.collidepoint((mx, my)):
-                info = 'increase the maximum health reserve by 10%' if self.hero_name == 'Hero1' else '1'
-                self.show_info(info, 1)
+                info = ('increase the maximum health reserve by 10%', 1)
+                self.show_info(info)
             elif self.btn_a.collidepoint((mx, my)):
-                info = 'increase attack power by 4' if self.hero_name == 'Hero1' else '2'
-                self.show_info(info, 1)
+                info = ('increase attack power by 4', 1)
+                self.show_info(info)
             elif self.btn_q.collidepoint((mx, my)):
-                info = '30% increase in recoverable health after using the super (buttonQ)' if self.hero_name == 'Hero1' else '3'
-                self.show_info(info, 2)
+                info = ('30% increase in recoverable health after using the super (buttonQ)', 2) if self.hero_name == 'Hero1' \
+                    else ("increase sheild protection by 12.5%", 1)
+                self.show_info(info)
             elif self.btn_e.collidepoint((mx, my)):
-                info = "increase the enemy's deceleration time by 10% after hitting the enemy with the " \
-                       "second attack (E button)" if self.hero_name == 'Hero1' else '4'
-                self.show_info(info, 2)
+                info = ("increase the enemy's deceleration time by 10% after hitting the enemy with the " \
+                        "second attack (E button)", 2) if self.hero_name == 'Hero1' \
+                    else ("increases the character's speed", 1)
+                self.show_info(info)
             elif self.btn_k.collidepoint((mx, my)):
-                info = 'increase the force coefficient of a normal attack during the action of super by 23% (Q button)' if self.hero_name == 'Hero1' else '5'
-                self.show_info(info, 2)
+                info = ('increase the force coefficient of a normal attack during the action of super by 23% (Q button)', 2) if self.hero_name == 'Hero1' \
+                    else ("increases the duration of the super (E button)", 1)
+                self.show_info(info)
             else:
-                self.show_info(False, 0)
+                self.show_info((False, 0))
         else:
             is_on_check = False
 
@@ -363,7 +351,9 @@ class Librarian(pygame.sprite.Sprite):
                 elif self.btn_k.collidepoint((mx, my)):
                     self.plus_k(player)
 
-    def show_info(self, arg, strings):
+    def show_info(self, info):
+        arg = info[0]
+        strings = info[1]
         if not arg:
             font = pygame.font.SysFont('Avenir Next', round((25 * self.w) / 1536))
             info = font.render('', True, (255, 255, 255))
@@ -421,10 +411,19 @@ class Librarian(pygame.sprite.Sprite):
             sprite.hp += 10
 
         if self.bought_items[-1] == '3_lib':
-            sprite.q_hp_recovery += 5
+            if sprite.name == 'Hero1':
+                sprite.q_hp_recovery += 5
+            if sprite.name == 'Hero3':
+                sprite.SHIELD_HP_KEF += 0.05
 
         if self.bought_items[-1] == '4_lib':
-            sprite.e_time_speed_to_low += 0.4
+            if sprite.name == 'Hero1':
+                sprite.e_time_speed_to_low += 0.4
+            if sprite.name == 'Hero3':
+                sprite.speed += 0.1
 
         if self.bought_items[-1] == '5_lib':
-            sprite.attack_power_kef += 0.1
+            if sprite.name == 'Hero1':
+                sprite.attack_power_kef += 0.1
+            if sprite.name == 'Hero3':
+                sprite.E_ACTIVE_TIMER *= 1.6

@@ -224,12 +224,17 @@ class Potion(pygame.sprite.Sprite):
         self.image = pygame.Surface((size, size), pygame.SRCALPHA)
         self.cell = cell
         self.new_tile_size = size
+        self.able = True
         if cell == 'V':
             self.draw_block(potion1)
+            self.surf = potion1
         elif cell == 'G':
             self.draw_block(potion2)
+            self.surf = potion2
         elif cell == 'Y':
             self.draw_block(potion3)
+            self.surf = potion3
+
         self.rect = self.image.get_rect(topleft=(pos[0] * size, pos[1] * size))
         self.all_potions = {'V': 'static/potion1.png',
                             'G': 'static/potion2.png',
@@ -242,8 +247,15 @@ class Potion(pygame.sprite.Sprite):
     def draw_block(self, block_to_draw):
         self.image.blit(pygame.transform.scale(block_to_draw, (self.new_tile_size, self.new_tile_size)), (0, 0))
 
-    def anim_potion(self):
-        pass
+    def delete(self):
+        self.image = pygame.Surface((self.new_tile_size, self.new_tile_size), pygame.SRCALPHA)
+        self.image.fill((255, 255, 255, 0))
+        self.able = False
+
+    def recover(self):
+        self.image = pygame.Surface((self.new_tile_size, self.new_tile_size), pygame.SRCALPHA)
+        self.draw_block(self.surf)
+        self.able = True
 
 
 class Chest(pygame.sprite.Sprite):

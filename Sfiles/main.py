@@ -104,7 +104,6 @@ def main_game(server_player, net, play_main):
         player_enemy = network.send(server_player)
         level = LevelG(maps[i], screen, player_main, player_enemy, network, server_player, interface)
         level.player_sprite.block_moving = False
-        print(server_player.wins, server_player.loses)
         if server_player.loses >= 3:
             server_player.win = False
             break
@@ -193,6 +192,16 @@ def map_preparation(player, network, player_settings):
     start_new_thread(sleeper, ())
 
     def portalParkourMap(sc, player_parkour):
+        try:
+            player_to_copy += 1
+        except:
+            player_to_copy = 0
+
+        if player_to_copy == 0:
+            player_save = copy(player_parkour)
+            player_saved = True
+            player_to_copy += 1
+        p = False
         runParkourMap = True
         level_p = LevelParkour(level_parkour_map, screen, player_settings)
         count = 0
@@ -207,7 +216,7 @@ def map_preparation(player, network, player_settings):
             for e in pygame.event.get():
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
-                        portalParkourMap(sc, player_parkour)
+                        p = True
                     level_p.check_fall = False
                 if level_p.portalParkour:
                     finished = True
@@ -215,13 +224,20 @@ def map_preparation(player, network, player_settings):
                 runParkourMap = False
             count += 1
             if level_p.check_fall:
-                portalParkourMap(sc, player_parkour)
+                p = True
             player_settings['keys'] = level_p.keys_taken
             level_p.events_check()
             if finished:
                 level.portalParkour = False
                 break
+            if p:
+                runParkourMap = False
             clock.tick(FPS)
+        if p:
+            if player_saved:
+                portalParkourMap(sc, player_save)
+            else:
+                portalParkourMap(sc, player_parkour)
 
     while run:
         level.sleeper_time = sleeper_time
@@ -255,6 +271,10 @@ def map_preparation(player, network, player_settings):
         if level.portalParkour:
             pygame.mixer.music.stop()
             portalParkourMap(screen, level.player)
+        if level.rerun_level:
+            level.rerun_player()
+            level.rerun_level = False
+            continue
         clock.tick(FPS)
 
 

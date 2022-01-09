@@ -5,7 +5,6 @@ from Hero1Player import Player_hero1
 from Hero3Player import Player_hero3
 from NPC import Librarian, BlackSmith
 from dataConsts import bgMapPreparation
-from pygame.locals import *
 
 
 class Level:
@@ -19,7 +18,9 @@ class Level:
         self.player_col = 0
         self.pos_x = 0
         self.interface = interface
+        self.all_potions = []
         self.setup_level(level_data)
+        self.interface.add_dicts(self.items_lib, self.items_bs)
         self.world_shift_x = 0
         self.world_shift_y = 0
         self.portalParkour = False
@@ -27,7 +28,10 @@ class Level:
         self.item_clicked = False
         self.first_start = True
         self.is_on_check = False
+        self.rerun_level = False
         self.keys_count = 0
+        self.deleted_potion = None
+        self.deleted_potion_count = 0
 
     def setup_level(self, layout, default_player=False):
         self.interface.update_screen_size(self.width, self.height)
@@ -80,10 +84,12 @@ class Level:
                     npc = BlackSmith((x, y), len(self.npces.sprites()), self.display_surface, self.player_settings['name'])
                     self.npces.add(npc)
                     self.all_sprites.add(npc)
+                    self.items_bs = npc.items
                 elif cell == 'L':
                     npc = Librarian((x, y), len(self.npces.sprites()), self.display_surface, self.player_settings['name'])
                     self.npces.add(npc)
                     self.all_sprites.add(npc)
+                    self.items_lib = npc.items
                 elif cell == 'п' or cell == 'П':
                     tile = Tile((col_index, row_index), tile_size, cell, level1_map, self.player_col)
                     self.decoration.add(tile)
@@ -91,12 +97,15 @@ class Level:
                 elif cell == 'V':
                     potion = Potion((col_index, row_index), tile_size, cell)
                     self.potions.add(potion)
+                    self.all_potions.append(potion)
                 elif cell == 'G':
                     potion = Potion((col_index, row_index), tile_size, cell)
                     self.potions.add(potion)
+                    self.all_potions.append(potion)
                 elif cell == 'Y':
                     potion = Potion((col_index, row_index), tile_size, cell)
                     self.potions.add(potion)
+                    self.all_potions.append(potion)
                 elif cell == 'C':
                     chest = Chest((col_index, row_index), tile_size, cell)
                     self.chests.add(chest)
@@ -133,10 +142,15 @@ class Level:
     def player_pos_checker(self):
         player = self.player_sprite
         if player.rect.y > self.height + 300 or player.rect.y < - 300:
-            self.setup_level(self.level_data, self.player_sprite)
+            self.rerun_level = True
             self.player_settings['keys'] = 0
             self.player_settings['b_cards'] = 0
             self.player_settings['gold'] = 0
+
+    def rerun_player(self):
+        self.player_sprite.image.blit(pygame.transform.scale(self.player_settings['imagePreview'], (self.width, self.height)), (0, 0))
+        self.player_sprite.rect = self.player_sprite.image.get_rect(topleft=(self.player_sprite.started_pos[0] + round((50 * self.width) / 1536),
+                                                                             self.player_sprite.started_pos[1]))
 
     def npc_collisions(self):
         player = self.player.sprite
@@ -223,11 +237,34 @@ class Level:
         player = self.player.sprite
         for pot in self.potions:
             if pot.rect.colliderect(player.rect):
-                self.take_potion(pot)
+                if pot.able:
+                    self.take_potion(pot)
 
     def take_potion(self, potion):
-        self.potions.remove(potion)
+        player = self.player.sprite
         self.interface.add_inventory_potions(potion, potion.all_potions)
+        self.delete_potion(potion)
+        if potion.cell == 'V':
+            player.speed_potion_count += 1
+        if potion.cell == 'G':
+            player.resistance_potion_count += 1
+        if potion.cell == 'Y':
+            player.recharge_potion_count += 1
+
+    def delete_potion(self, potion):
+        if self.deleted_potion:
+            self.deleted_potion.recover()
+        potion.delete()
+        self.deleted_potion = potion
+        self.check_potion_deleted()
+
+    def check_potion_deleted(self):
+        if self.deleted_potion:
+            self.deleted_potion_count += 1
+            if self.deleted_potion_count > 1000:
+                self.deleted_potion.recover()
+                self.deleted_potion = None
+                self.deleted_potion_count = 0
 
     def check_chest(self):
         player = self.player.sprite
@@ -249,6 +286,10 @@ class Level:
     def check_sprite_updates(self):
         for sprite in self.npces.sprites():
             if sprite.name == 'librarian':
+                if sprite.purchase_done:
+                    sprite.update_player_characteristics(self.player_sprite)
+                    sprite.purchase_done = False
+            if sprite.name == 'blacksmith':
                 if sprite.purchase_done:
                     sprite.update_player_characteristics(self.player_sprite)
                     sprite.purchase_done = False
@@ -289,6 +330,7 @@ class Level:
         self.check_chest()
         self.check_sprite_updates()
         self.add_keys()
+        self.check_potion_deleted()
 
         if self.player_sprite.name == 'Hero1':
             self.player_sprite.bullets.update((self.world_shift_x, self.world_shift_y))

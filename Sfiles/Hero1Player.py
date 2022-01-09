@@ -174,8 +174,9 @@ class Player_hero1(pygame.sprite.Sprite):
                     self.shoot_bool = self.shoot_bool_max
                     self.attacksEBool = 300
                     self.Q_SLEEPER = 1800
-            else:
-                self.K_x = True
+
+        if keys[pygame.K_x]:
+            self.K_x = True
         else:
             self.K_x = False
 
