@@ -37,7 +37,7 @@ def threaded_client(conn, player):
     reply = ""
     while True:
         try:
-            data = pickle.loads(conn.recv(1024))
+            data = pickle.loads(conn.recv(2048))
             players[player] = data
 
             if not data:
